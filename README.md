@@ -1,6 +1,6 @@
 ![bgitu compass](docs/images/thumbnail.png "BGITU Compass")
 
-Now in Android App
+BGITU Compass
 ==================
 
 **BGITU Compass** a specialized Android application for the students of Bryansk State University of Engineering and Technology.
