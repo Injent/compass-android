@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="schedule_changes_channel_name">Изменения расписания</string>
+    <string name="schedule_changes_channel_description">Последние изменения расписания</string>
+    <string name="schedule_changed_on">Изменение расписания на $%s1</string>
+    <string name="pinned_schedule_channel_name">Прикрепленное расписание</string>
+    <string name="background_work_channel_name">Фоновая работа</string>
+    <string name="general_channel_name">Общие</string>
+    <string name="sounded_pinned_schedule_channel_name">Звуковое прикрепленное расписание</string>
+</resources>

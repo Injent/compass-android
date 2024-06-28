@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="schedule_changes_channel_name">Schedule Changes</string>
+    <string name="schedule_changes_channel_description">The latest updates on schedule</string>
+    <string name="schedule_changed_on">Schedule changed on $%s1</string>
+    <string name="pinned_schedule_channel_name">Pinned schedule</string>
+    <string name="background_work_channel_name">Background work</string>
+    <string name="general_channel_name">General</string>
+    <string name="sounded_pinned_schedule_channel_name">Sounded pinned schedule</string>
+</resources>

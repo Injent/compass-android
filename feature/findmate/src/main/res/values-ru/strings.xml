@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nobody_found">Никто не был найден</string>
+    <string name="search_mate">Найдите себе напарника по учёбе</string>
+    <string name="help_each_other">Помогайте друг другу с решением задач в университете</string>
+    <string name="nobody_found_details">Студенты с вашими параметрами запроса еще не зарегистрировались в приложении</string>
+    <string name="var_placeholder">В</string>
+    <string name="title_search_mate">Искать напарника</string>
+    <string name="search_subject">Предмет</string>
+</resources>

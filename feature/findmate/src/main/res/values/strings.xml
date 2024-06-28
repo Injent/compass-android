@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nobody_found">No one has been found</string>
+    <string name="search_mate">Find yourself a study mate</string>
+    <string name="help_each_other">Help each other with solving problems at the university</string>
+    <string name="nobody_found_details">The students with your request parameters have not yet registered in the application</string>
+    <string name="var_placeholder">V</string>
+    <string name="title_search_mate">Search mate</string>
+    <string name="search_subject">Subject</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AvatarPlaceholder">
+        <item name="avatar_background">#d9d9d9</item>
+        <item name="avatar_foreground">#a7a7a7</item>
+    </style>
+</resources>

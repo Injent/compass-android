@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">Настройки</string>
+    <string name="ignore_minor_updates">Игнорировать необязательные обновления</string>
+    <string name="ignore_minor_updates_description">Всплывающие окна c рекомендацией обновиться будут скрыты</string>
+    <string name="app_theme">Тема приложения</string>
+    <string-array name="ui_themes">
+        <item>Системная</item>
+        <item>Светлая</item>
+        <item>Темная</item>
+        <item>AMOLED</item>
+        <item>Динамическая</item>
+    </string-array>
+    <string name="logout">Выйти</string>
+    <string name="show_pinned_schedule">Показывать расписание в шторке уведомлений</string>
+    <string name="show_pinned_schedule_description">Текущее расписание будет видно в центре уведомлений весь день</string>
+    <string name="changelog">Список обновлений</string>
+    <string name="report_error">Сообщить об ошибке</string>
+    <string name="please_allow_notification">Включите уведомления</string>
+    <string name="notification_sound">Звук прикрепленного расписания</string>
+    <string name="audio_not_selected">Системный</string>
+</resources>

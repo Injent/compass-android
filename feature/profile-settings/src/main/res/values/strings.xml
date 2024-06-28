@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_settings">Profile Settings</string>
+    <string name="profile_permissions">Permissions</string>
+    <string name="request_permission">Request permission</string>
+    <string name="view_gradebook">View gradebook</string>
+    <string name="gradebook">Gradebook №%s</string>
+    <string name="in_development">In development</string>
+    <string name="my_group">My group</string>
+    <string name="change_group">change</string>
+    <string name="add_link">Add link</string>
+    <string name="last_name">Last name</string>
+    <string name="first_name">First name</string>
+    <string name="bio">About me</string>
+    <string name="public_profile">Visible in the search</string>
+
+</resources>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/notification_padding"
+    android:columnCount="2"
+    android:rowCount="4"
+    android:useDefaultMargins="false"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/now"
+        android:layout_width="@dimen/time_column_width"
+        android:layout_height="wrap_content"
+        android:text="@string/now"
+        android:textAppearance="@style/TextHeadline" />
+
+    <TextView
+        android:id="@+id/current_subject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/time_column_width"
+        android:layout_marginStart="8dp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textAppearance="@style/TextHeadline" />
+
+    <LinearLayout
+        android:layout_width="@dimen/time_column_width"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/current_time_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextLabel" />
+
+        <TextView
+            android:id="@+id/current_time_end"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextLabel"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/current_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/time_column_width"
+        android:layout_marginStart="8dp"
+        android:maxLines="2"
+        android:textAppearance="@style/TextLabel" />
+
+    <TextView
+        android:layout_width="@dimen/time_column_width"
+        android:layout_height="wrap_content"
+        android:text="@string/next"
+        android:layout_marginTop="6dp"
+        android:textAppearance="@style/TextHeadline" />
+
+    <TextView
+        android:id="@+id/next_subject"
+        android:layout_width="match_parent"
+        android:layout_marginEnd="@dimen/time_column_width"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="6dp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textAppearance="@style/TextHeadline" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/next_time_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextLabel" />
+
+        <TextView
+            android:id="@+id/next_time_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextLabel"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/next_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextLabel"
+        android:layout_marginStart="8dp"
+        android:maxLines="2"
+        android:layout_marginEnd="@dimen/time_column_width" />
+
+
+    <Button
+        android:id="@+id/turn_off"
+        android:layout_width="wrap_content"
+        android:layout_marginEnd="@dimen/time_column_width"
+        android:layout_height="28dp"
+        android:layout_gravity="end"
+        android:layout_columnSpan="2"
+        android:background="@drawable/notification_button"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextButton"
+        android:text="@string/turn_off_for_today" />
+</GridLayout>

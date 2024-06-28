@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="label_login">Логин</string>
+    <string name="label_password">Пароль</string>
+    <string name="button_login">Войти</string>
+    <string name="authorization">Авторизация ЭОС</string>
+    <string name="error_eos_does_not_responds">Сервис ЭОС не доступен</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
+    <string name="enter_your_registration_email">На указанную почту придёт новый пароль</string>
+    <string name="why_eos">Зачем ЭОС?</string>
+    <string name="explanation_dialog_text">Авторизация ЭОС позволяет установить вашу личность. В дальнейшем это будет нужно для некоторых функций приложения.\n\nСейчас они находятся в разработке. Вы можете войти как гость и авторизоваться позже когда вам это будет удобно</string>
+    <string name="user_agreement_text">Продолжая использовать сервис вы принимаете {пользовательское соглашение}</string>
+    <string name="sign_in_with_eos">Войти с ЭОС</string>
+    <string name="sign_in_as_guest">Войти как гость</string>
+    <string name="user_agreement">Пользовательское соглашение</string>
+    <string name="pick_group">Выберите свою группу</string>
+    <string name="your_selected_group">Вы выбрали группу %s</string>
+    <string name="group_not_selected">Группа не выбрана</string>
+    <string name="button_continue">Продолжить</string>
+    <string name="alternative">ИЛИ</string>
+    <string name="confirm_account">Подтвердить аккаунт</string>
+    <string name="account_confirmation">Подтверждение</string>
+    <string name="forgot_password">Забыли пароль?</string>
+    <string name="submit_email">Отправить</string>
+    <string name="placeholder_email">Введите E-mail</string>
+    <string name="label_email">Почта</string>
+    <string name="hint_email">E-Mail должен быть внесён в личное дело</string>
+    <string name="email_not_found">Почта не найдена</string>
+    <string name="failed_to_connect_to_eos">Не удалось подключится к ЭОС</string>
+    <string name="invalid_email">Неверный адрес электронной почты</string>
+    <string name="successful_recovery">Успешное восстановление</string>
+    <string name="successful_recovery_text">На вашу почту будет выслан новый пароль</string>
+    <string name="huawei_not_supported">Huawei не поддерживается</string>
+    <string name="huawei_dialog_text">Приносим свои извинения, мы не можем поддерживать устройства Huawei из-за финансовых ограничений. Но вы можете воспользоваться нашим {ботом в Telegram}</string>
+    <string name="ignore">Игнорировать</string>
+    <string name="tg_bot">Телеграм бот</string>
+    <string name="desc_show_password">Показать пароль</string>
+    <string name="desc_hide_password">Скрыть пароль</string>
+    <string name="desc_login">Войти</string>
+</resources>

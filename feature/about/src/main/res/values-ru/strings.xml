@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_app">О приложении</string>
+    <string name="version">Версия %s</string>
+    <string name="app_description">Упрости себе жизнь в новом семестре. Просматривай свое актуальное расписание прямо в приложении.</string>
+    <string name="user_agreement">Пользовательское соглашение</string>
+    <string name="share_app">Поделиться приложением</string>
+    <string name="share_app_message">Попробуй Android приложение для просмотра расписания занятий БГИТУ <br />%s</string>
+    <string name="changelogs">Список изменений</string>
+</resources>

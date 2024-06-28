@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pinned_schedule_channel_name">Прикрепленное расписание</string>
+    <string name="then_end_of_classes">Окончание занятий</string>
+    <string name="break_title">Перерыв</string>
+    <string name="now">Сейчас</string>
+    <string name="next">Далее</string>
+    <string name="starts_soon">Скоро</string>
+    <string name="unfold">Развернуть</string>
+    <string name="turn_off_for_today">Отключить на сегодня</string>
+    <string name="notification_disallowed">Уведомления запрещены</string>
+    <string name="alarm_disabled">Сигналы не разрешены</string>
+    <string name="will_be_enabled_on_the_next_classroom">Будет включен на следующей паре</string>
+</resources>

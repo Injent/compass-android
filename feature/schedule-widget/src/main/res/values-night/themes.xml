@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ThemeWidgetSystem">
+        <item name="colorBackground">@color/dark_background</item>
+        <item name="colorOnBackground">@color/dark_text</item>
+        <item name="colorContainer">@color/dark_container</item>
+        <item name="colorOnContainer">@color/dark_text</item>
+    </style>
+</resources>

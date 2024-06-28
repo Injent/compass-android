@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update">Update</string>
+    <string name="later">Later</string>
+    <string name="ignore">Ignore</string>
+    <string name="update_confirmation_title">Update the BGITU Compass app?</string>
+    <string name="update_recommendation">We recommend updating the application. The update may contain bug fixes and additional functionality</string>
+    <string name="update_size">Size of update: %1$s</string>
+    <string name="app_update">App update</string>
+    <string name="force_update_confirmation_title">BGITU Compass app update required</string>
+    <string name="downloading">Downloading… %1$d%%</string>
+    <string name="downloaded">Ready for installation</string>
+    <string name="download_failed">Error due download</string>
+    <string name="retry_update">Retry</string>
+</resources>

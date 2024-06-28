@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_internal_server_error">Error on server</string>
+    <string name="error_unknown">Unknown error</string>
+    <string name="toast_finishing_update">Finishing update</string>
+</resources>

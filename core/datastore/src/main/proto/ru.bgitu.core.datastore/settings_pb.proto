@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+option java_package = "ru.bgitu.core.datastore";
+option java_multiple_files = true;
+
+import "google/protobuf/wrappers.proto";
+
+message GroupSlotPb {
+    google.protobuf.Int32Value id = 1;
+    google.protobuf.StringValue name = 2;
+    int32 slotIndex = 3;
+}
+
+message UserPrefsPb {
+    bool ignore_minor_updates = 1;
+    string theme = 2;
+    bool show_pinned_schedule = 3;
+    bool teacher_sort_by_weeks = 4;
+    repeated GroupSlotPb saved_groups = 5;
+    bool show_groups_on_main_screen = 6;
+}
+
+message DataVersionPb {
+    int32 schedule_version = 1;
+    int32 curr_app_version_code = 2;
+    int32 last_force_update_version = 3;
+    int32 new_features_version = 4;
+    int32 schema_version = 5;
+    int32 guest_account_version = 6;
+}
+
+message CredentialsPb {
+    string access_token = 1;
+    string refresh_token = 2;
+    int64 expiration_date = 3;
+    int64 date_diff = 4;
+    int64 auth_date = 5;
+    int64 user_id = 6;
+    int32 group_id = 7;
+    string group_name = 8;
+    bool is_verified = 9;
+}
+
+message UserDataPb {
+    string avatarUrl = 1;
+    repeated string permissions = 2;
+    string role = 3;
+    string last_name = 4;
+    int64 eos_user_id = 5;
+    string bio = 6;
+    string vkUrl = 7;
+    string tgUrl = 8;
+    string variantsJson = 9;
+    string name = 10;
+    bool public_profile = 11;
+}
+
+message MetadataPb {
+    int64 last_statistics_report = 1;
+    string appUUID = 2;
+    repeated string recent_professor_search = 3;
+    string newest_update_checksum = 4;
+    bool seen_teacher_schedule_alert = 5;
+    int64 available_version_code = 6;
+    string schedule_notifier_alarm_date_time = 7;
+}
+
+message SettingsPb {
+    string deprecated_studentInfo = 1;
+    int32 deprecated_schedule_version = 2;
+    int32 deprecated_user_version = 3;
+    string deprecated_access_token = 4;
+    string deprecated_expiration_date = 5;
+    string deprecated_request_date = 6;
+    int64 deprecated_time_diff = 7;
+    string deprecated_refresh_token = 8;
+    bool deprecated_ignore_minor_updates = 9;
+    int32 deprecated_ui_theme = 10;
+    int32 deprecated_group_id = 11;
+    int32 deprecated_curr_app_version_code = 12;
+    bool deprecated_show_pinned_schedule = 13;
+    int32 deprecated_last_force_update_version = 14;
+    int32 deprecated_new_features_version = 15;
+
+    CredentialsPb credentials = 16;
+    UserPrefsPb prefs = 17;
+    DataVersionPb data_versions = 18;
+    UserDataPb userdata = 19;
+    MetadataPb metadata = 20;
+}

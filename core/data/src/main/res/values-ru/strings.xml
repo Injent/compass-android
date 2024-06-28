@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_internal_server_error">Ошибка на сервере</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
+    <string name="toast_finishing_update">Завершение обновления</string>
+</resources>

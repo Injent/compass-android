@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="role_student">Student</string>
+    <string name="role_headman">Headman</string>
+    <string name="role_deputy_headman">Deputy Headman</string>
+    <string name="perm_add_homework">Add Homework</string>
+    <string name="perm_change_schedule">Change Schedule</string>
+    <string name="perm_broadcast_group">Broadcast to group</string>
+    <string name="perm_broadcast_flow">Broadcast to flow</string>
+    <string name="perm_broadcast_global">Broadcast to all</string>
+    <string name="perm_revoke_permissions">Revoke permissions</string>
+</resources>

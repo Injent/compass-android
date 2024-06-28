@@ -1,0 +1,20 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+.jks
+RELEASE_KEYSTORE.txt
+
+# Project exclude paths
+/build-logic/build/
+/build-logic/plugins/convention/build/
+/build-logic/plugins/convention/build/classes/kotlin/main/
+/build-logic/.idea
+# Project exclude paths
+/feature/professor-search/build/

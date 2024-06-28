@@ -1,0 +1,227 @@
+[versions]
+accompanist = "0.34.0"
+activity-compose = "1.9.0"
+agp = "8.5.0"
+androidxAnnotation = "1.8.0"
+androidxWork = "2.9.0"
+camerax = "1.3.4"
+coil = "2.6.0"
+compileSdk = "34"
+compose-bom = "2024.06.00"
+composeCompiler = "1.5.14"
+constraintLayout = "1.0.1"
+core-ktx = "1.13.1"
+datastore = "1.1.1"
+desugarJdkLibs = "2.0.4"
+detekt = "1.23.3"
+firebase-bom = "33.1.1"
+firebasePlugin = "3.0.2"
+glance = "1.1.0"
+googleApiClient = "2.4.0"
+googleAuth = "1.19.0"
+googleServicesAuth = "21.2.0"
+googleServicesBase = "18.5.0"
+googleServicesPlugin = "4.4.2"
+googleServicesDrive = "v3-rev197-1.25.0"
+koin-bom = "3.5.6"
+kotlin = "1.9.24"
+kotlinx-serialization = "1.6.3"
+kotlinxCoroutines = "1.8.0"
+kotlinxDatetime = "0.5.0"
+ksp = "1.9.24-1.0.20"
+lifecycle = "2.8.2"
+markdown = "0.3.7"
+minSdk = "27"
+okhttp-bom = "4.11.0"
+protobuf = "4.26.0"
+protobufPlugin = "0.9.4"
+retrofit = "2.9.0"
+retrofit-kotlinxSserialization = "1.0.0"
+room = "2.6.1"
+rustore-analytics = "0.1.5"
+rustore-core = "0.1.10"
+rustore-update = "1.0.1"
+secrets = "2.0.1"
+sheetsComposeDialogs = "1.2.0"
+splashScreen = "1.0.1"
+startup = "1.1.1"
+targetSdk = "34"
+ktor = "2.3.10"
+navigation = "2.8.0-beta04"
+reorderable = "0.9.6"
+truth = "1.4.2"
+turbine = "1.1.0"
+robolectric = "4.11.1"
+roborazzi = "1.7.0"
+jacoco = "0.8.7"
+junit = "4.13.2"
+androidxComposeAlpha = "1.7.0-beta04"
+androidxTestRules = "1.6.1"
+vkcompose = "0.5.4"
+moduleDependencyGraph = "2.5.0"
+androidxTracing = "1.3.0-alpha02"
+androidxTest = "1.6.1"
+
+[libraries]
+# Accompanist
+accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
+
+# Build logic plugins
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
+detekt-gradlePlugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+
+# Camera
+camerax-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
+camerax-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
+camerax-extensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "camerax" }
+camerax-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
+camerax-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
+
+# Compose
+compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
+compose-adaptive = { group = "androidx.compose.material3", name = "material3-adaptive", version = "1.0.0-alpha06" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+compose-constraintLayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintLayout" }
+compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+compose-ui-text = { group = "androidx.compose.ui", name = "ui-text" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
+compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "androidxComposeAlpha" }
+compose-ui-testManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+compose-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class" }
+compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
+
+# AndroidX
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+datastore = { group = "androidx.datastore", name = "datastore-core", version.ref = "datastore" }
+splashScreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
+startup = { group = "androidx.startup", name = "startup-runtime", version.ref = "startup" }
+tracing-ktx = { group = "androidx.tracing", name = "tracing-ktx", version.ref = "androidxTracing" }
+core-test = { group = "androidx.test", name = "core-ktx", version.ref = "androidxTest" }
+
+# Firebase
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom"}
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+
+# Google
+google-apiClient = { group = "com.google.api-client", name = "google-api-client-android", version.ref = "googleApiClient" }
+google-apis-drive = { group = "com.google.apis", name = "google-api-services-drive", version.ref = "googleServicesDrive" }
+google-services-base = { group = "com.google.android.gms", name = "play-services-base", version.ref = "googleServicesBase" }
+google-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "googleServicesAuth" }
+google-auth = { group = "com.google.auth", name = "google-auth-library-oauth2-http", version.ref = "googleAuth" }
+
+# Glance
+glance = { group = "androidx.glance", name = "glance", version.ref = "glance" }
+glance-widget = { group = "androidx.glance", name = "glance-appwidget", version.ref = "glance" }
+
+# Koin
+koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koin-bom" }
+koin-android = { group = "io.insert-koin", name = "koin-android" }
+koin-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
+koin-workManager = { group = "io.insert-koin", name = "koin-androidx-workmanager" }
+koin-navigation = { group = "io.insert-koin", name = "koin-androidx-navigation" }
+
+# Ktor
+ktor-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
+ktor-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+ktor-contentNegotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-auth = { group = "io.ktor", name = "ktor-client-auth", version.ref = "ktor" }
+
+# KotlinX
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
+kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+
+# Lifecycle
+lifecycle-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
+lifecycle-livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
+lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+lifecycle-viewModelKtx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+
+# Paging
+# Protobuf
+protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
+protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
+
+# Retrofit and OkHttp
+okHttp = { group = "com.squareup.okhttp3", name = "okhttp" }
+okHttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okhttp-bom" }
+okHttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor" }
+retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-kotlinxSerialization = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofit-kotlinxSserialization" }
+retrofit-scalars = { group = "com.squareup.retrofit2", name = "converter-scalars", version.ref = "retrofit" }
+
+# Room
+room = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ksp = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+
+# Rustore
+rustore-analytics = { group = "ru.rustore.sdk", name = "analytics", version.ref = "rustore-analytics" }
+rustore-core = { group = "ru.rustore.sdk", name = "core", version.ref = "rustore-core" }
+rustore-update = { group = "ru.rustore.sdk", name = "appupdate", version.ref = "rustore-update" }
+vkcomposeGradlePlugin = { group = "com.vk.vkompose", name = "com.vk.vkompose.gradle.plugin", version.ref = "vkcompose" }
+
+# Work
+work = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidxWork" }
+
+# Thrird Party
+coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+markdown = { group = "com.github.jeziellago", name = "compose-markdown", version.ref = "markdown" }
+sheetsComposeDialog-calendar = { group = "com.maxkeppeler.sheets-compose-dialogs", name = "calendar", version.ref = "sheetsComposeDialogs" }
+sheetsComposeDialog-core = { group = "com.maxkeppeler.sheets-compose-dialogs", name = "core", version.ref = "sheetsComposeDialogs" }
+reorderable = { group = "org.burnoutcrew.composereorderable", name = "reorderable", version.ref = "reorderable" }
+
+# Test
+truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+
+[plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+android-test = { id = "com.android.test", version.ref = "agp" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebasePlugin" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServicesPlugin" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
+secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
+roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
+vkcompose = { id = "com.vk.vkompose", version.ref = "vkcompose" }
+moduleDependencyGraph = { id = "com.jraska.module.graph.assertion", version.ref = "moduleDependencyGraph" }
+
+# Project plugins
+bgitu-app = { id = "bgitu.app", version = "unspecified" }
+bgitu-app-compose = { id = "bgitu.app.compose", version = "unspecified" }
+bgitu-detekt = { id = "bgitu.detekt", version = "unspecified" }
+bgitu-feature = { id = "bgitu.feature", version = "unspecified" }
+bgitu-koin = { id = "bgitu.koin", version = "unspecified" }
+bgitu-library = { id = "bgitu.library", version = "unspecified" }
+bgitu-library-compose = { id = "bgitu.library.compose", version = "unspecified" }
+bgitu-serialization = { id = "bgitu.serialization", version = "unspecified" }
+bgitu-android-test = { id = "bgitu.android.test", version = "unspecified" }
+bgitu-app-jacoco = { id = "bgitu.app.jacoco", version = "unspecified" }
+bgitu-library-jacoco = { id = "bgitu.library.jacoco", version = "unspecified" }

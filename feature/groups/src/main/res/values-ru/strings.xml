@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screen_saved_groups">Любимые группы</string>
+    <string name="label_primary_group">Основная группа</string>
+    <string name="label_saved_group">Вторичная группа</string>
+    <string name="option_groups_visibility">Показывать группы на главном экране</string>
+    <string name="add_group">Добавить группу</string>
+    <string name="organize_groups">Упорядочьте группы</string>
+    <string name="add_groups">Добавьте до 3-х групп</string>
+    <string name="screen_find_group">Найти группу</string>
+    <string name="delete_group">Удалить группу?</string>
+    <string name="delete_group_description">Группа %s будет удалена из ваших любимых групп</string>
+    <string name="delete">Удалить</string>
+    <string name="hint_groups">Зажмите карточку и переместите группу в нужное место</string>
+</resources>

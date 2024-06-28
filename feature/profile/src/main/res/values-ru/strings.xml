@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile">Профиль</string>
+    <string name="settings">Настройки</string>
+    <string name="documents">Документы</string>
+    <string name="about_app">О приложении</string>
+    <string name="help">Помощь и поддержка</string>
+    <string name="logout">Выйти</string>
+    <string name="statement">Ведомости</string>
+    <string name="educational_material">Учебный материал</string>
+    <string name="edit">Редактировать</string>
+    <string name="about_me">Обо мне</string>
+    <string name="contacts">Связь</string>
+    <string name="variants">Варианты</string>
+    <string name="enter_about_me">Укажите свои контакты, чтобы к вам могли обращатся</string>
+    <string name="option_specify">Заполнить</string>
+    <string name="student_of">Студент %s</string>
+    <string name="my_groups">Мои группы</string>
+</resources>

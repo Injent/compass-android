@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="weekend">Weekend!</string>
+    <string name="repeat">Repeat</string>
+    <string name="tab_home">Home</string>
+    <string name="error_failed_to_load_data">Failed to load data</string>
+    <string name="today_is_weekend">Today is weekend or you don\'t have any classes that day</string>
+    <string name="the_first_class_will_start_in">The first class will start %1$s</string>
+    <string name="this_class_will_end_in">This class will end %1$s</string>
+    <string name="classes_are_over">Classes are over</string>
+    <string name="study_break">Break will end %s</string>
+    <string name="try_new_features">Try new features!</string>
+</resources>

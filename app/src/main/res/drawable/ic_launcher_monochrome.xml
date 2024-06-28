@@ -1,0 +1,10 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:drawable="@drawable/app_logo_monochrome"
+      android:width="48dp"
+      android:height="48dp"
+      android:gravity="center" />
+
+  <item android:drawable="@android:color/transparent"
+      android:width="108dp"
+      android:height="108dp" />
+</layer-list>

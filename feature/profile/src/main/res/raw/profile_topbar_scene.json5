@@ -1,0 +1,45 @@
+{
+  ConstraintSets: {
+    start: {
+      background: {
+        width: 'parent',
+        height: 'parent',
+      },
+      title: {
+        width: 'wrap',
+        height: 'wrap',
+        start: ['parent', 'start', 16],
+        top: ['parent', 'top', 'title_top'],
+        translationY: 16,
+      },
+      avatar: {
+        width: 80,
+        height: 80,
+        start: ['parent', 'start', 16],
+        bottom: ['parent', 'bottom', -43],
+      }
+    },
+    end: {
+      background: {
+        width: 'parent',
+        height: 'parent',
+      },
+      title: {
+        width: 'wrap',
+        height: 'wrap',
+        start: ['parent', 'start', 16],
+        top: ['parent', 'top', 'title_top'],
+        bottom: ['parent', 'bottom', 0],
+        translationX: 120,
+      },
+      avatar: {
+        width: 32,
+        height: 32,
+        start: ['parent', 'start', 16],
+        top: ['parent', 'top', 'title_top'],
+        bottom: ['parent', 'bottom', 0],
+        translationX: 0,
+      }
+    }
+  }
+}

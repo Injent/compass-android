@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_wrong_credentials">Wrong login or password</string>
+    <string name="error_not_student">You are not a student</string>
+    <string name="error_eos_is_not_responding">EOS is not responding</string>
+    <string name="error_no_internet_connection">No internet connection</string>
+    <string name="error_server_not_responding">The server is not responding</string>
+    <string name="error_slow_internet_connection">Slow internet connection</string>
+    <string name="error_on_server">Error on server</string>
+    <string name="error_unknown">Unknown error</string>
+</resources>

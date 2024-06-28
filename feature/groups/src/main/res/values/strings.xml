@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screen_saved_groups">Saved groups</string>
+    <string name="label_primary_group">Primary group</string>
+    <string name="label_saved_group">Secondary group</string>
+    <string name="option_groups_visibility">Show groups on home screen</string>
+    <string name="add_group">Add group</string>
+    <string name="organize_groups">Organize groups</string>
+    <string name="add_groups">Add up to three groups</string>
+    <string name="screen_find_group">Find group</string>
+    <string name="delete_group">Delete group?</string>
+    <string name="delete_group_description">Group %s will be removed from your favorite groups</string>
+    <string name="delete">Delete</string>
+    <string name="hint_groups">Hold down the card and move the group to the desired position</string>
+</resources>

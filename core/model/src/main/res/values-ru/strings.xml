@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="role_student">Студент</string>
+    <string name="role_headman">Староста</string>
+    <string name="role_deputy_headman">Зам. старосты</string>
+    <string name="perm_add_homework">Добавлять ДЗ</string>
+    <string name="perm_change_schedule">Изменять расписание</string>
+    <string name="perm_broadcast_group">Вещать группе</string>
+    <string name="perm_broadcast_flow">Вещать потоку</string>
+    <string name="perm_broadcast_global">Вещать всем</string>
+    <string name="perm_revoke_permissions">Отнимать разрешения</string>
+</resources>

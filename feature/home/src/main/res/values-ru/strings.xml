@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="today">На сегодня</string>
+    <string name="tomorrow">На завтра</string>
+    <string name="weekend">Выходной!</string>
+    <string name="repeat">Повторить</string>
+    <string name="tab_home">Главная</string>
+    <string name="error_failed_to_load_data">Не удалось загрузить данные</string>
+    <string name="today_is_weekend">Сегодня у вас выходной или нет пар на этот день</string>
+    <string name="the_first_class_will_start_in">Первая пара начнется %s</string>
+    <string name="this_class_will_end_in">Пара закончится %s</string>
+    <string name="classes_are_over">Пары закончились</string>
+    <string name="study_break">Перерыв закончится %s</string>
+    <string name="try_new_features">Добавьте несколько групп</string>
+</resources>

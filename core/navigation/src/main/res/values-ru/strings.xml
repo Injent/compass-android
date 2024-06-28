@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="label_profile">профиль</string>
+    <string name="label_professor_search">преподаватели</string>
+    <string name="label_schedule">расписание</string>
+    <string name="label_files">файлы</string>
+    <string name="label_mates">помощники</string>
+</resources>

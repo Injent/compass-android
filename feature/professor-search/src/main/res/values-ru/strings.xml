@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recent_search_results">Недавние</string>
+    <string name="not_holding_classes">Не проводит занятия</string>
+    <string name="you_didnt_search_professors">Вы не искали преподавателей</string>
+    <string name="professor_search">Преподаватели</string>
+    <string name="attention">Внимание!</string>
+    <string name="alert_text">Предоставляемое расписание не является графиком пересдач или отработок — такую информацию уточняйте лично у преподавателей или на стендах кафедры</string>
+    <string name="clear_search">очистить</string>
+    <string name="filter_by_weeks">по неделям</string>
+    <string name="filter_by_days">по дням</string>
+</resources>

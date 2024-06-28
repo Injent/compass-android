@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_storage">Недостаточно свободного места на устройстве</string>
+    <string name="error_invalid">Поврежденный файл обновления</string>
+    <string name="error_download">Не удалось скачать</string>
+    <string name="error_abort">Обновление прервано</string>
+    <string name="error_no_updates">Нет обновлений</string>
+</resources>

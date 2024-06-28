@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="help_title">Help</string>
+    <string name="app_question">Questions, bug reports, and suggestions for the app</string>
+    <string name="suggestions">Suggestions about functionality</string>
+    <string name="mobile_dev_name">Elisey Verevkin</string>
+    <string name="backend_dev">Kirill Pudov</string>
+    <string name="mobile_dev_role">The developer of the BGITU Compass app</string>
+    <string name="backend_dev_role">Developer of Telegram bot and server logic of BGITU Compass</string>
+    <string name="mobile_dev_description">Did you find a bug in the application? Please contact me</string>
+    <string name="backend_dev_description">Do you have any ideas or suggestions? — Write to me</string>
+</resources>

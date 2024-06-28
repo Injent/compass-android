@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update">Обновить</string>
+    <string name="later">Не сейчас</string>
+    <string name="ignore">Игнорировать</string>
+    <string name="update_confirmation_title">Обновить приложение БГИТУ Компасс?</string>
+    <string name="update_recommendation">Рекомендуем обновить приложение. В обновлении могут находиться исправление ошибок и дополнительный функционал</string>
+    <string name="update_size">Размер обновления: %1$s</string>
+    <string name="app_update">Обновление</string>
+    <string name="force_update_confirmation_title">Требуется обновление приложения БГИТУ Компасс</string>
+    <string name="downloading">Скачивание… %1$d%%</string>
+    <string name="downloaded">Готово к установке</string>
+    <string name="download_failed">Ошибка скачивания</string>
+    <string name="retry_update">Повторить</string>
+</resources>

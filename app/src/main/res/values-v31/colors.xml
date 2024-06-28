@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="icon_background">@android:color/system_neutral2_10</color>
+    <color name="icon_tint">@android:color/system_accent1_600</color>
+    <color name="icon_tint_secondary">@android:color/system_accent2_600</color>
+</resources>

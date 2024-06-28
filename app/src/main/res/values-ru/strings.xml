@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_has_occurred">Возникла ошибка</string>
+    <string name="we_apologize">Мы приносим извинения за неудобства. Над проектом ведется активная работа и о проблеме уже знают</string>
+    <string name="relaunch_app">Перезапустить</string>
+    <string name="retry">Повторить</string>
+
+</resources>

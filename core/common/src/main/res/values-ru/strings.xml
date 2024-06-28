@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_unknown">Неизвестная ошибка</string>
+    <string name="app_name">БГИТУ Компас</string>
+    <string name="error_slow_internet_connection">Медленное интернет соединение</string>
+    <string name="error_no_internet_connection">Нет интернета</string>
+    <string name="week">Неделя %s</string>
+    <string name="location_building_default">к. %s</string>
+    <string name="location_classroom_default">ауд. %s</string>
+    <string name="location_building_short">к. %s</string>
+    <string name="location_classroom_short">ауд. %s</string>
+    <string name="practice_abbriviation">П</string>
+    <string name="practice">Практика</string>
+    <string name="lecture_abbriviation">Л</string>
+    <string name="lecture">Лекция</string>
+</resources>

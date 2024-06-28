@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="status_regular">Student</string>
+    <string name="status_admin">Admin</string>
+    <string name="status_special">Awarded</string>
+</resources>

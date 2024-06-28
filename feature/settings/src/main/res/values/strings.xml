@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">Settings</string>
+    <string name="ignore_minor_updates">Ignore minor updates</string>
+    <string name="ignore_minor_updates_description">Notifications of optional updates will be hidden</string>
+    <string name="app_theme">App theme</string>
+    <string-array name="ui_themes">
+        <item>System</item>
+        <item>Light</item>
+        <item>Dark</item>
+        <item>AMOLED</item>
+        <item>Dynamic</item>
+    </string-array>
+    <string name="logout">Logout</string>
+    <string name="show_pinned_schedule">Show schedule as notification</string>
+    <string name="show_pinned_schedule_description">Part of the schedule for today will be displayed in the notification center throughout the school day</string>
+    <string name="changelog">Changelog</string>
+    <string name="report_error">Report Error</string>
+    <string name="please_allow_notification">Please allow notifications</string>
+    <string name="notification_sound">Pinned schedule sound</string>
+    <string name="audio_not_selected">Default</string>
+</resources>

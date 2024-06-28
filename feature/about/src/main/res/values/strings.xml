@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_app">About application</string>
+    <string name="version">Version %s</string>
+    <string name="app_description">View your newest schedule in app.</string>
+    <string name="user_agreement">User agreement</string>
+    <string name="share_app">Share app</string>
+    <string name="share_app_message">Try the Android app to view the class schedule of BGITU <br />%s</string>
+    <string name="changelogs">Changelogs</string>
+</resources>

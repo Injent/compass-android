@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pinned_schedule_channel_name">Pinned Schedule</string>
+    <string name="then_end_of_classes">The end of classes</string>
+    <string name="break_title">Break</string>
+    <string name="now">Now</string>
+    <string name="next">Next</string>
+    <string name="starts_soon">Soon</string>
+    <string name="unfold">Unfold</string>
+    <string name="turn_off_for_today">Turn off for today</string>
+    <string name="notification_disallowed">Notifications are disallowed</string>
+    <string name="alarm_disabled">Alarms disabled</string>
+    <string name="will_be_enabled_on_the_next_classroom">It will be enabled on the next classroom</string>
+</resources>

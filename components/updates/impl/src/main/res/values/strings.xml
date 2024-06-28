@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_storage">There is not enough free space on the device</string>
+    <string name="error_invalid">Corrupted update file</string>
+    <string name="error_download">Failed to download</string>
+    <string name="error_abort">The update was interrupted</string>
+    <string name="error_no_updates">There are no updates</string>
+</resources>

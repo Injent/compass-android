@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_unknown">Unknown Error</string>
+    <string name="app_name">Compass</string>
+    <string name="error_slow_internet_connection">Slow internet connection</string>
+    <string name="error_no_internet_connection">No internet connection</string>
+    <string name="week">Week %s</string>
+    <string name="location_building_default">b. %1$s</string>
+    <string name="location_classroom_default">classroom %1$s</string>
+    <string name="location_building_short">b. %1$s</string>
+    <string name="location_classroom_short">class %1$s</string>
+    <string name="practice_abbriviation">P</string>
+    <string name="practice">Practice</string>
+    <string name="lecture_abbriviation">L</string>
+    <string name="lecture">Lecture</string>
+</resources>

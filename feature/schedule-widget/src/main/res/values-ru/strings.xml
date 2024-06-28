@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">Расписание</string>
+    <string name="tomorrow">Завтра</string>
+    <string name="yesterday">Вчера</string>
+    <string name="today">Сегодня</string>
+    <string name="no_classes">Нет занятий</string>
+    <string name="subject_placeholder_1">Математика</string>
+    <string name="subject_placeholder_2">Физкультура и спорт</string>
+    <string name="subject_placeholder_3">Физика</string>
+    <string name="location_placeholder_1">к 1, ауд. 312</string>
+    <string name="location_placeholder_2">к. 1</string>
+    <string name="location_placeholder_3">к. 1, ауд. 308</string>
+    <string name="widget_settings">Настройки виджета</string>
+    <string name="widget_opacity">Прозрачность</string>
+    <string name="widget_theme">Тема</string>
+    <string name="theme_auto">Автоматическая</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Темная</string>
+    <string name="theme_dynamic">Динамическая</string>
+    <string name="text_color_from_theme">Из темы</string>
+    <string name="text_color_black">Черный</string>
+    <string name="text_color_white">Белый</string>
+    <string name="widget_text_color">Цвет текста</string>
+    <string name="widget_elements_color">Цвет кнопок</string>
+</resources>

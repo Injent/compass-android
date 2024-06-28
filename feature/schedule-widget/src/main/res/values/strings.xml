@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">Schedule</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="today">Today</string>
+    <string name="no_classes">No classes today</string>
+    <string name="subject_placeholder_1">Mathematics</string>
+    <string name="subject_placeholder_2">Physical education and sports</string>
+    <string name="subject_placeholder_3">Physics</string>
+    <string name="location_placeholder_1">b. 1, classroom 312</string>
+    <string name="location_placeholder_2">b. 1</string>
+    <string name="location_placeholder_3">b. 1, classroom 308</string>
+    <string name="widget_settings">Widget Settings</string>
+    <string name="widget_opacity">Opacity</string>
+    <string name="widget_theme">Theme</string>
+    <string name="theme_auto">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_dynamic">Dynamic</string>
+    <string name="text_color_from_theme">From theme</string>
+    <string name="text_color_black">Black</string>
+    <string name="text_color_white">White</string>
+    <string name="widget_text_color">Text color</string>
+    <string name="widget_elements_color">Buttons color</string>
+</resources>

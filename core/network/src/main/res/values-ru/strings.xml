@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_wrong_credentials">Неверный логин или пароль</string>
+    <string name="error_not_student">Вы не являетесь студентом</string>
+    <string name="error_eos_is_not_responding">ЭОС не отвечает</string>
+    <string name="error_no_internet_connection">Нет интернета</string>
+    <string name="error_server_not_responding">Сервер не отвечает</string>
+    <string name="error_slow_internet_connection">Медленный интернет</string>
+    <string name="error_on_server">Ошибка на сервере</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
+</resources>

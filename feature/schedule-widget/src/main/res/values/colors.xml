@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background">#FFFFFF</color>
+    <color name="onBackground">#000000</color>
+    <color name="container">#261CC6FA</color>
+    <color name="onContainer">#000000</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="light_text">#1f1f1f</color>
+    <color name="light_container">#f8fafd</color>
+
+    <color name="dark_text">#e3e3e3</color>
+    <color name="dark_container">#28292a</color>
+    <color name="dark_background">#1f1f1f</color>
+</resources>
