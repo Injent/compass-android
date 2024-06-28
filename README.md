@@ -11,6 +11,6 @@ The app is currently in development. The stable version can be downloaded from [
 
 **BGITU Compass** allows you to view the current schedule of all bachelor's and master's degree groups, view the teacher's schedule, looking for study helpers.
 
-# Screenshtos
+# Screenshots
 
 ![screenshots](docs/images/screenshots.png)
