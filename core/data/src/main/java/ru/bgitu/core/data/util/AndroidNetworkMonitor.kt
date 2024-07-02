@@ -9,6 +9,7 @@ import android.net.NetworkRequest
 import androidx.core.content.getSystemService
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.onStart
 
 class AndroidNetworkMonitor internal constructor(
     private val context: Context

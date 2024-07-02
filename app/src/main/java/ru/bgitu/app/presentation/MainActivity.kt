@@ -43,10 +43,9 @@ class MainActivity : ComponentActivity() {
         initializeComponents()
 
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState
                     .onEach {
-                        println(it)
                         uiState = it
                     }
                     .collect()

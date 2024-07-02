@@ -25,7 +25,7 @@ sealed interface ProfileUiState {
 }
 
 sealed interface ProfileIntent {
-    data object Logout : ProfileIntent
+    data object SignOut : ProfileIntent
     data object NavigateToSettings : ProfileIntent
     data object NavigateToProfileSettings : ProfileIntent
     data object NavigateToAboutApp : ProfileIntent
@@ -87,7 +87,7 @@ class ProfileViewModel(
 
     fun onIntent(intent: ProfileIntent) {
         when (intent) {
-            ProfileIntent.Logout -> {
+            ProfileIntent.SignOut -> {
                 viewModelScope.launch {
                     signOut()
                     _events.send(ProfileEvent.NavigateToLogin(signout = true))

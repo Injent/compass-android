@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,6 +42,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -55,7 +57,6 @@ import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
 import ru.bgitu.core.designsystem.theme.NoRippleTheme
-import ru.bgitu.core.designsystem.theme.applyState
 import ru.bgitu.core.designsystem.util.thenIf
 
 @Composable
@@ -68,6 +69,28 @@ fun AppButton(
     isLoading: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(horizontal = 20.dp)
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsFocusedAsState()
+
+    val containerColor by animateColorAsState(
+        targetValue = when {
+            !enabled -> AppTheme.colorScheme.backgroundDisabled
+            isPressed -> AppTheme.colorScheme.backgroundPressed
+            else -> AppTheme.colorScheme.backgroundBrand
+        },
+        animationSpec = tween(durationMillis = 100, easing = LinearEasing)
+    )
+
+    val contentColor by animateColorAsState(
+        targetValue = when {
+            !enabled -> AppTheme.colorScheme.foregroundOnBrand.copy(.75f)
+            isPressed -> AppTheme.colorScheme.foregroundOnBrand
+                .copy(.5f)
+                .compositeOver(AppTheme.colorScheme.background1)
+            else -> AppTheme.colorScheme.foregroundOnBrand
+        }
+    )
+
     BaseButton(
         onClick = onClick,
         modifier = modifier
@@ -75,8 +98,8 @@ fun AppButton(
         enabled = enabled,
         shape = shape,
         isLoading = isLoading,
-        defaultContainerColor = AppTheme.colorScheme.backgroundBrand,
-        defaultContentColor = AppTheme.colorScheme.foregroundOnBrand,
+        containerColor = containerColor,
+        contentColor = contentColor,
         contentPadding = contentPadding
     ) {
         AppTextWithLoading(
@@ -95,12 +118,32 @@ fun AppSecondaryButton(
     enabled: Boolean = true,
     isLoading: Boolean = false,
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsFocusedAsState()
+
+    val containerColor by animateColorAsState(
+        targetValue = when {
+            !enabled -> AppTheme.colorScheme.backgroundTouchable.copy(.5f)
+            isPressed -> AppTheme.colorScheme.backgroundTouchablePressed
+            else -> AppTheme.colorScheme.backgroundTouchable
+        },
+        animationSpec = tween(durationMillis = 100, easing = LinearEasing)
+    )
+
+    val contentColor by animateColorAsState(
+        targetValue = when {
+            !enabled -> AppTheme.colorScheme.foreground1.copy(.35f)
+            isPressed -> AppTheme.colorScheme.foreground1.copy(.75f)
+            else -> AppTheme.colorScheme.foreground
+        }
+    )
+
     BaseButton(
         onClick = onClick,
         isLoading = isLoading,
         enabled = enabled,
-        defaultContainerColor = AppTheme.colorScheme.backgroundTouchable,
-        defaultContentColor = AppTheme.colorScheme.foreground,
+        containerColor = containerColor,
+        contentColor = contentColor,
         modifier = modifier
             .height(ButtonTokens.LargeButtonHeight)
     ) {
@@ -187,8 +230,8 @@ private fun AppTextWithLoading(
 private fun BaseButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    defaultContainerColor: Color,
-    defaultContentColor: Color,
+    containerColor: Color,
+    contentColor: Color,
     enabled: Boolean = true,
     shape: Shape = AppTheme.shapes.default,
     isLoading: Boolean = false,
@@ -200,20 +243,6 @@ private fun BaseButton(
     val buttonScale by animateFloatAsState(
         targetValue = if (isPressed && enabled) 0.975f else 1f,
         animationSpec = spring(stiffness = Spring.StiffnessHigh)
-    )
-
-    val containerColor by animateColorAsState(
-        targetValue = defaultContainerColor.applyState(
-            isPressed = isPressed, enabled = enabled
-        ),
-        animationSpec = tween(durationMillis = 100, easing = LinearEasing)
-    )
-
-    val contentColor by animateColorAsState(
-        targetValue = defaultContentColor.applyState(
-            isPressed = isPressed, enabled = enabled
-        ),
-        animationSpec = tween(durationMillis = 100, easing = LinearEasing)
     )
 
     AppRippleTheme(NoRippleTheme) {
@@ -252,8 +281,8 @@ fun AppSmallButton(
         shape = shape,
         isLoading = isLoading,
         contentPadding = PaddingValues(horizontal = AppTheme.spacing.m),
-        defaultContainerColor = AppTheme.colorScheme.backgroundBrand,
-        defaultContentColor = AppTheme.colorScheme.foregroundOnBrand,
+        containerColor = AppTheme.colorScheme.backgroundBrand,
+        contentColor = AppTheme.colorScheme.foregroundOnBrand,
         modifier = modifier.height(ButtonTokens.SmallButtonHeight),
     ) {
         val textStyle = AppTheme.typography.calloutButton.copy(fontWeight = FontWeight.Medium)

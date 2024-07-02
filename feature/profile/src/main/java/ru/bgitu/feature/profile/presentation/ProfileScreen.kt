@@ -27,6 +27,9 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -60,6 +63,7 @@ import ru.bgitu.core.ui.listenEvents
 import ru.bgitu.core.ui.onClick
 import ru.bgitu.feature.profile.R
 import ru.bgitu.feature.profile.model.ProfileItem
+import ru.bgitu.feature.profile.presentation.components.SignOutDialog
 import kotlin.math.roundToInt
 
 @Composable
@@ -238,8 +242,17 @@ private fun NewProfileScreenContent(
                 ProfileMenuItems(
                     onIntent = onIntent
                 )
+                var showSignOutDialog by remember { mutableStateOf(false) }
+
+                if (showSignOutDialog) {
+                    SignOutDialog(
+                        onConfirm = { onIntent(ProfileIntent.SignOut) },
+                        onDismiss = { showSignOutDialog = false }
+                    )
+                }
+
                 AppCard(
-                    onClick = { onIntent(ProfileIntent.Logout) }
+                    onClick = { showSignOutDialog = true }
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -254,7 +267,7 @@ private fun NewProfileScreenContent(
                         )
 
                         Text(
-                            text = stringResource(R.string.logout),
+                            text = stringResource(R.string.sign_out),
                             style = AppTheme.typography.headline1,
                             color = AppTheme.colorScheme.foreground1,
                             modifier = Modifier.weight(1f)

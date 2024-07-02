@@ -10,6 +10,7 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -118,27 +119,6 @@ fun TextResource.asString(context: Context): String {
         is TextResource.Plain -> plain
         is TextResource.DynamicString -> context.getString(resId, *args)
     }
-}
-
-@Composable
-fun rememberImeState(): State<Boolean> {
-    val imeState = remember { mutableStateOf(false) }
-
-    val view = LocalView.current
-    val viewTreeObserver = view.viewTreeObserver
-    DisposableEffect(viewTreeObserver) {
-        val listener = ViewTreeObserver.OnGlobalLayoutListener {
-            imeState.value = ViewCompat.getRootWindowInsets(view)
-                ?.isVisible(WindowInsetsCompat.Type.ime()) ?: true
-        }
-
-        viewTreeObserver.addOnGlobalLayoutListener(listener)
-        onDispose {
-            viewTreeObserver.removeOnGlobalLayoutListener(listener)
-        }
-    }
-
-    return imeState
 }
 
 class ImeAnimationState {
@@ -345,7 +325,7 @@ fun ClearFocusWithImeEffect(
     block: ((visible: Boolean) -> Unit)? = null
 ) {
     val focusManager = LocalFocusManager.current
-    val isImeVisible = WindowInsets.isImeVisible
+    val isImeVisible by rememberImeState()
 
     LaunchedEffect(isImeVisible) {
         block?.invoke(isImeVisible)

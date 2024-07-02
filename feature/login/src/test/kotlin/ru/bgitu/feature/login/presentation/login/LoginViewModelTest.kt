@@ -1,10 +1,14 @@
 package ru.bgitu.feature.login.presentation.login
 
 import androidx.test.core.app.ActivityScenario.launch
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
@@ -13,6 +17,7 @@ import ru.bgitu.core.data_test.AlwaysOnlineMonitor
 import ru.bgitu.core.testing.repository.TestCompassAuthenticator
 import ru.bgitu.core.testing.repository.TestSyncManager
 import ru.bgitu.core.testing.util.MainDispatcherRule
+import kotlin.random.Random
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -20,6 +25,8 @@ class LoginViewModelTest {
 
     @get:Rule
     val dispatchRule = MainDispatcherRule()
+
+    val testDispatcher = TestScope(UnconfinedTestDispatcher())
 
     // Keep this during all tests
     private val compassAuthenticator = TestCompassAuthenticator()

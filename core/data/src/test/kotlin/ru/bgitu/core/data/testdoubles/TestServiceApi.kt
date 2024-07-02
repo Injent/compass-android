@@ -1,27 +1,22 @@
 package ru.bgitu.core.data.testdoubles
 
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
 import ru.bgitu.core.common.Result
-import ru.bgitu.core.common.runResulting
 import ru.bgitu.core.model.CompassAccount
 import ru.bgitu.core.model.Group
 import ru.bgitu.core.model.ProfessorClass
 import ru.bgitu.core.model.RemoteDataVersions
-import ru.bgitu.core.model.StatisticsModel
 import ru.bgitu.core.model.UserRole
 import ru.bgitu.core.model.settings.UserCredentials
 import ru.bgitu.core.network.CompassService
-import ru.bgitu.core.network.model.NetworkContacts
 import ru.bgitu.core.network.model.NetworkLesson
 import ru.bgitu.core.network.model.NetworkSearchMateItem
 import ru.bgitu.core.network.model.NetworkSubject
 import ru.bgitu.core.network.model.NetworkUserProfile
-import ru.bgitu.core.network.model.request.HeadmanRequest
 import ru.bgitu.core.network.model.request.RegisterCmtRequest
 import ru.bgitu.core.network.model.request.RegisterEosUserRequest
 import ru.bgitu.core.network.model.request.RegisterGuestRequest
@@ -124,10 +119,6 @@ class TestCompassService : CompassService {
         TODO("Not yet implemented")
     }
 
-    override suspend fun headmanRequest(request: HeadmanRequest) {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun refreshToken(refreshToken: String): Result<RefreshTokenResponse> {
         TODO("Not yet implemented")
     }
@@ -141,10 +132,6 @@ class TestCompassService : CompassService {
     }
 
     override suspend fun getChangelog(versionCode: Long): Result<ByteArray> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun sendStatistics(statisticsModel: StatisticsModel): Result<Unit> {
         TODO("Not yet implemented")
     }
 

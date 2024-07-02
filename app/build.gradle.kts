@@ -10,7 +10,6 @@ plugins {
     alias(libs.plugins.bgitu.detekt)
     alias(libs.plugins.bgitu.serialization)
     alias(libs.plugins.bgitu.app.jacoco)
-    alias(libs.plugins.moduleDependencyGraph)
 }
 
 android {
@@ -20,7 +19,7 @@ android {
         applicationId = "ru.bgitu.app"
         targetSdk = 34
         versionCode = 9
-        versionName = "dev"
+        versionName = "0.9-rc"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

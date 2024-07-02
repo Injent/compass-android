@@ -85,6 +85,7 @@ class FirstOfflineScheduleRepository(
     override suspend fun syncWith(synchronizer: Synchronizer): Boolean {
         val groupId = settings.data.first().groupId ?: return false
         val dataVersion = synchronizer.dataVersions()
+
         val remoteDataVersion = serviceApi.getScheduleVersion(groupId).getOrElse { return false }
 
         if (dataVersion.scheduleDataVersion == remoteDataVersion.scheduleVersion) {

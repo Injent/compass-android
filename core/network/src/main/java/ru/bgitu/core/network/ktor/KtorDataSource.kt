@@ -46,7 +46,6 @@ import ru.bgitu.core.model.CompassAccount
 import ru.bgitu.core.model.Group
 import ru.bgitu.core.model.ProfessorClass
 import ru.bgitu.core.model.RemoteDataVersions
-import ru.bgitu.core.model.StatisticsModel
 import ru.bgitu.core.model.settings.UserCredentials
 import ru.bgitu.core.network.BuildConfig
 import ru.bgitu.core.network.CompassService
@@ -56,7 +55,6 @@ import ru.bgitu.core.network.model.NetworkSearchMateItem
 import ru.bgitu.core.network.model.NetworkSubject
 import ru.bgitu.core.network.model.NetworkUserProfile
 import ru.bgitu.core.network.model.request.ChooseGroupRequest
-import ru.bgitu.core.network.model.request.HeadmanRequest
 import ru.bgitu.core.network.model.request.RegisterCmtRequest
 import ru.bgitu.core.network.model.request.RegisterEosUserRequest
 import ru.bgitu.core.network.model.request.RegisterGuestRequest
@@ -223,10 +221,6 @@ class KtorDataSource(
         }
     }
 
-    override suspend fun headmanRequest(request: HeadmanRequest) {
-        //
-    }
-
     override suspend fun refreshToken(refreshToken: String) = runResulting {
         client.get {
             url(CompassRoutes.REFRESH_TOKEN)
@@ -252,12 +246,6 @@ class KtorDataSource(
             url(CompassRoutes.CHANGELOG)
             parameter("version", versionCode)
         }.readBytes()
-    }
-
-    override suspend fun sendStatistics(
-        statisticsModel: StatisticsModel
-    ): Result<Unit> = runResulting {
-       //
     }
 
     override suspend fun searchProfessors(query: String) = runResulting {

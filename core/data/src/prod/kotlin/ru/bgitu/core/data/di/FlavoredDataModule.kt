@@ -10,16 +10,6 @@ import ru.bgitu.core.common.di.CommonQualifiers
 import ru.bgitu.core.data.repository.CompassAuthenticator
 import ru.bgitu.core.data.repository.DefaultCompassAuthenticator
 
-@SuppressLint("HardwareIds")
-val flavoredDataModule = module {
-    single<CompassAuthenticator> {
-        DefaultCompassAuthenticator(
-            settings = get(),
-            serviceApi = get(),
-            networkMonitor = get(),
-            database = get(),
-            ioDispatcher = get(CommonQualifiers.DispatcherIO),
-            deviceId = Secure.getString(androidContext().contentResolver, ANDROID_ID)
-        )
-    } bind CompassAuthenticator::class
+val FlavoredDataModule = module {
+
 }

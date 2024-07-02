@@ -58,7 +58,7 @@ class WorkManagerSyncManager(
     override fun requestSync() {
         workManager.enqueueUniqueWork(
             SyncWorkName,
-            ExistingWorkPolicy.KEEP,
+            ExistingWorkPolicy.REPLACE,
             SyncWorker.start()
         )
     }

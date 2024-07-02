@@ -5,7 +5,7 @@
     <string name="documents">Documents</string>
     <string name="about_app">About application</string>
     <string name="help">Help</string>
-    <string name="logout">Log out</string>
+    <string name="sign_out">Sign out</string>
     <string name="statement">Statement</string>
     <string name="educational_material">Educational material</string>
     <string name="edit">Edit</string>
@@ -16,4 +16,5 @@
     <string name="option_specify">Specify</string>
     <string name="student_of">Student of %s</string>
     <string name="my_groups">My groups</string>
+    <string name="are_you_sure_you_want_to_sign_out">Are you sure that you want to sign out?</string>
 </resources>

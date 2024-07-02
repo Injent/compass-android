@@ -28,12 +28,6 @@ sealed interface Screen {
 
     @Serializable data class PickGroup(val predictedSearchQuery: String? = null) : Screen
 
-    @Serializable sealed class ProfessorGraph {
-        @Serializable data class ProfessorSearch(val professorName: String? = null) : ProfessorGraph()
-
-        @Serializable data class ProfessorSchedule(val professorName: String) : ProfessorGraph()
-    }
-
     @Serializable data class ProfessorSearch(val professorName: String? = null) : Screen
 
     @Serializable data class ProfessorSchedule(val professorName: String) : Screen

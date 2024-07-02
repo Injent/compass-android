@@ -106,8 +106,7 @@ class ScheduleWorker(
                 )
                 .build()
 
-            val manager = WorkManager.getInstance(context)
-            manager.enqueueUniqueWork(
+            WorkManager.getInstance(context).enqueueUniqueWork(
                 scheduleWorkName,
                 ExistingWorkPolicy.REPLACE,
                 request

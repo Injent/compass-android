@@ -46,7 +46,7 @@ fun AppBottomNavigation(
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit
 ) {
-    val lineColor = AppTheme.colorScheme.stroke1.copy(.25f)
+    val lineColor = AppTheme.colorScheme.stroke1.copy(.5f)
     val lineWidth = if (AppTheme.isDarkTheme) AppTheme.strokeWidth.thick else 0.dp
     Row(
         modifier = modifier

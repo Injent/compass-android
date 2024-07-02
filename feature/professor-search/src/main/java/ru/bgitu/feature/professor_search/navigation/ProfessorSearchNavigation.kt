@@ -15,11 +15,12 @@ import ru.bgitu.core.navigation.Screen
 import ru.bgitu.core.navigation.getId
 import ru.bgitu.core.navigation.parent
 import ru.bgitu.feature.professor_search.presentation.ProfessorNavHost
+import ru.bgitu.feature.professor_search.presentation.ProfessorScheduleScreen
 import ru.bgitu.feature.professor_search.presentation.details.ProfessorDetailsScreen
 import ru.bgitu.feature.professor_search.presentation.details.ProfessorDetailsViewModel
 
 fun NavGraphBuilder.professorSearchScreen() {
-    composable<Screen.ProfessorGraph>(
+    composable<Screen.ProfessorSearch>(
         popEnterTransition = { slideInHorizontally { -it } },
         exitTransition = {
             if (this.targetState.destination.id == getId<Screen.ProfessorSearch>()) {
@@ -29,10 +30,10 @@ fun NavGraphBuilder.professorSearchScreen() {
             }
         }
     ) {
-        val route = it.toRoute<Screen.ProfessorGraph>()
+        val route = it.toRoute<Screen.ProfessorSearch>()
 
         ProfessorNavHost(
-            professorName = null,
+            professorName = route.professorName,
             backStackEntry = it.parent(LocalNavController.current)
         )
     }
@@ -42,8 +43,8 @@ internal fun NavGraphBuilder.professorScheduleScreen(
     onBack: () -> Unit,
     backStackEntry: NavBackStackEntry
 ) {
-    composable<Screen.ProfessorSchedule> {
-        val route = it.toRoute<Screen.ProfessorSchedule>()
+    composable<ProfessorScheduleScreen> {
+        val route = it.toRoute<ProfessorScheduleScreen>()
 
         val viewModel: ProfessorDetailsViewModel = koinViewModel(
             key = route.professorName,

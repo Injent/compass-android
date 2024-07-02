@@ -12,12 +12,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -42,7 +40,6 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -72,6 +69,7 @@ import ru.bgitu.core.designsystem.theme.CompassTheme
 import ru.bgitu.core.designsystem.util.ClearFocusWithImeEffect
 import ru.bgitu.core.designsystem.util.TopGoneLayout
 import ru.bgitu.core.designsystem.util.asString
+import ru.bgitu.core.designsystem.util.rememberImeState
 import ru.bgitu.core.navigation.LocalNavController
 import ru.bgitu.core.navigation.Screen
 import ru.bgitu.core.navigation.Tab
@@ -93,7 +91,7 @@ fun LoginRoute(
     val context = LocalContext.current
 
     SideEffect {
-        (context as Activity).window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        (context as Activity).window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
     }
     viewModel.events.listenEvents { event ->
         when (event) {
@@ -145,6 +143,8 @@ internal fun LoginScreen(
     passwordFieldState: TextFieldState,
     onIntent: (LoginIntent) -> Unit,
 ) {
+    val isImeVisible by rememberImeState()
+
     ClearFocusWithImeEffect()
 
     Scaffold(
@@ -175,8 +175,6 @@ internal fun LoginScreen(
         TopGoneLayout(
             top = {
                 if (!uiState.verificationRequest) {
-                    val isImeVisible = WindowInsets.isImeVisible
-
                     val alpha by animateFloatAsState(
                         targetValue = if (isImeVisible) 0f else 1f
                     )
@@ -293,14 +291,10 @@ private fun LoginSection(
             },
             textVisible = uiState.passwordVisible,
             imeAction = ImeAction.Go,
-            enabled = uiState.canLogin,
             onKeyboardAction = {
                 onIntent(LoginIntent.Login)
             },
             modifier = Modifier
-                .semantics {
-                    contentDescription = context.getString(R.string.desc_login)
-                }
                 .fillMaxWidth()
         )
 
@@ -326,7 +320,6 @@ private fun LoginSection(
                 onIntent(LoginIntent.Login)
             },
             isLoading = uiState.loading,
-            enabled = uiState.canLogin,
             modifier = Modifier
                 .fillMaxWidth()
                 .semantics {

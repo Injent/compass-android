@@ -6,6 +6,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ru.bgitu.core.navigation.Screen
@@ -15,6 +16,10 @@ import ru.bgitu.feature.professor_search.navigation.professorScheduleScreen
 import ru.bgitu.feature.professor_search.presentation.search.ProfessorSearchIntent
 import ru.bgitu.feature.professor_search.presentation.search.ProfessorSearchRoute
 import ru.bgitu.feature.professor_search.presentation.search.ProfessorSearchViewModel
+
+@Serializable internal object ProfessorSearchScreen
+
+@Serializable internal data class ProfessorScheduleScreen(val professorName: String)
 
 @Composable
 fun ProfessorNavHost(
@@ -28,10 +33,10 @@ fun ProfessorNavHost(
     }
     val nestedNavHostStartDestination = remember(professorName, viewModel.professorName) {
         if (professorName != null) {
-            Screen.ProfessorSchedule(professorName)
+            ProfessorScheduleScreen(professorName)
         } else {
-            Screen.ProfessorSchedule(
-                professorName = viewModel.professorName ?: return@remember Screen.ProfessorSearch()
+            ProfessorScheduleScreen(
+                professorName = viewModel.professorName ?: return@remember ProfessorSearchScreen
             )
         }
     }
@@ -41,7 +46,7 @@ fun ProfessorNavHost(
         navController = nestedNavController,
         startDestination = nestedNavHostStartDestination
     ) {
-        composable<Screen.ProfessorGraph.ProfessorSearch> {
+        composable<ProfessorSearchScreen> {
             ProfessorSearchRoute(
                 viewModel = viewModel,
                 onNavigateToDetails = { professorName ->

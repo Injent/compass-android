@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import ru.bgitu.core.designsystem.R
 
-val alshaussFont = FontFamily(
+internal val AlshaussFont = FontFamily(
     Font(R.font.alshauss_black, FontWeight.Black),
     Font(R.font.alshauss_black_italic, FontWeight.Black, FontStyle.Italic),
     Font(R.font.alshauss_bold, FontWeight.Bold),
@@ -25,12 +25,15 @@ val alshaussFont = FontFamily(
     Font(R.font.alshauss_light, FontWeight.Light),
     Font(R.font.alshauss_light_italic, FontWeight.Light, FontStyle.Italic),
     Font(R.font.alshauss_thin, FontWeight.Thin),
-    Font(R.font.alshauss_thin, FontWeight.Thin, FontStyle.Italic),
+    Font(R.font.alshauss_thin_italic, FontWeight.Thin, FontStyle.Italic),
 )
 
-val baselineShift = BaselineShift(-0f)
-val platformStyle = PlatformTextStyle(includeFontPadding = true)
-val lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.Both)
+private val baselineShift = BaselineShift(-0f)
+private val platformStyle = PlatformTextStyle(includeFontPadding = true)
+private val lineHeightStyle = LineHeightStyle(
+    alignment = LineHeightStyle.Alignment.Center,
+    trim = LineHeightStyle.Trim.Both
+)
 
 @Immutable
 data class AppTypography(
@@ -55,7 +58,7 @@ data class AppTypography(
 
 val Typography = AppTypography(
     xLargeTitle = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Bold,
         fontSize = 44.sp,
         lineHeight = 48.sp,
@@ -64,7 +67,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     largeTitle = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Bold,
         fontSize = 34.sp,
         lineHeight = 40.sp,
@@ -74,7 +77,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     title1 = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Normal,
         fontSize = 30.sp,
         lineHeight = 32.sp,
@@ -84,7 +87,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     title2 = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Bold,
         fontSize = 28.sp,
         lineHeight = 32.sp,
@@ -94,7 +97,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     title3 = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
         lineHeight = 24.sp,
@@ -104,7 +107,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     headline1 = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Medium,
         fontSize = 18.sp,
         lineHeight = 24.sp,
@@ -114,7 +117,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     headline2 = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         lineHeight = 20.sp,
@@ -124,7 +127,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     body = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 20.sp,
@@ -134,7 +137,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     bodyButton = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 20.sp,
@@ -144,7 +147,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     subheadline = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 20.sp,
@@ -154,7 +157,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     subheadlineButton = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 20.sp,
@@ -164,7 +167,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     callout = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         lineHeight = 20.sp,
@@ -174,7 +177,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     calloutButton = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         lineHeight = 20.sp,
@@ -184,7 +187,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     footnote = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         lineHeight = 16.sp,
@@ -194,7 +197,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     footstrike = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         lineHeight = 26.sp,
@@ -204,7 +207,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     caption1 = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Normal,
         fontSize = 11.sp,
         lineHeight = 12.sp,
@@ -214,7 +217,7 @@ val Typography = AppTypography(
         lineHeightStyle = lineHeightStyle
     ),
     caption2 = TextStyle(
-        fontFamily = alshaussFont,
+        fontFamily = AlshaussFont,
         fontWeight = FontWeight.Bold,
         fontSize = 11.sp,
         lineHeight = 12.sp,

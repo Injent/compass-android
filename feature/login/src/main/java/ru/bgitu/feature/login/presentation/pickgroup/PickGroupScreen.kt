@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -60,6 +60,7 @@ import ru.bgitu.core.designsystem.icon.AppIllustrations
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.util.ClearFocusWithImeEffect
 import ru.bgitu.core.designsystem.util.asString
+import ru.bgitu.core.designsystem.util.rememberImeState
 import ru.bgitu.core.designsystem.util.thenIf
 import ru.bgitu.core.navigation.LocalNavController
 import ru.bgitu.core.navigation.Tab
@@ -124,12 +125,10 @@ private fun PickGroupScreen(
     onIntent: (PickGroupIntent) -> Unit
 ) {
     val context = LocalContext.current
-    val isImeVisible = WindowInsets.isImeVisible
+    val isImeVisible by rememberImeState()
     ClearFocusWithImeEffect()
 
-    BackHandler(
-        enabled = uiState.searchResults.isNotEmpty() && isImeVisible
-    ) {
+    BackHandler {
         onIntent(PickGroupIntent.ResetGroup)
     }
 
@@ -139,7 +138,9 @@ private fun PickGroupScreen(
             PickGroupTopBar(onBack = { onIntent(PickGroupIntent.Back) })
         },
         snackbarHost = {
-            AppSnackbarHost()
+            AppSnackbarHost(
+                modifier = Modifier.imePadding()
+            )
         },
         bottomBar = {
             AnimatedVisibility(

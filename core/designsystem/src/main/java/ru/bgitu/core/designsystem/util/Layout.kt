@@ -17,7 +17,7 @@ fun TopGoneLayout(
     top: @Composable () -> Unit,
     content: @Composable () -> Unit
 ) {
-    val imeVisible = WindowInsets.isImeVisible
+    val imeVisible by rememberImeState()
     var topHeightPx by remember {
         mutableIntStateOf(0)
     }

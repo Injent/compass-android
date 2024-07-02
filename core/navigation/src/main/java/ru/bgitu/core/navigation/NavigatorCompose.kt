@@ -1,11 +1,15 @@
 package ru.bgitu.core.navigation
 
+import android.annotation.SuppressLint
+import androidx.annotation.RestrictTo
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.serialization.generateHashCode
 import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.serializer
 import kotlin.reflect.KClass
 
@@ -72,7 +76,8 @@ fun NavBackStackEntry.parent(navController: NavController): NavBackStackEntry {
     )
 }
 
+@SuppressLint("RestrictedApi")
 @OptIn(InternalSerializationApi::class)
 inline fun <reified T : Screen> getId(): Int {
-    return T::class.serializer().hashCode()
+    return T::class.serializer().generateHashCode()
 }
