@@ -10,5 +10,5 @@ const val TELEGRAM_BOT = "https://t.me/bgitu_compass_bot"
 const val HOME_DEEPLINK = "compass://home"
 
 const val DEFAULT_WORK_RETRY_ATTEMPTS = 2
-const val MAIN_ACTIVITY_CLASS = "ru.bgitu.app.MainActivity"
+const val MAIN_ACTIVITY_CLASS = "ru.bgitu.app.presentation.MainActivity"
 const val CYRILLIC_REGEX = "^[а-яА-ЯЁё0-9\\s.]*\$"

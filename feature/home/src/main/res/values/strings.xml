@@ -12,4 +12,7 @@
     <string name="classes_are_over">Classes are over</string>
     <string name="study_break">Break will end %s</string>
     <string name="try_new_features">Try new features!</string>
+    <string name="action_select_group">Select group</string>
+    <string name="select_group_description">You can change the group later or add several others</string>
+    <string name="your_group">Your group</string>
 </resources>

@@ -7,7 +7,7 @@ object AppIllustrations {
     val Calendar = R.drawable.ill_calendar
     val ApplyDone = R.drawable.ill_apply_done
     val Happy = R.drawable.ill_happy
-    val GroupOfStudent = R.drawable.ill_group_of_students
+    val GroupOfStudents = R.drawable.ill_group_of_students
     val SignIn = R.drawable.ill_sign_in
     val CalendarClock = R.drawable.ill_calendar_clock
     val Broken = R.drawable.ill_broken

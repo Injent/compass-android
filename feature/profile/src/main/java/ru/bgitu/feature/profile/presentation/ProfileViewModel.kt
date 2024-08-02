@@ -3,22 +3,21 @@ package ru.bgitu.feature.profile.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import ru.bgitu.components.signin.repository.CompassAuthenticator
 import ru.bgitu.core.common.eventChannel
-import ru.bgitu.core.common.getOrElse
-import ru.bgitu.core.data.repository.CompassAuthenticator
-import ru.bgitu.core.data.repository.CompassRepository
-import ru.bgitu.core.domain.GetUserSettingsUseCase
+import ru.bgitu.core.common.eventbus.EventBus
+import ru.bgitu.core.common.eventbus.GlobalAppEvent
+import ru.bgitu.core.datastore.SettingsRepository
 import ru.bgitu.core.model.UserProfile
-import ru.bgitu.feature.schedule_notifier.api.ScheduleNotifier
 
 sealed interface ProfileUiState {
     data object Loading : ProfileUiState
     data class Empty(
-        val groupName: String
+        val isMateBannerVisible: Boolean
     ) : ProfileUiState
     data class Success(val profile: UserProfile) : ProfileUiState
     data class Error(val profile: UserProfile) : ProfileUiState
@@ -32,11 +31,12 @@ sealed interface ProfileIntent {
     data object NavigateToHelp : ProfileIntent
     data object NavigateToLogin : ProfileIntent
     data object NavigateToGroups : ProfileIntent
+    data object CloseMateBanner : ProfileIntent
 
 }
 
 sealed interface ProfileEvent {
-    data class NavigateToLogin(val signout: Boolean) : ProfileEvent
+    data class NavigateToLogin(val autoSignOut: Boolean) : ProfileEvent
     data object NavigateToSettings : ProfileEvent
     data object NavigatoToProfileSettings : ProfileEvent
     data object NavigateToHelp : ProfileEvent
@@ -45,39 +45,24 @@ sealed interface ProfileEvent {
 }
 
 class ProfileViewModel(
-    private val authenticator: CompassAuthenticator,
-    private val scheduleNotifier: ScheduleNotifier,
-    private val compassRepository: CompassRepository,
-    getUserSettings: GetUserSettingsUseCase
+    private val settingsRepository: SettingsRepository,
+    private val compassAuthenticator: CompassAuthenticator
 ) : ViewModel() {
 
     private val _events = eventChannel<ProfileEvent>()
     val events = _events.receiveAsFlow()
 
-    val profile = getUserSettings().mapLatest { data ->
-        return@mapLatest ProfileUiState.Empty(groupName = data.groupName ?: "")
-        val account = data.compassAccount
-
-        if (account == null) {
-            ProfileUiState.Empty(groupName = data.groupName ?: "")
-        } else {
-            val profile = compassRepository.getUserProfile(account.userId.toInt())
-                .getOrElse {
-                    return@mapLatest ProfileUiState.Error(
-                        UserProfile(
-                            userId = account.userId,
-                            bio = "",
-                            avatarUrl = account.avatarUrl,
-                            firstName = account.fullName.split(" ").last(),
-                            lastName = account.fullName.split(" ").first(),
-                            contacts = null,
-                            publicProfile = true,
-                            variants = emptyList(),
-                        )
-                    )
-                }
-            ProfileUiState.Success(profile)
+    val profile = combine(
+        settingsRepository.data,
+        settingsRepository.metadata
+    ) { userData, metaData ->
+        if (userData.userProfile == null && userData.isAnonymous) {
+            return@combine ProfileUiState.Empty(isMateBannerVisible = !metaData.isMateBannerClosed)
         }
+        userData.userProfile?.let { profile ->
+            ProfileUiState.Success(profile)
+        } ?: ProfileUiState.Empty(false)
+
     }
         .stateIn(
             scope = viewModelScope,
@@ -87,35 +72,26 @@ class ProfileViewModel(
 
     fun onIntent(intent: ProfileIntent) {
         when (intent) {
-            ProfileIntent.SignOut -> {
-                viewModelScope.launch {
-                    signOut()
-                    _events.send(ProfileEvent.NavigateToLogin(signout = true))
+            ProfileIntent.SignOut -> viewModelScope.launch {
+                compassAuthenticator.signOut()
+                EventBus.post(GlobalAppEvent.SignOut)
+                _events.send(ProfileEvent.NavigateToLogin(autoSignOut = true))
+            }
+            ProfileIntent.NavigateToSettings -> _events.trySend(ProfileEvent.NavigateToSettings)
+            ProfileIntent.NavigateToProfileSettings -> _events.trySend(
+                ProfileEvent.NavigatoToProfileSettings
+            )
+            ProfileIntent.NavigateToAboutApp -> _events.trySend(ProfileEvent.NavigateToAboutApp)
+            ProfileIntent.NavigateToHelp -> _events.trySend(ProfileEvent.NavigateToHelp)
+            ProfileIntent.NavigateToLogin -> _events.trySend(
+                ProfileEvent.NavigateToLogin(autoSignOut = false)
+            )
+            ProfileIntent.NavigateToGroups -> _events.trySend(ProfileEvent.NavigateToGroups)
+            ProfileIntent.CloseMateBanner -> viewModelScope.launch {
+                settingsRepository.updateMetadata {
+                    it.copy(isMateBannerClosed = true)
                 }
             }
-            ProfileIntent.NavigateToSettings -> {
-                _events.trySend(ProfileEvent.NavigateToSettings)
-            }
-            ProfileIntent.NavigateToProfileSettings -> {
-                _events.trySend(ProfileEvent.NavigatoToProfileSettings)
-            }
-            ProfileIntent.NavigateToAboutApp -> {
-                _events.trySend(ProfileEvent.NavigateToAboutApp)
-            }
-            ProfileIntent.NavigateToHelp -> {
-                _events.trySend(ProfileEvent.NavigateToHelp)
-            }
-            ProfileIntent.NavigateToLogin -> {
-                _events.trySend(ProfileEvent.NavigateToLogin(signout = false))
-            }
-            ProfileIntent.NavigateToGroups -> {
-                _events.trySend(ProfileEvent.NavigateToGroups)
-            }
         }
-    }
-
-    private suspend fun signOut() {
-        scheduleNotifier.disable()
-        authenticator.signOut()
     }
 }

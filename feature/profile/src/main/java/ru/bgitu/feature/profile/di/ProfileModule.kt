@@ -7,10 +7,8 @@ import ru.bgitu.feature.profile.presentation.ProfileViewModel
 val ProfileModule = module {
     viewModel {
         ProfileViewModel(
-            authenticator = get(),
-            scheduleNotifier = get(),
-            getUserSettings = get(),
-            compassRepository = get()
+            settingsRepository = get(),
+            compassAuthenticator = get()
         )
     }
 }

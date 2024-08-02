@@ -1,6 +1,7 @@
 [versions]
 accompanist = "0.34.0"
 activity-compose = "1.9.0"
+agcp = "1.9.1.300"
 agp = "8.5.0"
 androidxAnnotation = "1.8.0"
 androidxWork = "2.9.0"
@@ -14,22 +15,17 @@ core-ktx = "1.13.1"
 datastore = "1.1.1"
 desugarJdkLibs = "2.0.4"
 detekt = "1.23.3"
-firebase-bom = "33.1.1"
+firebase-bom = "33.1.2"
 firebasePlugin = "3.0.2"
 glance = "1.1.0"
-googleApiClient = "2.4.0"
-googleAuth = "1.19.0"
-googleServicesAuth = "21.2.0"
-googleServicesBase = "18.5.0"
 googleServicesPlugin = "4.4.2"
-googleServicesDrive = "v3-rev197-1.25.0"
 koin-bom = "3.5.6"
 kotlin = "1.9.24"
 kotlinx-serialization = "1.6.3"
-kotlinxCoroutines = "1.8.0"
+kotlinxCoroutines = "1.8.1"
 kotlinxDatetime = "0.5.0"
 ksp = "1.9.24-1.0.20"
-lifecycle = "2.8.2"
+lifecycle = "2.8.4"
 markdown = "0.3.7"
 minSdk = "27"
 okhttp-bom = "4.11.0"
@@ -47,7 +43,7 @@ splashScreen = "1.0.1"
 startup = "1.1.1"
 targetSdk = "34"
 ktor = "2.3.10"
-navigation = "2.8.0-beta04"
+navigation = "2.8.0-beta06"
 reorderable = "0.9.6"
 truth = "1.4.2"
 turbine = "1.1.0"
@@ -55,30 +51,28 @@ robolectric = "4.11.1"
 roborazzi = "1.7.0"
 jacoco = "0.8.7"
 junit = "4.13.2"
-androidxComposeAlpha = "1.7.0-beta04"
+androidxComposeAlpha = "1.7.0-beta06"
 androidxTestRules = "1.6.1"
 vkcompose = "0.5.4"
-moduleDependencyGraph = "2.5.0"
 androidxTracing = "1.3.0-alpha02"
 androidxTest = "1.6.1"
+androidxCredentialManager = "1.2.2"
+googleIdentify = "1.1.1"
+huaweiAgConnect = "1.9.1.300"
+huaweiAccount = "6.12.0.300"
+vkId = "2.0.1"
 
 [libraries]
 # Accompanist
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 
 # Build logic plugins
+agcp = { group = "com.huawei.agconnect", name = "agcp", version.ref = "agcp" }
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 detekt-gradlePlugin = { group = "io.gitlab.arturbosch.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
-
-# Camera
-camerax-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
-camerax-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
-camerax-extensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "camerax" }
-camerax-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
-camerax-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
 
 # Compose
 compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
@@ -117,12 +111,14 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 
+# VK
+vk-id = { group = "com.vk.id", name = "vkid", version.ref = "vkId" }
+vk-id-oneTapCompose = { group = "com.vk.id", name = "onetap-compose", version.ref = "vkId" }
+
 # Google
-google-apiClient = { group = "com.google.api-client", name = "google-api-client-android", version.ref = "googleApiClient" }
-google-apis-drive = { group = "com.google.apis", name = "google-api-services-drive", version.ref = "googleServicesDrive" }
-google-services-base = { group = "com.google.android.gms", name = "play-services-base", version.ref = "googleServicesBase" }
-google-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "googleServicesAuth" }
-google-auth = { group = "com.google.auth", name = "google-auth-library-oauth2-http", version.ref = "googleAuth" }
+androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "androidxCredentialManager" }
+androidx-credentials-playServicesAuth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "androidxCredentialManager" }
+google-identify = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleIdentify" }
 
 # Glance
 glance = { group = "androidx.glance", name = "glance", version.ref = "glance" }
@@ -155,7 +151,12 @@ lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtim
 lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 lifecycle-viewModelKtx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 
-# Paging
+# Huawei
+huawei-account = { group = "com.huawei.hms", name = "hwid", version.ref = "huaweiAccount" }
+huawei-core = { group = "com.huawei.agconnect", name = "agconnect-core", version.ref = "huaweiAgConnect" }
+huawei-auth = { group = "com.huawei.agconnect", name = "agconnect-auth", version.ref = "huaweiAgConnect" }
+huawei-auth-huawei = { group = "com.huawei.agconnect", name = "agconnect-auth-huawei", version.ref = "huaweiAgConnect" }
+
 # Protobuf
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
 protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
@@ -211,7 +212,7 @@ protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
 vkcompose = { id = "com.vk.vkompose", version.ref = "vkcompose" }
-moduleDependencyGraph = { id = "com.jraska.module.graph.assertion", version.ref = "moduleDependencyGraph" }
+huaweiAgConnect = { id = "com.huawei.agconnect", version.ref = "huaweiAgConnect" }
 
 # Project plugins
 bgitu-app = { id = "bgitu.app", version = "unspecified" }

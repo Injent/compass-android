@@ -2,6 +2,7 @@
 <resources>
 
     <string name="status_regular">Student</string>
-    <string name="status_admin">Admin</string>
+    <string name="status_admin">Dev</string>
     <string name="status_special">Awarded</string>
+    <string name="status_popular">Popular</string>
 </resources>

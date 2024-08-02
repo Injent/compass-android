@@ -1,19 +1,15 @@
 package ru.bgitu.core.datastore.migrations
 
 import androidx.datastore.core.DataMigration
-import kotlinx.datetime.Instant
 import kotlinx.serialization.json.Json
 import ru.bgitu.core.datastore.SettingsPb
 import ru.bgitu.core.datastore.copy
 import ru.bgitu.core.datastore.credentialsPb
 import ru.bgitu.core.datastore.dataVersionPb
-import ru.bgitu.core.datastore.metadataPb
 import ru.bgitu.core.datastore.model.DeprecatedStudentInfo
 import ru.bgitu.core.datastore.userDataPb
 import ru.bgitu.core.datastore.userPrefsPb
-import ru.bgitu.core.model.UserPermission
 import ru.bgitu.core.model.settings.UiTheme
-import java.util.UUID
 
 class MultipleMessageMigration : DataMigration<SettingsPb> {
     override suspend fun cleanUp() = Unit
@@ -23,11 +19,9 @@ class MultipleMessageMigration : DataMigration<SettingsPb> {
             // Migrate to DataVersion
             dataVersions = dataVersionPb {
                 scheduleVersion = currentData.deprecatedScheduleVersion
-                lastForceUpdateVersion = currentData.deprecatedLastForceUpdateVersion
                 currAppVersionCode = currentData.deprecatedCurrAppVersionCode
                 newFeaturesVersion = currentData.deprecatedNewFeaturesVersion
                 schemaVersion = 1
-                guestAccountVersion = 1
             }
 
             // Migrate to UserPrefs
@@ -52,14 +46,8 @@ class MultipleMessageMigration : DataMigration<SettingsPb> {
             if (deprecatedInfo != null) {
                 userdata = userDataPb {
                     avatarUrl = deprecatedInfo.avatarUrl ?: ""
-                    lastName = deprecatedInfo.surname
-                    name = deprecatedInfo.name
-                    permissions.apply {
-                        clear()
-                        addAll(deprecatedInfo.permissions.map(UserPermission::toString))
-                    }
+                    displayName = "${deprecatedInfo.name} ${deprecatedInfo.surname}"
                     role = deprecatedInfo.role.toString()
-                    eosUserId = deprecatedInfo.studentId.toLong()
                 }
             }
 
@@ -67,16 +55,8 @@ class MultipleMessageMigration : DataMigration<SettingsPb> {
             credentials = credentialsPb {
                 accessToken = currentData.deprecatedAccessToken
                 refreshToken = currentData.deprecatedRefreshToken
-                expirationDate = Instant.DISTANT_PAST.toEpochMilliseconds()
-                authDate = Instant.DISTANT_PAST.toEpochMilliseconds()
-                dateDiff = currentData.deprecatedTimeDiff
                 groupId = currentData.deprecatedGroupId
                 groupName = deprecatedInfo?.groupName ?: ""
-                isVerified = deprecatedInfo != null
-            }
-
-            metadata = metadataPb {
-                appUUID = UUID.randomUUID().toString()
             }
 
             deprecatedStudentInfo = ""

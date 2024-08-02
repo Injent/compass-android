@@ -8,6 +8,7 @@ data class NetworkSearchMateItem(
     val userId: Int,
     val fullName: String,
     val bio: String,
+    val avatarUrl: String?,
     val isVerified: Boolean,
     val contacts: NetworkContacts
 )
@@ -17,5 +18,6 @@ fun NetworkSearchMateItem.toExternalModel() = SearchMateItem(
     fullName = fullName,
     bio = bio,
     isVerified = isVerified,
+    avatarUrl = avatarUrl,
     contacts = contacts.toExternalModel()
 )

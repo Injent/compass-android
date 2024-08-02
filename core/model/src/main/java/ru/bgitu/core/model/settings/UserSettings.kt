@@ -1,6 +1,5 @@
 package ru.bgitu.core.model.settings
 
-import ru.bgitu.core.model.CompassAccount
 import ru.bgitu.core.model.Group
 import ru.bgitu.core.model.UserProfile
 
@@ -12,8 +11,8 @@ data class UserSettings(
     val currentAppVersionCode: Int,
     val newFeaturesVersion: Int,
     val isAuthorized: Boolean,
-    val compassAccount: CompassAccount?,
-    val userProfile: UserProfile?
+    val userProfile: UserProfile?,
+    val isAnonymous: Boolean
 ) {
     val primaryGroup: Group?
         get() = if (groupId != null && groupName != null) {

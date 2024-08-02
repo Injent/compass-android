@@ -8,7 +8,7 @@ import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.feature.profile.R
 
 @Composable
-internal fun SignOutDialog(
+fun SignOutDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier

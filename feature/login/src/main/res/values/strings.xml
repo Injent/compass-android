@@ -3,19 +3,12 @@
     <string name="label_login">Login</string>
     <string name="label_password">Password</string>
     <string name="button_login">Sign In</string>
-    <string name="authorization">Authorization EOS</string>
-    <string name="error_eos_does_not_responds">EOS doesn\'t responds</string>
-    <string name="error_unknown">Unknown Error</string>
+    <string name="authorization">Sign in</string>
     <string name="enter_your_registration_email">A new password will be sent to the specified email</string>
-    <string name="why_eos">Why EOS?</string>
-    <string name="explanation_dialog_text">EOS authorization allows you to establish your identity. In the future, this will be necessary for some functions of the application. They are currently in development.\n\nYou can log in as a guest and log in later when it is convenient for you</string>
     <string name="user_agreement_text">By continuing to use the service you accept {user agreement}</string>
-    <string name="sign_in_with_eos">Sign in with EOS</string>
     <string name="sign_in_as_guest">Sign in as guest</string>
     <string name="user_agreement">User agreement</string>
     <string name="pick_group">Pick your group</string>
-    <string name="your_selected_group">You selected a group %s</string>
-    <string name="group_not_selected">Group is not selected</string>
     <string name="button_continue">Continue</string>
     <string name="alternative">OR</string>
     <string name="confirm_account">Confirm account</string>
@@ -37,4 +30,6 @@
     <string name="desc_show_password">Show password</string>
     <string name="desc_hide_password">Hide password</string>
     <string name="desc_login">Login</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="sign_in_with_telegram">Sign in with Telegram</string>
 </resources>

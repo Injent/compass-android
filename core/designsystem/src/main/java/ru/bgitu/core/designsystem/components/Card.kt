@@ -20,6 +20,8 @@ import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.movableContentOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,20 +61,23 @@ fun AppCard(
             containerColor = color,
             contentColor = AppTheme.colorScheme.foreground1
         )
-        val shadowModifier = modifier
+        val shadowModifier = Modifier
             .thenIf(shadowEnabled) {
                 boxShadow(
                     color = SpotCard,
                     blurRadius = 8.dp,
                     spreadRadius = 1.dp,
                     offset = DpOffset(0.dp, 1.dp),
-                    shape = AppTheme.shapes.default,
+                    shape = shape,
                     clip = false,
                     inset = false
                 )
             }
-        val contentInColumn = @Composable {
-            Column(modifier = Modifier.padding(contentPadding), content = content)
+
+        val contentInColumn = remember(content, contentPadding) {
+            movableContentOf {
+                Column(modifier = Modifier.padding(contentPadding), content = content)
+            }
         }
         AppRippleTheme(DefaultRippleTheme) {
             onClick?.let {
@@ -80,7 +85,7 @@ fun AppCard(
                     onClick = it,
                     shape = shape,
                     colors = colors,
-                    modifier = shadowModifier,
+                    modifier = modifier.then(shadowModifier),
                 ) {
                     contentInColumn()
                 }
@@ -88,7 +93,7 @@ fun AppCard(
                 Card(
                     shape = shape,
                     colors = colors,
-                    modifier = shadowModifier
+                    modifier = modifier.then(shadowModifier)
                 ) {
                     contentInColumn()
                 }

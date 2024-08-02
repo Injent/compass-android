@@ -6,12 +6,12 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavDestination
@@ -29,9 +30,8 @@ import ru.bgitu.app.navigation.AppNavigator
 import ru.bgitu.app.presentation.components.AppUpdateBottomSheetSetup
 import ru.bgitu.app.presentation.components.NavigationItems
 import ru.bgitu.app.presentation.components.NavigationListenerEffect
-import ru.bgitu.core.data.model.AuthStatus
+import ru.bgitu.components.signin.model.AuthState
 import ru.bgitu.core.designsystem.components.AppBottomNavigation
-import ru.bgitu.core.designsystem.components.AppSnackbarHost
 import ru.bgitu.core.designsystem.components.LocalSnackbarController
 import ru.bgitu.core.designsystem.components.rememberSnackbarController
 import ru.bgitu.core.designsystem.icon.AppIcons
@@ -50,7 +50,7 @@ import ru.bgitu.feature.update.presentation.DownloadProgressSnackbarEffect
 fun App(
     uiState: MainActivityUiState,
     viewModel: MainViewModel,
-    dynamicColorAllowed: Boolean,
+    dynamicColorAvailable: Boolean,
 ) {
     val context = LocalContext.current
     val snackbarController = rememberSnackbarController()
@@ -60,7 +60,7 @@ fun App(
 
     CompassTheme(
         darkTheme = darkTheme,
-        dynamicColorAllowed = dynamicColorAllowed
+        dynamicColorAllowed = dynamicColorAvailable
     ) {
         AppUpdateBottomSheetSetup(uiState = uiState)
 
@@ -92,14 +92,12 @@ fun App(
                 if (navHostController.currentDestination?.id != getId<Screen.Loading>()) {
                     return@LaunchedEffect
                 }
-                when (uiState.authStatus) {
-                    AuthStatus.SIGNED, AuthStatus.SIGNED_AS_GUEST -> {
+                when (uiState.authState) {
+                    AuthState.AUTHED, AuthState.ANONYMOUS -> {
                         navHostController.clearBackStack<Screen.Loading>()
                         navHostController.replaceAll(Screen.MainGraph)
                     }
-                    AuthStatus.SIGNIN_REQUIRED -> {
-                        navHostController.replaceAll(Screen.LoginGraph)
-                    }
+                    AuthState.NOT_AUTHED -> navHostController.replaceAll(Screen.LoginGraph)
                     else -> Unit
                 }
             }
@@ -129,8 +127,18 @@ private fun AppMainScreenContent(
 ) {
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        bottomBar = {
-            val visibleState = remember { MutableTransitionState(false) }
+    ) { innerPadding ->
+        NavigationListenerEffect(navController = navHostController)
+
+        Box {
+            AppNavigator(
+                navHostController = navHostController,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            )
+
+            val visibleState = remember { MutableTransitionState(true) }
 
             LaunchedEffect(navHostController) {
                 navHostController.addOnDestinationChangedListener { _, destination, _ ->
@@ -142,13 +150,16 @@ private fun AppMainScreenContent(
                 visibleState = visibleState,
                 enter = slideInVertically { it },
                 exit = slideOutVertically { it },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomStart)
             ) {
                 Column {
                     AppBottomNavigation {
                         NavigationItems(
                             avatarUrl = uiState.avatarUrl,
-                            itemModifier = Modifier
+                            hideMateTab = uiState.authState == AuthState.ANONYMOUS,
+                            modifier = Modifier
                                 .weight(1f)
                         )
                     }
@@ -161,21 +172,7 @@ private fun AppMainScreenContent(
                     )
                 }
             }
-        },
-        snackbarHost = {
-            AppSnackbarHost(
-                Modifier.imePadding()
-            )
         }
-    ) { innerPadding ->
-        NavigationListenerEffect(navController = navHostController)
-
-        AppNavigator(
-            navHostController = navHostController,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        )
     }
 }
 

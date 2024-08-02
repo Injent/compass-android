@@ -8,7 +8,6 @@ val SettingsModule = module {
     viewModel {
         SettingsViewModel(
             settings = get(),
-            compassAuthenticator = get(),
             scheduleNotifier = get()
         )
     }

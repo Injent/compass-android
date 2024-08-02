@@ -1,5 +1,12 @@
 package ru.bgitu.feature.profile.presentation
 
+import androidx.activity.ComponentActivity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +24,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -28,10 +36,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -42,7 +51,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.layoutId
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.androidx.compose.koinViewModel
 import ru.bgitu.core.common.openUrl
+import ru.bgitu.core.designsystem.components.AppBottomBarTokens
 import ru.bgitu.core.designsystem.components.AppCard
 import ru.bgitu.core.designsystem.components.AppItemCard
 import ru.bgitu.core.designsystem.components.AppSmallButton
@@ -64,18 +75,21 @@ import ru.bgitu.core.ui.onClick
 import ru.bgitu.feature.profile.R
 import ru.bgitu.feature.profile.model.ProfileItem
 import ru.bgitu.feature.profile.presentation.components.SignOutDialog
+import ru.bgitu.feature.profile.presentation.components.TryNewFeatureCard
+import ru.bgitu.feature.profile.presentation.components.TryNewFeatureDialog
 import kotlin.math.roundToInt
 
 @Composable
-fun ProfileScreen(
-    viewModel: ProfileViewModel
-) {
+internal fun ProfileScreen() {
     val navController = LocalNavController.current
+    val context = LocalContext.current
+
+    val viewModel: ProfileViewModel = koinViewModel(viewModelStoreOwner = context as ComponentActivity)
 
     viewModel.events.listenEvents { event ->
         when (event) {
             is ProfileEvent.NavigateToLogin -> {
-                if (event.signout)
+                if (event.autoSignOut)
                     navController.replaceAll(Screen.LoginGraph)
                 else
                     navController.push(Screen.Login(compactScreen = true))
@@ -98,9 +112,12 @@ fun ProfileScreen(
 
 @Composable
 private fun ProfileMenuItems(
-    onIntent: (ProfileIntent) -> Unit
+    onIntent: (ProfileIntent) -> Unit,
+    hideSettings: Boolean,
 ) {
     ProfileItem.entries.forEach { profileItem ->
+        if (hideSettings && profileItem == ProfileItem.SETTINGS) return@forEach
+
         AppItemCard(
             label = stringResource(profileItem.labelRes),
             icon = profileItem.iconRes,
@@ -109,6 +126,7 @@ private fun ProfileMenuItems(
                     ProfileItem.HELP -> ProfileIntent.NavigateToHelp
                     ProfileItem.ABOUT -> ProfileIntent.NavigateToAboutApp
                     ProfileItem.MY_GROUPS -> ProfileIntent.NavigateToGroups
+                    ProfileItem.SETTINGS -> ProfileIntent.NavigateToSettings
                 }
 
                 onIntent(action)
@@ -134,7 +152,7 @@ private fun ProfileScreenTopBar(
         pinnedHeight = 56.dp + additionalStatusBarHeight,
         maxHeight = 120.dp + additionalStatusBarHeight,
     ) { fraction ->
-        val headerColorTransition = AppTheme.colorScheme.background1.copy(fraction)
+        val headerColorTransition = AppTheme.colorScheme.background3.copy(fraction)
         Box(
             modifier = Modifier
                 .layoutId("background")
@@ -177,6 +195,7 @@ private fun ProfileScreenTopBar(
             avatarUrl = avatarUrl,
             modifier = Modifier
                 .layoutId("avatar")
+                .clip(CircleShape)
         )
     }
 }
@@ -190,7 +209,8 @@ private fun NewProfileScreenContent(
 
     Scaffold(
         modifier = Modifier
-            .nestedScroll(scrollBehavior.nestedScrollConnection),
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .padding(bottom = AppBottomBarTokens.Height),
         topBar = {
             ProfileScreenTopBar(
                 scrollBehavior = scrollBehavior,
@@ -209,40 +229,75 @@ private fun NewProfileScreenContent(
                         state = rememberScrollState(),
                     )
                     .padding(paddingValues)
-                    .padding(
-                        top = AppTheme.spacing.l,
-                        start = AppTheme.spacing.l,
-                        end = AppTheme.spacing.l
-                    )
+                    .padding(AppTheme.spacing.l)
             ) {
-                Status(
-                    statusDecor = StatusDecor.ADMIN,
-                    modifier = Modifier.align(Alignment.End),
-                )
-                ProfileHeader(
-                    uiState = uiState,
-                    onIntent = onIntent,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                AboutMeCard(
-                    uiState = uiState,
-                    onSpecifyRequest = {},
-                    modifier = Modifier.fillMaxWidth()
-                )
-                ContactsCard(
-                    uiState = uiState,
-                    onSpecifyRequest = {},
-                    modifier = Modifier.fillMaxWidth()
-                )
-                VariantsCard(
-                    uiState = uiState,
-                    onSpecifyRequest = { /*TODO*/ },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                when (uiState) {
+                    is ProfileUiState.Success -> {
+                        Status(
+                            statusDecor = StatusDecor.valueOf(uiState.profile.userRole.name),
+                            modifier = Modifier.align(Alignment.End)
+                        )
+                        AuthorizedProfileHeader(
+                            uiState = uiState,
+                            onIntent = onIntent,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        AboutMeCard(
+                            uiState = uiState,
+                            onSpecifyRequest = {},
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        ContactsCard(
+                            uiState = uiState,
+                            onSpecifyRequest = {},
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        VariantsCard(
+                            uiState = uiState,
+                            onSpecifyRequest = { /*TODO*/ },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    else -> Status(
+                        statusDecor = StatusDecor.REGULAR,
+                        modifier = Modifier.align(Alignment.End)
+                    )
+                }
+
+                AnimatedVisibility(
+                    visible = (uiState as? ProfileUiState.Empty)?.isMateBannerVisible ?: false,
+                    enter = expandVertically(
+                        animationSpec = tween(durationMillis = 400)
+                    ) + fadeIn(
+                        animationSpec = tween(delayMillis = 200)
+                    ),
+                    exit = shrinkVertically(
+                        animationSpec = tween(delayMillis = 200)
+                    ) + fadeOut(
+                        animationSpec = tween()
+                    )
+                ) {
+                    var showNewFeatureDialog by rememberSaveable { mutableStateOf(false) }
+
+                    if (showNewFeatureDialog) {
+                        TryNewFeatureDialog(
+                            onConfirm = { onIntent(ProfileIntent.SignOut) },
+                            onDismissRequest = { showNewFeatureDialog = false }
+                        )
+                    }
+
+                    TryNewFeatureCard(
+                        onClose = { onIntent(ProfileIntent.CloseMateBanner) },
+                        onClick = { showNewFeatureDialog = true },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+
                 ProfileMenuItems(
-                    onIntent = onIntent
+                    onIntent = onIntent,
+                    hideSettings = uiState is ProfileUiState.Success
                 )
-                var showSignOutDialog by remember { mutableStateOf(false) }
+                var showSignOutDialog by rememberSaveable { mutableStateOf(false) }
 
                 if (showSignOutDialog) {
                     SignOutDialog(
@@ -280,8 +335,8 @@ private fun NewProfileScreenContent(
 }
 
 @Composable
-private fun ProfileHeader(
-    uiState: ProfileUiState,
+private fun AuthorizedProfileHeader(
+    uiState: ProfileUiState.Success,
     onIntent: (ProfileIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -291,12 +346,7 @@ private fun ProfileHeader(
             modifier = Modifier
         ) {
             Text(
-                text = when (uiState) {
-                    is ProfileUiState.Success -> uiState.profile.lastName
-                    ProfileUiState.Loading -> "..."
-                    is ProfileUiState.Error -> uiState.profile.lastName
-                    is ProfileUiState.Empty -> stringResource(R.string.student_of, uiState.groupName)
-                },
+                text = uiState.profile.displayName,
                 style = AppTheme.typography.headline1,
                 color = AppTheme.colorScheme.foreground1,
                 modifier = Modifier
@@ -339,12 +389,6 @@ private fun AboutMeCard(
             is ProfileUiState.Error -> Unit
             ProfileUiState.Loading -> ShimmerLoading()
             is ProfileUiState.Success -> {
-                Text(
-                    text = stringResource(R.string.about_me),
-                    style = AppTheme.typography.subheadline,
-                    color = AppTheme.colorScheme.foreground2,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
                 Text(
                     text = uiState.profile.bio,
                     style = AppTheme.typography.body,

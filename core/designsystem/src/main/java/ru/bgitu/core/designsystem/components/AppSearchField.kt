@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.input.TextFieldBuffer
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.then
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -38,7 +39,7 @@ fun AppSearchField(
     modifier: Modifier = Modifier,
     label: String? = null,
     placeholder: String = stringResource(android.R.string.search_go),
-    inputTransformation: InputTransformation? = null,
+    inputTransformation: InputTransformation = InputTransformation {},
     onKeyboardAction: KeyboardActionHandler? = null,
     interactionSource: MutableInteractionSource? = null,
 ) {
@@ -71,7 +72,7 @@ fun AppSearchField(
             }
         },
         onKeyboardAction = onKeyboardAction,
-        inputTransformation = inputTransformation,
+        inputTransformation = InputTransformation {}.then(inputTransformation),
         interactionSource = interactionSource
     )
 }

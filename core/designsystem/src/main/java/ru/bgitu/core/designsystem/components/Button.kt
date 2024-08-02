@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
@@ -253,7 +254,8 @@ private fun BaseButton(
             interactionSource = interactionSource,
             shape = shape,
             enabled = enabled,
-            modifier = modifier.scale(buttonScale)
+            modifier = modifier
+                .scale(buttonScale)
         ) {
             Row(
                 modifier = Modifier.padding(contentPadding),
@@ -304,6 +306,83 @@ fun AppSmallButton(
             isLoading = isLoading
         )
         Spacer(Modifier.weight(1f))
+    }
+}
+
+@Composable
+fun AppConfirmButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsFocusedAsState()
+
+    val containerColor by animateColorAsState(
+        targetValue = when {
+            !enabled -> AppTheme.colorScheme.backgroundDisabled
+            isPressed -> AppTheme.colorScheme.backgroundPressed
+            else -> AppTheme.colorScheme.backgroundBrand
+        },
+        animationSpec = tween(durationMillis = 100, easing = LinearEasing)
+    )
+
+    val contentColor by animateColorAsState(
+        targetValue = when {
+            !enabled -> AppTheme.colorScheme.foregroundOnBrand.copy(.35f)
+            isPressed -> AppTheme.colorScheme.foregroundOnBrand.copy(.75f)
+            else -> AppTheme.colorScheme.foregroundOnBrand
+        }
+    )
+
+    BaseButton(
+        onClick = onClick,
+        containerColor = containerColor,
+        contentColor = contentColor,
+        enabled = enabled,
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = AppTheme.spacing.s, vertical = AppTheme.spacing.s)
+    ) {
+        Icon(
+            painter = painterResource(AppIcons.Done),
+            contentDescription = null,
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = text,
+            style = AppTheme.typography.calloutButton,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(horizontal = AppTheme.spacing.s)
+        )
+    }
+}
+
+@Composable
+fun AppDismissButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit,
+    contentColor: Color,
+) {
+    BaseButton(
+        onClick = onClick,
+        containerColor = contentColor.copy(.1f),
+        contentColor = contentColor,
+        modifier = modifier,
+        contentPadding = PaddingValues(horizontal = AppTheme.spacing.s, vertical = AppTheme.spacing.s)
+    ) {
+        Icon(
+            painter = painterResource(AppIcons.Close),
+            contentDescription = null,
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = text,
+            style = AppTheme.typography.calloutButton,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.padding(horizontal = AppTheme.spacing.s)
+        )
     }
 }
 

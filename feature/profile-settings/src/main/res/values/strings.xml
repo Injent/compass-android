@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="profile_settings">Profile Settings</string>
-    <string name="profile_permissions">Permissions</string>
-    <string name="request_permission">Request permission</string>
-    <string name="view_gradebook">View gradebook</string>
     <string name="gradebook">Gradebook №%s</string>
-    <string name="in_development">In development</string>
     <string name="my_group">My group</string>
-    <string name="change_group">change</string>
     <string name="add_link">Add link</string>
-    <string name="last_name">Last name</string>
-    <string name="first_name">First name</string>
+    <string name="display_name">Display name</string>
     <string name="bio">About me</string>
     <string name="public_profile">Visible in the search</string>
+    <string name="enter_display_name">Enter display name</string>
+    <string name="hint_bio">Add a description</string>
+    <string name="profile_photo">Profile photo</string>
+    <string name="hint_avatar">Copy the direct link to the picture you want to put as an avatar for your profile</string>
+    <string name="avatar_empty">Clipboard is empty</string>
+    <string name="avatar_filled">This picture is from the clipboard</string>
+    <string name="current_clipboard">Clipped text</string>
+    <string name="avatar_invalid">The copied text is not a direct link to the image</string>
+    <string name="public_profile_description">Your profile will be visible in the search for other students in with the same options as yours</string>
 
 </resources>

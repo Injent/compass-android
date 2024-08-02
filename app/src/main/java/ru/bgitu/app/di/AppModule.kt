@@ -9,6 +9,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ru.bgitu.app.presentation.MainViewModel
+import ru.bgitu.components.signin.di.SignInModule
 import ru.bgitu.components.sync.di.SyncModule
 import ru.bgitu.components.updates.impl.di.UpdatesModule
 import ru.bgitu.core.common.di.CommonModule
@@ -44,6 +45,7 @@ val AppModule = module {
         // Components modules
         SyncModule,
         UpdatesModule,
+        SignInModule,
         // Feature modules
         HomeModule,
         LoginModule,
@@ -64,7 +66,7 @@ val AppModule = module {
         MainViewModel(
             appUpdateManager = get(),
             compassAuthenticator = get(),
-            settings = get()
+            settingsRepository = get()
         )
     }
 

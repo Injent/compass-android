@@ -4,5 +4,6 @@
     <string name="we_apologize">Мы приносим извинения за неудобства. Над проектом ведется активная работа и о проблеме уже знают</string>
     <string name="relaunch_app">Перезапустить</string>
     <string name="retry">Повторить</string>
+    <string name="label_auth">Авторизация</string>
 
 </resources>

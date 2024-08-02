@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -30,7 +32,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -66,8 +70,8 @@ fun WidgetSettingsScreen(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0),
         modifier = Modifier,
-        containerColor = Color.Transparent,
         topBar = {
             val gradientStart = AppTheme.colorScheme.background2
             val gradientEnd = Color.Transparent
@@ -97,12 +101,14 @@ fun WidgetSettingsScreen(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs),
                 modifier = Modifier
-                    .height(56.dp)
                     .boxShadow(
                         shape = AppTheme.shapes.defaultTopCarved
                     )
-                    .background(AppTheme.colorScheme.background1, AppTheme.shapes.defaultTopCarved)
-                    .padding(AppTheme.spacing.s)
+                    .background(AppTheme.colorScheme.background3, AppTheme.shapes.defaultTopCarved)
+                    .navigationBarsPadding()
+                    .padding(
+                        horizontal = AppTheme.spacing.l
+                    )
             ) {
                 AppTextButton(
                     text = stringResource(android.R.string.cancel),
@@ -122,24 +128,13 @@ fun WidgetSettingsScreen(
         val scrollState = rememberScrollState()
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.l),
             modifier = Modifier
-//                .drawWithContent {
-//                    Path().apply {
-//                        moveTo(0f, scrollBehavior.state.contentOffset.absoluteValue)
-//                        lineTo(size.width, scrollBehavior.state.contentOffset.absoluteValue)
-//                        lineTo(size.width, size.height)
-//                        lineTo(0f, size.height)
-//                        close()
-//                    }
-//                }
                 .verticalScroll(scrollState)
                 .padding(top = paddingValues.calculateTopPadding())
                 .background(AppTheme.colorScheme.background2)
-                .padding(horizontal = AppTheme.spacing.s),
+                .padding(AppTheme.spacing.l),
         ) {
-            Spacer(Modifier.height(AppTheme.spacing.l))
-
             AppCardWithContent(
                 label = stringResource(R.string.widget_opacity)
             ) {
@@ -254,7 +249,16 @@ private fun WidgetSettingsTopBar(
         WidgetPreview(
             options = widgetOptions,
             colors = colors,
-            modifier = Modifier.height(250.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+                .drawWithContent {
+                    drawRect(
+                        color = Color.Transparent,
+                        blendMode = BlendMode.Clear
+                    )
+                    drawContent()
+                }
         )
     }
 }

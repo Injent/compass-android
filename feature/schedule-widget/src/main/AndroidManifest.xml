@@ -6,7 +6,7 @@
             android:exported="true"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Wallpaper.NoTitleBar"
+            android:theme="@style/Theme.Compass.WidgetSettings"
             tools:ignore="DiscouragedApi">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>

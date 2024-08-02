@@ -26,8 +26,6 @@ sealed interface Screen {
 
     @Serializable data object Recovery : Screen
 
-    @Serializable data class PickGroup(val predictedSearchQuery: String? = null) : Screen
-
     @Serializable data class ProfessorSearch(val professorName: String? = null) : Screen
 
     @Serializable data class ProfessorSchedule(val professorName: String) : Screen
@@ -40,5 +38,5 @@ sealed interface Screen {
 
     @Serializable data object Groups : Screen
 
-    @Serializable data class GroupSearch(val backResultType: String) : Screen
+    @Serializable data class GroupSearch(val resultKey: String) : Screen
 }

@@ -4,14 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import ru.bgitu.core.common.eventChannel
 import ru.bgitu.core.model.Group
 import ru.bgitu.feature.groups.data.GroupManagementRepository
 
 sealed interface GroupsUiState {
     data class Success(
-        val primaryGroup: Group,
+        val primaryGroup: Group?,
         val savedGroups: List<Group>,
         val showGroupsOnMainScreen: Boolean,
     ) : GroupsUiState
@@ -29,9 +31,15 @@ sealed interface GroupsIntent {
     data class SetGroupVisibility(val visible: Boolean) : GroupsIntent
 }
 
+sealed interface GroupsEvent {
+    data object GroupNotSelectedAlert : GroupsEvent
+}
+
 class GroupsViewModel(
     private val groupRepository: GroupManagementRepository,
 ) : ViewModel() {
+    private val _events = eventChannel<GroupsEvent>()
+    val events get() = _events.receiveAsFlow()
 
     val uiState = groupRepository.getGroupsData().mapLatest { groupData ->
         GroupsUiState.Success(
@@ -68,10 +76,13 @@ class GroupsViewModel(
                     groupRepository.removeGroup(intent.group)
                 }
             }
-            is GroupsIntent.SetGroupVisibility -> {
-                viewModelScope.launch {
-                    groupRepository.setGroupsVisibility(intent.visible)
+            is GroupsIntent.SetGroupVisibility -> viewModelScope.launch {
+                if (uiState.value is GroupsUiState.Success
+                    && (uiState.value as GroupsUiState.Success).primaryGroup == null) {
+                    _events.send(GroupsEvent.GroupNotSelectedAlert)
+                    return@launch
                 }
+                groupRepository.setGroupsVisibility(intent.visible)
             }
         }
     }

@@ -19,25 +19,25 @@ import java.util.Locale
 
 
 class CompassRepository(
-    private val network: CompassService,
+    private val compassService: CompassService,
     private val settings: SettingsRepository
 ) {
-    suspend fun getUserProfile(userId: Int) = network.getUserProfile(userId)
+    suspend fun getUserProfile(userId: Long) = compassService.getUserProfile(userId)
         .map(NetworkUserProfile::toExternalModel)
 
     suspend fun updateUserProfile(profile: UserProfile) =
-        network.updateUserProfile(profile.toNetworkModel())
+        compassService.updateUserProfile(profile.toNetworkModel())
 
     suspend fun getChangelog(versionCode: Long): Result<String> {
-        return network.getChangelog(versionCode).map(ByteArray::decodeToString)
+        return compassService.getChangelog(versionCode).map(ByteArray::decodeToString)
     }
 
     suspend fun searchProfessor(query: String): Result<List<String>> {
-        return network.searchProfessors(query)
+        return compassService.searchProfessors(query)
     }
 
     suspend fun searchMates(subjectName: String): Result<List<SearchMateItem>> {
-        return network.searchMates(subjectName, TODO()).map(NetworkSearchMateItem::toExternalModel)
+        return compassService.searchMates(subjectName, TODO()).map(NetworkSearchMateItem::toExternalModel)
     }
 
     suspend fun getProfessorSchedule(
@@ -45,7 +45,7 @@ class CompassRepository(
         from: LocalDate,
         to: LocalDate
     ): Result<List<ProfessorClass>> {
-        return network.getProfessorSchedule(professorName, from, to)
+        return compassService.getProfessorSchedule(professorName, from, to)
             .onSuccess {
                 settings.updateMetadata {
                     it.copy(
@@ -58,6 +58,8 @@ class CompassRepository(
     fun getRecentProfessors(): Flow<List<String>> {
         return settings.metadata.mapLatest { it.recentProfessorSearch }
     }
+
+    suspend fun searchGroups(query: String) = compassService.searchGroups(query)
 
     private fun getDeviceName(): String {
         fun String.localCapitalize(): String {

@@ -2,6 +2,11 @@ package ru.bgitu.core.designsystem.components
 
 import android.view.SoundEffectConstants
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +20,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
@@ -24,22 +30,27 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.zIndex
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.RedTheme
 import ru.bgitu.core.designsystem.util.boxShadow
+import kotlin.math.roundToInt
 
 @Composable
 fun AppBottomNavigation(
@@ -137,7 +148,34 @@ fun TabItem(
                 } else AppTheme.colorScheme.foreground3, label = ""
             )
             CompositionLocalProvider(LocalContentColor provides color) {
-                icon()
+                val density = LocalDensity.current
+                val animatable = remember { Animatable(0f) }
+
+                LaunchedEffect(selected) {
+                    if (selected) {
+                        animatable.animateTo(
+                            targetValue = 0f,
+                            animationSpec = keyframes {
+                                durationMillis = 300
+                                0f at 0 using FastOutLinearInEasing
+                                0.8f at 100 using  FastOutSlowInEasing
+                                1f at 150 // ms
+                                0f at 300 using CubicBezierEasing(1f, 0.2f, 0.0f, 0.4f)
+                            }
+                        )
+                    }
+                }
+
+                Box(
+                    modifier = Modifier.offset {
+                        IntOffset(
+                            x = 0,
+                            y = density.run { -(animatable.value * 8.dp.toPx()).roundToInt() }
+                        )
+                    }
+                ) {
+                    icon()
+                }
                 Text(
                     text = label,
                     style = AppTheme.typography.caption1,
@@ -150,6 +188,6 @@ fun TabItem(
     }
 }
 
-private object AppBottomBarTokens {
+object AppBottomBarTokens {
     val Height = 56.dp
 }

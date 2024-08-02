@@ -1,34 +1,26 @@
 package ru.bgitu.feature.profile_settings.presentation
 
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import ru.bgitu.core.datastore.SettingsRepository
-import ru.bgitu.core.model.UserProfile
-
-sealed interface ProfileSetttingsUiState {
-    data class Success(
-        val profile: UserProfile,
-    ) : ProfileSetttingsUiState
-
-    data object Loading : ProfileSetttingsUiState
-}
 
 sealed class ProfileSettingsIntent {
+    data class SetDisplayName(val lastName: String) : ProfileSettingsIntent()
+    data class SetBio(val bio: String) : ProfileSettingsIntent()
     data class AddContact(val url: String) : ProfileSettingsIntent()
     data class RemoveContact(val url: String) : ProfileSettingsIntent()
     data class AddVariant(val subjectName: String, val variant: Int) : ProfileSettingsIntent()
     data class RemoveVariant(val subjectName: String) : ProfileSettingsIntent()
     data object Back : ProfileSettingsIntent()
-    data object SwitchVisibility : ProfileSettingsIntent()
+    data class SetPublicProfile(val isVisible: Boolean) : ProfileSettingsIntent()
+    data class SetProfileImage(val avatarUrl: String?) : ProfileSettingsIntent()
 }
 
 sealed class ProfileSettingsEvent {
@@ -41,21 +33,18 @@ class ProfileSettingsViewModel(
     private val _events = Channel<ProfileSettingsEvent>()
     val events = _events.receiveAsFlow()
 
-    private val _profile = MutableStateFlow(
-        runBlocking { settingsRepository.getProfile() }
-    )
-    val profile = _profile.asStateFlow()
-
-
-    val bioField = TextFieldState()
-    val nameField = TextFieldState()
-    val lastNameField = TextFieldState()
-
-    init {
-        bioField.setTextAndPlaceCursorAtEnd(_profile.value.bio)
-        lastNameField.setTextAndPlaceCursorAtEnd(_profile.value.lastName)
-        nameField.setTextAndPlaceCursorAtEnd(_profile.value.firstName)
+    val profile = settingsRepository.data.mapLatest {
+        checkNotNull(it.userProfile)
     }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = runBlocking {
+                checkNotNull(settingsRepository.getProfile()) {
+                    "Profile shouldn't ne null when navigating to profile settings"
+                }
+            }
+        )
 
     fun onIntent(intent: ProfileSettingsIntent) {
         when (intent) {
@@ -63,20 +52,27 @@ class ProfileSettingsViewModel(
             is ProfileSettingsIntent.AddVariant -> TODO()
             is ProfileSettingsIntent.RemoveContact -> TODO()
             is ProfileSettingsIntent.RemoveVariant -> TODO()
-            is ProfileSettingsIntent.Back -> viewModelScope.launch { updateProfile() }
-            is ProfileSettingsIntent.SwitchVisibility -> _profile.update {
-                it.copy(publicProfile = !it.publicProfile)
+            is ProfileSettingsIntent.Back -> _events.trySend(ProfileSettingsEvent.Back)
+            is ProfileSettingsIntent.SetPublicProfile -> viewModelScope.launch {
+                settingsRepository.updateProfile {
+                    it.copy(publicProfile = intent.isVisible)
+                }
+            }
+            is ProfileSettingsIntent.SetDisplayName -> viewModelScope.launch {
+                settingsRepository.updateProfile {
+                    it.copy(displayName = intent.lastName)
+                }
+            }
+            is ProfileSettingsIntent.SetBio -> viewModelScope.launch {
+                settingsRepository.updateProfile {
+                    it.copy(bio = intent.bio.trim())
+                }
+            }
+            is ProfileSettingsIntent.SetProfileImage -> viewModelScope.launch {
+                settingsRepository.updateProfile {
+                    it.copy(avatarUrl = intent.avatarUrl)
+                }
             }
         }
-    }
-
-    private suspend fun updateProfile() {
-        val fetchedProfile = _profile.value.copy(
-            bio = bioField.text.toString(),
-            lastName = lastNameField.text.toString(),
-            firstName = nameField.text.toString()
-        )
-        settingsRepository.updateProfile { fetchedProfile }
-        _events.trySend(ProfileSettingsEvent.Back)
     }
 }

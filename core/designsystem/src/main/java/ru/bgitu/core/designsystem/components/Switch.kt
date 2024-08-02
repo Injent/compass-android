@@ -76,7 +76,7 @@ fun AppSwitch(
     }
 }
 
-private object AppSwitchTokens {
+object AppSwitchTokens {
     val TrackWidth = 50.dp
     val TrackHeight = 30.dp
     val Gap = 4.dp

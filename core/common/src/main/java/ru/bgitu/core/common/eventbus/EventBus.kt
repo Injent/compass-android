@@ -15,7 +15,7 @@ object EventBus {
         _events.emit(event)
     }
 
-    suspend inline fun <reified T> subscribe(crossinline onEvent: (T) -> Unit) {
+    suspend inline fun <reified T> subscribe(crossinline onEvent: suspend (T) -> Unit) {
         events.filterIsInstance<T>()
             .collectLatest { event ->
                 currentCoroutineContext().ensureActive()

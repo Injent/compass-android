@@ -16,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -98,18 +99,26 @@ private fun ProfileIcon(
             }
             .size(20.dp)
     ) {
-        ProfileImage(avatarUrl = avatarUrl, modifier = Modifier.fillMaxSize())
+        ProfileImage(
+            avatarUrl = avatarUrl,
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(CircleShape)
+        )
     }
 }
 
 @Composable
 fun NavigationItems(
     avatarUrl: String?,
-    itemModifier: Modifier = Modifier
+    hideMateTab: Boolean,
+    modifier: Modifier = Modifier
 ) {
     val navController = LocalNavController.current
 
-    for (tab in Tab.entries) {
+    Tab.entries.forEach { tab ->
+        if (tab == Tab.MATES && hideMateTab) return@forEach
+
         val selected = navController.currentBackStackEntryAsState()
             .value
             ?.destination
@@ -117,7 +126,7 @@ fun NavigationItems(
             ?: false
 
         TabItem(
-            modifier = itemModifier,
+            modifier = modifier,
             label = stringResource(tab.label),
             selected = selected,
             onItemSelected = { navController.navigateTopDestination(tab) },

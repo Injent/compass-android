@@ -12,4 +12,6 @@
     <string name="delete_group_description">Group %s will be removed from your favorite groups</string>
     <string name="delete">Delete</string>
     <string name="hint_groups">Hold down the card and move the group to the desired position</string>
+    <string name="group_not_selected">Not selected</string>
+    <string name="alert_group_not_selected">Group not selected!</string>
 </resources>

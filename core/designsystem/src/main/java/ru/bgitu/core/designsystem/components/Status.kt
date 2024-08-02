@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.bgitu.core.designsystem.R
@@ -64,8 +65,15 @@ fun Tag(
 enum class StatusDecor {
     ADMIN,
     SPECIAL,
-    REGULAR
+    REGULAR,
+    POPULAR
 }
+
+private const val DARK_ADMIN_COLOR = 0xFFc9e9ff
+private const val LIGHT_ADMIN_COLOR = 0xFF253e4f
+private const val SPECIAL_COLOR = 0xFFa227db
+private const val REGULAR_COLOR = 0xFFb5bac1
+
 
 @Composable
 fun Status(
@@ -73,20 +81,21 @@ fun Status(
     modifier: Modifier = Modifier
 ) {
     val contentColor = when (statusDecor) {
-        StatusDecor.ADMIN -> if (AppTheme.isDarkTheme) {
-            AppTheme.colors.yellow
-        } else Color(0xFFF3A610)
-        StatusDecor.SPECIAL -> Color(0xFFa227db)
-        StatusDecor.REGULAR -> Color.Unspecified
+        StatusDecor.ADMIN -> Color(
+            if (AppTheme.isDarkTheme) {
+                DARK_ADMIN_COLOR
+            } else LIGHT_ADMIN_COLOR
+        )
+        StatusDecor.SPECIAL -> Color(SPECIAL_COLOR)
+        StatusDecor.REGULAR -> Color(REGULAR_COLOR)
+        StatusDecor.POPULAR -> AppTheme.colorScheme.backgroundBrand
     }
     Row(
         horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .background(
-                color = if (statusDecor == StatusDecor.REGULAR) {
-                    AppTheme.colorScheme.backgroundTouchable
-                } else AppTheme.colorScheme.backgroundTouchable,
+                color = AppTheme.colorScheme.backgroundTouchable,
                 shape = CircleShape
             )
             .padding(
@@ -97,9 +106,10 @@ fun Status(
         Icon(
             painter = painterResource(
                 when (statusDecor) {
-                    StatusDecor.ADMIN -> AppIcons.Crown
+                    StatusDecor.ADMIN -> AppIcons.Wrench
                     StatusDecor.SPECIAL -> AppIcons.Badge
-                    StatusDecor.REGULAR -> AppIcons.Approved
+                    StatusDecor.REGULAR -> AppIcons.Student
+                    StatusDecor.POPULAR -> AppIcons.ThumbUp
                 }
             ),
             contentDescription = null,
@@ -112,10 +122,13 @@ fun Status(
                     StatusDecor.ADMIN -> R.string.status_admin
                     StatusDecor.SPECIAL -> R.string.status_special
                     StatusDecor.REGULAR -> R.string.status_regular
+                    StatusDecor.POPULAR -> R.string.status_popular
                 }
             ),
             style = AppTheme.typography.callout,
-            color = contentColor
+            color = contentColor,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

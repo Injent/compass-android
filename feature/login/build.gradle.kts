@@ -15,6 +15,11 @@ android {
 }
 
 dependencies {
+    implementation(projects.components.signin)
+
+    implementation(libs.vk.id.oneTapCompose)
+    implementation(libs.vk.id)
+
     testImplementation(projects.core.dataTest)
 
     androidTestImplementation(libs.core.test)

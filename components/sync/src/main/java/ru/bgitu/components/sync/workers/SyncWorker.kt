@@ -11,29 +11,27 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import org.koin.core.component.KoinComponent
 import ru.bgitu.components.sync.util.successOrRetryUntil
+import ru.bgitu.components.sync.util.syncNotification
 import ru.bgitu.components.sync.util.toForegroundInfo
 import ru.bgitu.core.data.repository.ScheduleRepository
 import ru.bgitu.core.data.util.Synchronizer
 import ru.bgitu.core.datastore.DataVersions
 import ru.bgitu.core.datastore.SettingsRepository
-import ru.bgitu.core.notifications.Notifier
 
 class SyncWorker(
     appContext: Context,
     params: WorkerParameters,
     private val settings: SettingsRepository,
     private val scheduleRepository: ScheduleRepository,
-    private val notifier: Notifier,
-) : CoroutineWorker(appContext, params), Synchronizer, KoinComponent {
+) : CoroutineWorker(appContext, params), Synchronizer {
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
-        return notifier.backgroundWorkNotification().toForegroundInfo()
+        return applicationContext.syncNotification().toForegroundInfo()
     }
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
-        if (settings.credentials.first() == null) return@withContext Result.failure()
+        if (settings.data.first().primaryGroup == null) return@withContext Result.failure()
 
         val syncedSuccessfully = awaitAll(
             async { scheduleRepository.sync() }

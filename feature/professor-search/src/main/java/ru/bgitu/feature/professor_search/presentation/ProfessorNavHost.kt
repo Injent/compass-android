@@ -1,7 +1,9 @@
 package ru.bgitu.feature.professor_search.presentation
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -9,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
+import ru.bgitu.core.designsystem.components.AppBottomBarTokens
 import ru.bgitu.core.navigation.Screen
 import ru.bgitu.core.navigation.back
 import ru.bgitu.core.navigation.replaceAll
@@ -44,7 +47,8 @@ fun ProfessorNavHost(
 
     NavHost(
         navController = nestedNavController,
-        startDestination = nestedNavHostStartDestination
+        startDestination = nestedNavHostStartDestination,
+        modifier = Modifier.padding(bottom = AppBottomBarTokens.Height)
     ) {
         composable<ProfessorSearchScreen> {
             ProfessorSearchRoute(

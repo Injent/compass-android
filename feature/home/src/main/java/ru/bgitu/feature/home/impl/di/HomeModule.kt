@@ -12,7 +12,8 @@ val HomeModule = module {
             openScheduleDate = params.getOrNull(),
             scheduleRepository = get(),
             context = androidContext(),
-            settings = get()
+            settings = get(),
+            syncManager = get()
         )
     }
 }

@@ -27,6 +27,19 @@ android {
         }
         buildFeatures.buildConfig = true
 
+        val props = Properties().apply {
+            rootProject.file("secrets.properties").inputStream().use { load(it) }
+        }
+
+        addManifestPlaceholders(
+            mapOf(
+                "VKIDClientID" to props.getProperty("VKIDClientID"),
+                "VKIDClientSecret" to props.getProperty("VKIDClientSecret"),
+                "VKIDRedirectHost" to "vk.com",
+                "VKIDRedirectScheme" to "vk${props.getProperty("VKIDClientID")}",
+            )
+        )
+
         resourceConfigurations += setOf(
             "en",
             "ru",
@@ -74,7 +87,7 @@ android {
             val props = Properties().apply {
                 file("release_config.properties").inputStream().use { load(it) }
             }
-            storeFile = file(props.getProperty("storeFile"))
+            storeFile = project.file(props.getProperty("storeFile"))
             storePassword = props.getProperty("storePassword")
             keyAlias = props.getProperty("keyAlias")
             keyPassword = props.getProperty("keyPassword")
@@ -85,6 +98,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            isCrunchPngs = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -95,11 +109,14 @@ android {
         debug {
             isMinifyEnabled = false
             manifestPlaceholders["crashlyticsCollectionEnabled"] = false
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
 
 dependencies {
+    implementation(libs.ktor.core)
+    implementation(libs.ktor.cio)
     // Features
     implementation(projects.feature.home)
     implementation(projects.feature.findmate)
@@ -115,6 +132,7 @@ dependencies {
     implementation(projects.feature.scheduleWidget)
     implementation(projects.feature.professorSearch)
     implementation(projects.feature.groups)
+    implementation(projects.feature.input)
 
     implementation(projects.core.designsystem)
     implementation(projects.core.network)
@@ -131,6 +149,9 @@ dependencies {
     implementation(projects.components.updates.api)
     implementation(projects.components.updates.impl)
     implementation(projects.components.sync)
+    implementation(projects.components.signin)
+
+    implementation(libs.vk.id)
 
     // Core
     implementation(libs.compose.activity)

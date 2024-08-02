@@ -7,6 +7,7 @@ class AppStrokeWidth internal constructor(
     val thin: Dp = 1.2.dp,
     val thick: Dp = 1.5.dp,
     val thicker: Dp = 2.dp,
+    val large: Dp = 3.dp
 )
 
 internal val StrokeWidth = AppStrokeWidth()

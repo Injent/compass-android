@@ -18,16 +18,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import ru.bgitu.core.common.CommonDrawables
 import ru.bgitu.core.navigation.Screen
-import ru.bgitu.feature.about.navigation.about
-import ru.bgitu.feature.findmate.navigation.findMateGraph
-import ru.bgitu.feature.groups.navigation.groupsScreen
-import ru.bgitu.feature.help.navigation.help
-import ru.bgitu.feature.home.impl.navigation.homeScreen
-import ru.bgitu.feature.login.navigation.loginGraph
-import ru.bgitu.feature.professor_search.navigation.professorSearchScreen
-import ru.bgitu.feature.profile.navigation.profile
+import ru.bgitu.feature.profile.navigation.profileRoute
 import ru.bgitu.feature.profile_settings.navigation.profileSettings
-import ru.bgitu.feature.settings.navigation.settings
 
 @Composable
 fun AppNavigator(
@@ -40,27 +32,29 @@ fun AppNavigator(
         modifier = modifier
     ) {
         composable<Screen.Loading> { LoadingScreen() }
-        about()
-        help()
-        settings()
-        profileSettings()
-        groupsScreen()
+        //inputScreen()
+        //about()
+        //help()
+        //settings()
+        //profileSettings()
+        //groupsScreen()
 
-        loginGraph()
+        //loginGraph()
         mainGraph()
     }
 }
 
 private fun NavGraphBuilder.mainGraph() {
     navigation<Screen.MainGraph>(
-        startDestination = Screen.Home,
+        startDestination = Screen.Loading,
         enterTransition = { fadeIn() },
         exitTransition = { fadeOut() }
     ) {
-        homeScreen()
-        professorSearchScreen()
-        findMateGraph()
-        profileGraph()
+        composable<Screen.Loading> {  }
+        //homeScreen()
+        //professorSearchScreen()
+        //findMateGraph()
+        //profileGraph()
     }
 }
 
@@ -68,7 +62,7 @@ private fun NavGraphBuilder.profileGraph() {
     navigation<Screen.ProfileGraph>(
         startDestination = Screen.Profile,
     ) {
-        profile()
+        profileRoute()
         profileSettings()
     }
 }

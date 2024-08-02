@@ -25,6 +25,7 @@ import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.then
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,8 +38,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.theme.AppTheme
@@ -148,12 +151,14 @@ fun AppTextField(
     label: String? = null,
     tip: String? = null,
     placeholder: String = "",
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     onKeyboardAction: KeyboardActionHandler? = null,
     leadingIcon: @Composable () -> Unit = {},
     trailingIcon: @Composable () -> Unit = {},
-    inputTransformation: InputTransformation? = null,
-    interactionSource: MutableInteractionSource? = null
+    inputTransformation: InputTransformation = InputTransformation {},
+    interactionSource: MutableInteractionSource? = null,
+    maxTextLenght: Int = 300,
+    maxLines: Int = 1
 ) {
     val mutableInteractionSource = interactionSource ?: remember { MutableInteractionSource() }
     val isFocused by mutableInteractionSource.collectIsFocusedAsState()
@@ -162,10 +167,15 @@ fun AppTextField(
     val cursonBrush = remember { SolidColor(cursorColor) }
 
     val containerColor by animateColorAsState(
-        targetValue = AppTheme.colorScheme.backgroundTouchable.applyState(
-            isPressed = isFocused,
-            enabled = enabled
-        ),
+        targetValue = if (readOnly) {
+            AppTheme.colorScheme.background4
+        } else {
+            when {
+                !enabled -> AppTheme.colorScheme.backgroundDisabled
+                isFocused -> AppTheme.colorScheme.backgroundTouchable
+                else -> AppTheme.colorScheme.background3
+            }
+        },
     )
 
     val iconColor by animateColorAsState(
@@ -196,27 +206,53 @@ fun AppTextField(
             keyboardOptions = keyboardOptions,
             onKeyboardAction = onKeyboardAction,
             cursorBrush = cursonBrush,
-            inputTransformation = inputTransformation,
+            inputTransformation = InputTransformation {
+                if (asCharSequence().length > maxTextLenght) {
+                    revertAllChanges()
+                    return@InputTransformation
+                }
+                if (maxLines < asCharSequence().count { it == '\n' }) {
+                    revertAllChanges()
+                }
+            }.then(inputTransformation),
             decorator = { textLayout ->
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = if (lineLimits is TextFieldLineLimits.MultiLine) {
+                        Alignment.Top
+                    } else Alignment.CenterVertically,
                     modifier = Modifier
                         .defaultMinSize(minHeight = 48.dp)
                         .background(containerColor, AppTheme.shapes.default)
-                        .padding(horizontal = 12.dp, vertical = 10.dp)
+                        .padding(
+                            horizontal = 12.dp,
+                            vertical = 10.dp
+                        )
                 ) {
                     CompositionLocalProvider(
                         LocalContentColor provides iconColor,
                         content = leadingIcon
                     )
-                    Box(Modifier.weight(1f)) {
-                        textLayout()
-                        if (state.text.isEmpty()) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Box {
+                            textLayout()
+                            if (state.text.isEmpty()) {
+                                Text(
+                                    text = placeholder,
+                                    style = AppTheme.typography.callout,
+                                    color = AppTheme.colorScheme.foreground4,
+                                )
+                            }
+                        }
+                        if (maxLines > 1) {
+                            Spacer(Modifier.height(AppTheme.spacing.xs))
                             Text(
-                                text = placeholder,
-                                style = AppTheme.typography.callout,
+                                text = "${state.text.length}/$maxTextLenght",
+                                style = AppTheme.typography.footstrike,
                                 color = AppTheme.colorScheme.foreground4,
+                                modifier = Modifier.align(Alignment.End)
                             )
                         }
                     }
@@ -227,6 +263,82 @@ fun AppTextField(
                 }
             }
         )
+
+        tip?.let { tip ->
+            Text(
+                text = tip,
+                color = AppTheme.colorScheme.foreground2,
+                style = AppTheme.typography.footnote,
+                modifier = Modifier.padding(top = 6.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun AppReadOnlyTextField(
+    text: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    label: String? = null,
+    tip: String? = null,
+    placeholder: String = "",
+    leadingIcon: @Composable () -> Unit = {},
+    trailingIcon: @Composable () -> Unit = {},
+    fieldMinHeight: Dp = 48.dp,
+    maxLines: Int = 1,
+) {
+    val containerColor = AppTheme.colorScheme.background4
+
+    val iconColor by animateColorAsState(
+        targetValue = if (enabled) {
+            AppTheme.colorScheme.foreground3
+        } else AppTheme.colorScheme.foreground4,
+    )
+
+    Column(modifier) {
+        label?.let {
+            Text(
+                text = label,
+                style = AppTheme.typography.subheadline,
+                color = AppTheme.colorScheme.foreground2
+            )
+            Spacer(Modifier.height(AppTheme.spacing.s))
+        }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
+            verticalAlignment = if (maxLines > 1) {
+                Alignment.Top
+            } else Alignment.CenterVertically,
+            modifier = Modifier
+                .defaultMinSize(minHeight = fieldMinHeight)
+                .background(containerColor, AppTheme.shapes.default)
+                .padding(horizontal = 12.dp, vertical = 10.dp)
+        ) {
+            CompositionLocalProvider(
+                LocalContentColor provides iconColor,
+                content = leadingIcon
+            )
+            Box(Modifier.weight(1f)) {
+                if (text.isEmpty()) {
+                    Text(
+                        text = placeholder,
+                        style = AppTheme.typography.callout,
+                        color = AppTheme.colorScheme.foreground4,
+                    )
+                } else {
+                    Text(
+                        text = text,
+                        style = AppTheme.typography.callout,
+                        color = AppTheme.colorScheme.foreground1,
+                    )
+                }
+            }
+            CompositionLocalProvider(
+                LocalContentColor provides iconColor,
+                content = trailingIcon
+            )
+        }
 
         tip?.let { tip ->
             Text(

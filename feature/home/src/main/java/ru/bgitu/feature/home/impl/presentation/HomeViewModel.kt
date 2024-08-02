@@ -24,8 +24,12 @@ import kotlinx.datetime.plus
 import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.common.eventChannel
+import ru.bgitu.core.common.eventbus.EventBus
+import ru.bgitu.core.common.eventbus.GlobalAppEvent
 import ru.bgitu.core.data.model.ScheduleLoadState
 import ru.bgitu.core.data.repository.ScheduleRepository
+import ru.bgitu.core.data.util.SyncManager
+import ru.bgitu.core.data.util.SyncStatus
 import ru.bgitu.core.datastore.SettingsRepository
 import ru.bgitu.core.model.Group
 import ru.bgitu.core.model.Lesson
@@ -41,7 +45,7 @@ private const val SELECTED_DATE = "selected_date"
 
 sealed interface HomeIntent {
     data class ChangeDate(val date: LocalDate) : HomeIntent
-    data class ChangeGroup(val group: Group) : HomeIntent
+    data class ChangeGroupView(val group: Group) : HomeIntent
     data object NavigateToGroupSettings : HomeIntent
     data object NavigateToNewFeatures : HomeIntent
 }
@@ -53,10 +57,12 @@ sealed interface HomeEvent {
 
 sealed interface HomeUiState {
     data class Success(
-        val selectedGroup: Group,
+        val selectedGroup: Group? = null,
         val savedGroups: List<Group> = emptyList(),
-        val showGroups: Boolean
+        val showGroups: Boolean,
+        val isSyncing: Boolean = false
     ) : HomeUiState
+    data object GroupNotSelected : HomeUiState
     data object Loading : HomeUiState
 }
 
@@ -65,32 +71,42 @@ class HomeViewModel(
     openScheduleDate: LocalDate?,
     private val settings: SettingsRepository,
     scheduleRepository: ScheduleRepository,
+    syncManager: SyncManager,
     context: Context,
 ) : ViewModel() {
 
     private val _events = eventChannel<HomeEvent>()
     val events = _events.receiveAsFlow()
 
-    private val selectedGroup = MutableStateFlow(
+    private val _selectedGroup = MutableStateFlow(
         runBlocking { settings.data.first().primaryGroup }
     )
+    init {
+        viewModelScope.launch {
+            EventBus.subscribe<GlobalAppEvent.ChangeGroup> {
+                _selectedGroup.value = settings.data.first().primaryGroup
+            }
+        }
+    }
 
     val uiState = combine(
-        selectedGroup,
-        settings.data
-    ) { selectedGroup, userdata ->
-        val primaryGroup = checkNotNull(userdata.primaryGroup) {
-            "Primary group can't be null when navigating to home screen"
+        _selectedGroup,
+        settings.data,
+        syncManager.syncState,
+    ) { selectedGroup, userdata, syncStatus ->
+        if (userdata.primaryGroup == null) {
+            return@combine HomeUiState.GroupNotSelected
         }
         HomeUiState.Success(
-            selectedGroup = checkNotNull(selectedGroup),
-            savedGroups = listOf(primaryGroup) + userdata.userPrefs.savedGroups,
-            showGroups = userdata.userPrefs.showGroupsOnMainScreen
+            selectedGroup = selectedGroup,
+            savedGroups = listOf(userdata.primaryGroup!!) + userdata.userPrefs.savedGroups,
+            showGroups = userdata.userPrefs.showGroupsOnMainScreen,
+            isSyncing = syncStatus == SyncStatus.RUNNUNG
         )
     }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
+            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = HomeUiState.Loading
         )
 
@@ -101,7 +117,7 @@ class HomeViewModel(
 
     val scheduleState: StateFlow<ScheduleLoadState> = combine(
         _selectedDate,
-        selectedGroup,
+        _selectedGroup,
         settings.data
     ) { selectedDate, selectedGroup, userdata ->
         when {
@@ -120,7 +136,7 @@ class HomeViewModel(
     }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
+            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = ScheduleLoadState.Loading
         )
 
@@ -136,7 +152,7 @@ class HomeViewModel(
     }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
+            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = null
         )
 
@@ -159,7 +175,8 @@ class HomeViewModel(
         )
 
     val hasNewFeatures = settings.data.map {
-        it.newFeaturesVersion < BuildConfig.LAST_BIG_UPDATE_VERSION_CODE.toInt()
+        it.newFeaturesVersion < BuildConfig.LAST_BIG_UPDATE_VERSION_CODE.toInt() &&
+                uiState.value is HomeUiState.Success
     }
         .stateIn(
             scope = viewModelScope,
@@ -174,30 +191,34 @@ class HomeViewModel(
             }
             HomeIntent.NavigateToNewFeatures -> {
                 viewModelScope.launch {
-                    increaseNewFeaturesVersion(BuildConfig.LAST_BIG_UPDATE_VERSION_CODE.toInt() )
-                    _events.send(HomeEvent.NavigateToNewFeatures)
+                    settings.updateDataVersions {
+                        it.copy(newFeaturesVersion = BuildConfig.LAST_BIG_UPDATE_VERSION_CODE.toInt())
+                    }
+                    _events.send(HomeEvent.NavigateToGroupSettings)
                 }
             }
-            is HomeIntent.ChangeGroup -> {
-                selectedGroup.value = intent.group
+            is HomeIntent.ChangeGroupView -> {
+                _selectedGroup.value = intent.group
             }
-            HomeIntent.NavigateToGroupSettings -> _events.trySend(HomeEvent.NavigateToGroupSettings)
-            else -> Unit
+            HomeIntent.NavigateToGroupSettings -> {
+                _events.trySend(HomeEvent.NavigateToGroupSettings)
+            }
         }
     }
 
-    private suspend fun increaseNewFeaturesVersion(appVersion: Int) {
-        settings.updateDataVersions {
-            it.copy(newFeaturesVersion = appVersion)
-        }
-    }
-
-    private fun getCurrentClassLabelState(currentDateTime: LocalDateTime, lessons: List<Lesson>): TextResource? {
+    private fun getCurrentClassLabelState(
+        currentDateTime: LocalDateTime,
+        lessons: List<Lesson>
+    ): TextResource? {
         if (lessons.isEmpty()) return null
 
         val firstClass = lessons.first()
         val firstClassStart = firstClass.startAt.atDate(firstClass.date)
-        val timeDiffForFirstClass = DateTimeUtil.difference(currentDateTime, firstClassStart, ChronoUnit.MINUTES).absoluteValue
+        val timeDiffForFirstClass = DateTimeUtil.difference(
+            currentDateTime,
+            firstClassStart,
+            ChronoUnit.MINUTES
+        ).absoluteValue
 
         val currentClassIndex = lessons.indexOfFirst {
             val start = it.startAt.atDate(it.date)
@@ -254,7 +275,10 @@ class HomeViewModel(
 
             return TextResource.DynamicString(
                 R.string.study_break,
-                DateTimeUtil.formatRelativeAdaptiveTime(currentDateTime.time, willStartClass.startAt)
+                DateTimeUtil.formatRelativeAdaptiveTime(
+                    currentDateTime.time,
+                    willStartClass.startAt
+                )
             )
         }
 

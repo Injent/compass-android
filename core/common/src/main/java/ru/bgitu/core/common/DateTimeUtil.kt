@@ -34,7 +34,6 @@ import java.util.Locale
 import kotlin.math.absoluteValue
 
 object DateTimeUtil {
-    private const val TIMEZONE = "Europe/Moscow"
     private val hoursMinutesFormatter by lazy { DateTimeFormatter.ofPattern("HH:mm") }
     private val relativeDateTimeFormatter by lazy { RelativeDateTimeFormatter.getInstance() }
     private val dateFormatter by lazy { DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL) }
@@ -44,7 +43,7 @@ object DateTimeUtil {
         get() = currentDateTime.date
 
     val currentDateTime: LocalDateTime
-        get() = Clock.System.now().toLocalDateTime(TimeZone.of(TIMEZONE))
+        get() = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 
     val weeksDateBoundary: ClosedRange<LocalDate>
         get() {

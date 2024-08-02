@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -84,6 +83,7 @@ import org.koin.core.parameter.parametersOf
 import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.data.model.ScheduleLoadState
+import ru.bgitu.core.designsystem.components.AppBottomBarTokens
 import ru.bgitu.core.designsystem.components.AppIconButton
 import ru.bgitu.core.designsystem.components.AppTab
 import ru.bgitu.core.designsystem.components.AppTextButton
@@ -94,6 +94,7 @@ import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
 import ru.bgitu.core.designsystem.theme.NoRippleTheme
 import ru.bgitu.core.designsystem.util.asString
+import ru.bgitu.core.designsystem.util.thenIf
 import ru.bgitu.core.model.Group
 import ru.bgitu.core.model.Lesson
 import ru.bgitu.core.model.Subject
@@ -110,6 +111,7 @@ import ru.bgitu.core.ui.schedule.LessonItem
 import ru.bgitu.core.ui.schedule.LoadingLessonItems
 import ru.bgitu.feature.home.R
 import ru.bgitu.feature.home.impl.presentation.components.NewFeaturesButton
+import ru.bgitu.feature.home.impl.presentation.components.SelectGroupView
 import kotlin.random.Random
 
 @Composable
@@ -179,11 +181,17 @@ private fun HomeScreenContent(
                 verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(AppTheme.spacing.l)
+                    .thenIf(uiState is HomeUiState.Success || hasNewFeatures) {
+                        padding(
+                            start = AppTheme.spacing.m,
+                            end = AppTheme.spacing.m,
+                            bottom = AppTheme.spacing.m
+                        )
+                    }
             ) {
-                if (hasNewFeatures && (uiState as? HomeUiState.Success)?.savedGroups?.size == 1) {
+                if (hasNewFeatures) {
                     NewFeaturesButton(
-                        onClick = { onIntent(HomeIntent.NavigateToGroupSettings) },
+                        onClick = { onIntent(HomeIntent.NavigateToNewFeatures) },
                         modifier = Modifier
                             .align(Alignment.End)
                     )
@@ -191,11 +199,12 @@ private fun HomeScreenContent(
 
                 when (uiState) {
                     is HomeUiState.Success -> {
-                        if (uiState.savedGroups.size > 1 && uiState.showGroups) {
+                        if (uiState.savedGroups.size > 1 && uiState.showGroups
+                            && uiState.selectedGroup != null) {
                             GroupTabs(
                                 groups = uiState.savedGroups,
                                 selectedGroup = uiState.selectedGroup,
-                                onGroupSelected = { group -> onIntent(HomeIntent.ChangeGroup(group)) },
+                                onGroupSelected = { group -> onIntent(HomeIntent.ChangeGroupView(group)) },
                                 onGroupSettingsClick = { onIntent(HomeIntent.NavigateToGroupSettings) },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -206,13 +215,14 @@ private fun HomeScreenContent(
                 }
             }
         },
-        modifier = Modifier.statusBarsPadding()
+        modifier = Modifier
+            .systemBarsPadding()
+            .padding(bottom = AppBottomBarTokens.Height)
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .systemBarsPadding()
         ) {
             var ignorePageChangeOnInit by rememberSaveable { mutableStateOf(true) }
 
@@ -241,56 +251,69 @@ private fun HomeScreenContent(
             )
             Spacer(Modifier.height(AppTheme.spacing.l))
 
-            HorizontalPager(
-                state = pagerState,
-                pageSpacing = AppTheme.spacing.l,
-                contentPadding = PaddingValues(horizontal = AppTheme.spacing.l)
-            ) { page ->
-                val scrollState = rememberScrollState()
+            when (uiState) {
+                HomeUiState.GroupNotSelected -> {
+                    SelectGroupView(
+                        onClick = { onIntent(HomeIntent.NavigateToGroupSettings) },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(AppTheme.spacing.xxxl)
+                    )
+                }
+                HomeUiState.Loading -> {}
+                is HomeUiState.Success -> {
+                    HorizontalPager(
+                        state = pagerState,
+                        pageSpacing = AppTheme.spacing.l,
+                        contentPadding = PaddingValues(horizontal = AppTheme.spacing.l)
+                    ) { page ->
+                        val scrollState = rememberScrollState()
 
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(scrollState)
-                ) {
-                    val maxWidthModifier = Modifier.fillMaxWidth()
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(scrollState)
+                        ) {
+                            val maxWidthModifier = Modifier.fillMaxWidth()
 
-                    when (scheduleState) {
-                        is ScheduleLoadState.Error -> {
-                            AlertSchedule(
-                                modifier = maxWidthModifier,
-                                illustation = AppIllustrations.Warning,
-                                headline = stringResource(R.string.error_failed_to_load_data),
-                            )
-                        }
-                        ScheduleLoadState.Loading -> LoadingLessonItems(modifier = maxWidthModifier)
-                        is ScheduleLoadState.Success -> {
-                            val mapedLessons = remember(scheduleState, selectorUiState) {
-                                val dateForPage = selectorUiState.getDateForPage(page)
-                                scheduleState[dateForPage].let { lessons ->
-                                    lessons.map {
-                                        it.toUiModel(
-                                            isFirst = lessons.first().startAt == it.startAt,
-                                            isLast = lessons.last().startAt == it.startAt
+                            when (scheduleState) {
+                                is ScheduleLoadState.Error -> {
+                                    AlertSchedule(
+                                        modifier = maxWidthModifier,
+                                        illustation = AppIllustrations.Warning,
+                                        headline = stringResource(R.string.error_failed_to_load_data),
+                                    )
+                                }
+                                ScheduleLoadState.Loading -> LoadingLessonItems(modifier = maxWidthModifier)
+                                is ScheduleLoadState.Success -> {
+                                    val mapedLessons = remember(scheduleState, selectorUiState) {
+                                        val dateForPage = selectorUiState.getDateForPage(page)
+                                        scheduleState[dateForPage].let { lessons ->
+                                            lessons.map {
+                                                it.toUiModel(
+                                                    isFirst = lessons.first().startAt == it.startAt,
+                                                    isLast = lessons.last().startAt == it.startAt
+                                                )
+                                            }
+                                        }
+                                    }
+                                    if (mapedLessons.isEmpty()) {
+                                        AlertSchedule(
+                                            modifier = maxWidthModifier,
+                                            illustation = AppIllustrations.Calendar,
+                                            headline = stringResource(R.string.weekend),
+                                        )
+                                    } else {
+                                        DaySchedule(
+                                            lessons = mapedLessons,
+                                            classLabelMessage = classLabelMessage.takeIf {
+                                                selectorUiState.currentDateTime.date == mapedLessons.first().date
+                                            },
+                                            currentDateTime = selectorUiState.currentDateTime
                                         )
                                     }
                                 }
-                            }
-                            if (mapedLessons.isEmpty()) {
-                                AlertSchedule(
-                                    modifier = maxWidthModifier,
-                                    illustation = AppIllustrations.Calendar,
-                                    headline = stringResource(R.string.weekend),
-                                )
-                            } else {
-                                DaySchedule(
-                                    lessons = mapedLessons,
-                                    classLabelMessage = classLabelMessage.takeIf {
-                                        selectorUiState.currentDateTime.date == mapedLessons.first().date
-                                    },
-                                    currentDateTime = selectorUiState.currentDateTime
-                                )
                             }
                         }
                     }
@@ -358,6 +381,7 @@ private fun ColumnScope.DaySchedule(
             }
         }
     }
+
     lessons.forEach {
         var expanded by remember { mutableStateOf(false) }
         LessonItem(

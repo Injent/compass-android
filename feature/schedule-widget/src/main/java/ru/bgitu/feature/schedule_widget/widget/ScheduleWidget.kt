@@ -63,7 +63,7 @@ import ru.bgitu.feature.schedule_widget.model.provideWidgetColors
 import ru.bgitu.feature.schedule_widget.model.toWidgetState
 import ru.bgitu.feature.schedule_widget.ui.GlanceLesson
 import ru.bgitu.feature.schedule_widget.widget.ChangeDateAction.Companion.QueryDateParam
-import ru.bgitu.feature.schedule_widget.work.ScheduleWorker
+import ru.bgitu.feature.schedule_widget.work.WidgetScheduleWorker
 
 const val EXTRA_OPENED_SCHEDULE_DATE = "opened_schedule_date"
 
@@ -279,7 +279,7 @@ class ScheduleWidget : GlanceAppWidget() {
 
     override suspend fun onDelete(context: Context, glanceId: GlanceId) {
         ScheduleStateDefinition.deleteDataStore(context)
-        ScheduleWorker.cancel(context)
+        WidgetScheduleWorker.cancel(context)
     }
 
     override fun onCompositionError(
@@ -289,6 +289,6 @@ class ScheduleWidget : GlanceAppWidget() {
         throwable: Throwable
     ) {
         super.onCompositionError(context, glanceId, appWidgetId, throwable)
-        ScheduleWorker.start(context, DateTimeUtil.currentDate)
+        WidgetScheduleWorker.start(context, DateTimeUtil.currentDate)
     }
 }

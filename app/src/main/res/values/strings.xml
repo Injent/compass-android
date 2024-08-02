@@ -1,7 +1,7 @@
 <resources>
-
     <string name="error_has_occurred">An error has occurred</string>
     <string name="we_apologize">We apologize for the inconvenience. Active work is underway on the project and the problem is already known</string>
     <string name="relaunch_app">Relaunch app</string>
     <string name="retry">Retry</string>
+    <string name="label_auth">Auth</string>
 </resources>

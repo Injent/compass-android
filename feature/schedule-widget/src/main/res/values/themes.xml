@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.Transparent" parent="@style/Theme.AppCompat.DayNight.NoActionBar">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-    </style>
     <style name="ThemeWidgetSystem">
         <item name="colorBackground">@color/white</item>
         <item name="colorOnBackground">@color/light_text</item>
@@ -43,5 +37,12 @@
         <item name="android:textStyle">bold</item>
         <item name="android:gravity">center</item>
         <item name="android:tint">?colorOnBackground</item>
+    </style>
+
+    <style name="Theme.Compass.WidgetSettings" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowShowWallpaper">true</item>
     </style>
 </resources>

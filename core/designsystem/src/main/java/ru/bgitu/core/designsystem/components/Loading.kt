@@ -1,6 +1,7 @@
 package ru.bgitu.core.designsystem.components
 
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.StartOffset
 import androidx.compose.animation.core.StartOffsetType
@@ -9,6 +10,8 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
@@ -18,9 +21,55 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import ru.bgitu.core.common.CommonDrawables
 import ru.bgitu.core.designsystem.R
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
+
+@Composable
+fun CompassLoading(
+    modifier: Modifier = Modifier
+) {
+    val arrowPainter = painterResource(CommonDrawables.ic_compass_arrow)
+
+    val infiniteTransition = rememberInfiniteTransition(label = "")
+    val additionalRotation by infiniteTransition.animateFloat(
+        initialValue = 120f,
+        targetValue = -60f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                2000,
+                easing = LinearOutSlowInEasing
+            )
+        )
+    )
+    val rotation by infiniteTransition.animateFloat(
+        initialValue = -120f,
+        targetValue = 60f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                2000,
+                easing = FastOutSlowInEasing
+            ),
+            repeatMode = RepeatMode.Reverse,
+            initialStartOffset = StartOffset(offsetMillis = 0, StartOffsetType.FastForward)
+        ),
+    )
+
+    Icon(
+        painter = arrowPainter,
+        contentDescription = null,
+        tint = AppTheme.colorScheme.backgroundBrand,
+        modifier = modifier
+            .sizeIn(
+                minWidth = 24.dp,
+                minHeight = 24.dp
+            )
+            .padding(8.dp)
+            .rotate(rotation - additionalRotation)
+    )
+}
 
 @Composable
 fun AppCircularLoading(
@@ -32,7 +81,7 @@ fun AppCircularLoading(
         initialValue = 0f,
         targetValue = 720f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1000, easing =  FastOutSlowInEasing),
+            animation = tween(2000, easing =  FastOutSlowInEasing),
             repeatMode = RepeatMode.Restart,
             initialStartOffset = StartOffset(offsetMillis = 700, StartOffsetType.FastForward)
         ), label = ""
@@ -66,5 +115,13 @@ private fun AppDoubleLoadingPreview() {
         AppDoubleLoading(
             tint = AppTheme.colorScheme.foreground
         )
+    }
+}
+
+@Preview
+@Composable
+private fun CompassLoadingPreview() {
+    CompassTheme {
+        CompassLoading()
     }
 }

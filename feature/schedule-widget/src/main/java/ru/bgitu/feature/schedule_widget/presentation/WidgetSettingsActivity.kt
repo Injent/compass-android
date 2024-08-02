@@ -1,24 +1,24 @@
 package ru.bgitu.feature.schedule_widget.presentation
 
-import android.app.Activity
 import android.appwidget.AppWidgetManager
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
-import android.view.Window
+import android.view.View.LAYER_TYPE_SOFTWARE
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.SideEffect
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.toArgb
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.appwidget.updateAll
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
 import ru.bgitu.feature.schedule_widget.copy
 import ru.bgitu.feature.schedule_widget.model.WidgetOptions
@@ -29,8 +29,14 @@ import ru.bgitu.feature.schedule_widget.widget.ScheduleWidget
 
 class WidgetSettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        actionBar?.hide()
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        enableEdgeToEdge()
+        if (SDK_INT >= 29) {
+            window.isStatusBarContrastEnforced = false
+            window.isNavigationBarContrastEnforced = false
+        }
+        if (SDK_INT < 29) {
+            window.decorView.rootView.setLayerType(LAYER_TYPE_SOFTWARE, null)
+        }
         super.onCreate(savedInstanceState)
 
         val appWidgetId = intent?.extras?.getInt(
@@ -68,19 +74,26 @@ class WidgetSettingsActivity : ComponentActivity() {
                         finishSettings(appWidgetId, false)
                     }
                 )
-
-                val navigationBarColor = AppTheme.colorScheme.background1
-                SideEffect {
-                    window.navigationBarColor = navigationBarColor.toArgb()
-                    window.statusBarColor = navigationBarColor.toArgb()
-                }
             }
+        }
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        overrideLargeFontSize()
+    }
+
+    private fun overrideLargeFontSize() {
+        Configuration().apply {
+            setTo(baseContext.resources.configuration)
+            fontScale = fontScale.coerceAtMost(1.5f)
+            applyOverrideConfiguration(this)
         }
     }
 
     private fun finishSettings(appWidgetId: Int, save: Boolean) {
         val resultValue = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        setResult(if (save) Activity.RESULT_OK else Activity.RESULT_CANCELED, resultValue)
+        setResult(if (save) RESULT_OK else RESULT_CANCELED, resultValue)
         finish()
     }
 }

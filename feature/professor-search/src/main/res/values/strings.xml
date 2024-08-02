@@ -2,12 +2,13 @@
 <resources>
     <string name="recent_search_results">Recent</string>
     <string name="not_holding_classes">Not holding classes</string>
-    <string name="you_didnt_search_professors">You weren\'t looking for teachers</string>
+    <string name="search_professors_description">Look for teachers according to their schedule</string>
     <string name="professor_search">Teachers</string>
     <string name="attention">Attention!</string>
-    <string name="alert_text">The schedule provided is not a schedule of retakes or work—outs - check this information personally with the teachers or at the stands of the department</string>
+    <string name="alert_text">The schedule provided {is not} a schedule of retakes or workouts - check this information {personally with the teachers} or at the {stands of the department}</string>
     <string name="clear_search">clear</string>
     <string name="filter_by_weeks">by weeks</string>
     <string name="filter_by_days">by days</string>
     <string name="from_date_to_date" translatable="false">%s - %s</string>
+    <string name="search_professors_title">Teacher\'s schedule</string>
 </resources>

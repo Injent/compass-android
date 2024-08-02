@@ -18,54 +18,69 @@ message UserPrefsPb {
     bool teacher_sort_by_weeks = 4;
     repeated GroupSlotPb saved_groups = 5;
     bool show_groups_on_main_screen = 6;
+
 }
 
 message DataVersionPb {
     int32 schedule_version = 1;
     int32 curr_app_version_code = 2;
-    int32 last_force_update_version = 3;
     int32 new_features_version = 4;
     int32 schema_version = 5;
-    int32 guest_account_version = 6;
+    int32 account_version = 6;
+
+    int32 deprecated_last_force_update_version = 3;
 }
 
 message CredentialsPb {
     string access_token = 1;
     string refresh_token = 2;
-    int64 expiration_date = 3;
-    int64 date_diff = 4;
-    int64 auth_date = 5;
+    int64 last_auth_date = 5;
     int64 user_id = 6;
     int32 group_id = 7;
     string group_name = 8;
-    bool is_verified = 9;
+
+    // Deprecated
+    int64 deprecated_expiration_date = 3;
+    int64 deprecated_date_diff = 4;
+    bool deprecated_is_verified = 9;
 }
 
 message UserDataPb {
-    string avatarUrl = 1;
-    repeated string permissions = 2;
+    string display_name = 10;
+    string avatar_url = 1;
     string role = 3;
-    string last_name = 4;
-    int64 eos_user_id = 5;
     string bio = 6;
-    string vkUrl = 7;
-    string tgUrl = 8;
-    string variantsJson = 9;
-    string name = 10;
+    string vk_url = 7;
+    string tg_url = 8;
+    string variants_json = 9;
     bool public_profile = 11;
+
+    repeated string deprecated_permissions = 2;
+    string deprecated_last_name = 4;
+    int64 deprecated_eos_user_id = 5;
 }
 
 message MetadataPb {
-    int64 last_statistics_report = 1;
-    string appUUID = 2;
     repeated string recent_professor_search = 3;
     string newest_update_checksum = 4;
     bool seen_teacher_schedule_alert = 5;
     int64 available_version_code = 6;
     string schedule_notifier_alarm_date_time = 7;
+    bool is_anonymous_user = 8;
+    bool is_mate_banner_closed = 9;
+
+    int64 deprecated_last_statistics_report = 1;
+    string deprecated_app_uuid = 2;
 }
 
 message SettingsPb {
+    CredentialsPb credentials = 16;
+    UserPrefsPb prefs = 17;
+    DataVersionPb data_versions = 18;
+    UserDataPb userdata = 19;
+    MetadataPb metadata = 20;
+
+    // Deprecated
     string deprecated_studentInfo = 1;
     int32 deprecated_schedule_version = 2;
     int32 deprecated_user_version = 3;
@@ -81,10 +96,4 @@ message SettingsPb {
     bool deprecated_show_pinned_schedule = 13;
     int32 deprecated_last_force_update_version = 14;
     int32 deprecated_new_features_version = 15;
-
-    CredentialsPb credentials = 16;
-    UserPrefsPb prefs = 17;
-    DataVersionPb data_versions = 18;
-    UserDataPb userdata = 19;
-    MetadataPb metadata = 20;
 }

@@ -10,7 +10,7 @@ val GroupsModule = module {
     single {
         GroupManagementRepository(
             settingsRepository = get(),
-            serviceApi = get()
+            compassService = get()
         )
     }
 

@@ -7,59 +7,59 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import ru.bgitu.components.signin.model.AuthState
+import ru.bgitu.components.signin.repository.CompassAuthenticator
 import ru.bgitu.components.updates.api.AppUpdateManager
 import ru.bgitu.components.updates.api.model.InstallState
 import ru.bgitu.components.updates.api.model.UpdateAvailability
 import ru.bgitu.components.updates.api.model.UpdateInfo
 import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.common.eventChannel
-import ru.bgitu.core.data.model.AuthStatus
-import ru.bgitu.core.data.repository.CompassAuthenticator
 import ru.bgitu.core.datastore.SettingsRepository
 import ru.bgitu.core.model.settings.UiTheme
 
 data class MainActivityUiState(
     val isLoading: Boolean = true,
-    val authStatus: AuthStatus = AuthStatus.LOADING,
+    val authState: AuthState = AuthState.LOADING,
     val uiTheme: UiTheme = UiTheme.SYSTEM,
     val updateInfo: UpdateInfo = UpdateInfo.Unknown,
     val installState: InstallState = InstallState.Unknown,
     val showUpdateSheet: Boolean = false,
-    val avatarUrl: String? = null
+    val avatarUrl: String? = null,
 )
 
-sealed class MainActivityIntent {
-    data object RetryDownload : MainActivityIntent()
-    data object InstallUpdate : MainActivityIntent()
+sealed interface MainActivityIntent {
+    data object RetryDownload : MainActivityIntent
+    data object InstallUpdate : MainActivityIntent
 }
 
-sealed class MainActivityEvent {
-    data class ShowErrorSnackbar(val details: TextResource) : MainActivityEvent()
-    data object HideSnackBar : MainActivityEvent()
+sealed interface MainActivityEvent {
+    data class ShowErrorSnackbar(val details: TextResource) : MainActivityEvent
+    data object HideSnackBar : MainActivityEvent
 }
 
 class MainViewModel(
     compassAuthenticator: CompassAuthenticator,
     private val appUpdateManager: AppUpdateManager,
-    settings: SettingsRepository,
+    settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     private val _events = eventChannel<MainActivityEvent>()
     val events = _events.receiveAsFlow()
 
     val uiState = combine(
-        compassAuthenticator.validateAuthentication(),
-        settings.data,
+        compassAuthenticator.authState,
+        settingsRepository.data,
         appUpdateManager.appUpdateInfo,
         appUpdateManager.installState
-    ) { authStatus, data, updateInfo, installState ->
+    ) { authState, data, updateInfo, installState ->
         MainActivityUiState(
-            isLoading = authStatus == AuthStatus.LOADING,
-            authStatus = authStatus,
+            isLoading = authState == AuthState.LOADING,
+            authState = authState,
             uiTheme = data.userPrefs.theme,
             updateInfo = updateInfo,
             installState = installState,
-            avatarUrl = data.compassAccount?.avatarUrl,
+            avatarUrl = data.userProfile?.avatarUrl,
             showUpdateSheet = updateInfo is UpdateInfo.NativeUpdate
                     && updateInfo.updateAvailability == UpdateAvailability.UPDATE_AVAILABLE
         )

@@ -3,6 +3,7 @@ package ru.bgitu.core.network.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import ru.bgitu.core.model.UserProfile
+import ru.bgitu.core.model.UserRole
 
 @Serializable
 class NetworkUserProfile(
@@ -10,10 +11,10 @@ class NetworkUserProfile(
     val userId: Long,
     val bio: String,
     val avatarUrl: String?,
-    val firstName: String,
-    val lastName: String,
+    val fullName: String,
     val contacts: NetworkContacts?,
     val variants: List<NetworkVariantEntry>,
+    val role: UserRole,
     val publicProfile: Boolean
 ) {
     @Serializable
@@ -27,10 +28,10 @@ fun NetworkUserProfile.toExternalModel() = UserProfile(
     userId = userId,
     bio = bio,
     avatarUrl = avatarUrl,
-    firstName = firstName,
-    lastName = firstName,
+    displayName = fullName,
     contacts = contacts?.toExternalModel(),
     publicProfile = publicProfile,
+    userRole = role,
     variants = variants.map { entry ->
         UserProfile.VariantEntry(
             subjectName = entry.subjectName,
@@ -43,8 +44,7 @@ fun UserProfile.toNetworkModel() = NetworkUserProfile(
     userId = userId,
     bio = bio,
     avatarUrl = avatarUrl,
-    firstName = firstName,
-    lastName = lastName,
+    fullName = displayName,
     contacts = contacts?.toNetworkModel(),
     variants = variants.map { entry ->
         NetworkUserProfile.NetworkVariantEntry(
@@ -52,5 +52,6 @@ fun UserProfile.toNetworkModel() = NetworkUserProfile(
             variant = entry.variant
         )
     },
+    role = userRole,
     publicProfile = publicProfile
 )

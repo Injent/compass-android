@@ -136,13 +136,15 @@ fun CompassTheme(
     val newColorScheme = if (darkTheme) NewDarkColorScheme else NewLightColorScheme
     val ripple = if (darkTheme) AppDarkRipple else AppLightRipple
 
-    if (!view.isInEditMode && !isTranslucent) {
+    if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
             val insetsController = WindowCompat.getInsetsController(window, view)
             insetsController.isAppearanceLightStatusBars = !darkTheme
             insetsController.isAppearanceLightNavigationBars = !darkTheme
-            window.decorView.setBackgroundColor(newColorScheme.background2.toArgb())
+            if (!isTranslucent) {
+                window.decorView.setBackgroundColor(newColorScheme.background2.toArgb())
+            }
         }
     }
 

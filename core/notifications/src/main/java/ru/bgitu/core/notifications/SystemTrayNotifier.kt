@@ -30,6 +30,10 @@ class SystemTrayNotifier internal constructor(
             .build()
     }
 
+    override fun cancel(notificationId: Int) {
+        notificationManager.cancel(notificationId)
+    }
+
     override fun isNotificationVisible(notificationId: Int): Boolean {
         return notificationManager.activeNotifications
             .any {

@@ -1,8 +1,5 @@
 package ru.bgitu.feature.groups.presentation.search
 
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -34,7 +30,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.androidx.compose.koinViewModel
 import ru.bgitu.core.designsystem.components.AppSearchField
 import ru.bgitu.core.designsystem.theme.AppTheme
-import ru.bgitu.core.designsystem.util.ClearFocusWithImeEffect
 import ru.bgitu.core.designsystem.util.thenIf
 import ru.bgitu.core.model.Group
 import ru.bgitu.core.navigation.LocalNavController
@@ -42,32 +37,22 @@ import ru.bgitu.core.navigation.back
 import ru.bgitu.core.ui.AppBackButton
 import ru.bgitu.core.ui.AppSearchItem
 import ru.bgitu.feature.groups.R
-import ru.bgitu.feature.groups.model.RESULT_PRIMARY_GROUP
-import ru.bgitu.feature.groups.model.RESULT_SECONDARY_GROUP
-import ru.bgitu.feature.groups.model.setPrimaryGroup
-import ru.bgitu.feature.groups.model.setSecondaryGroup
+import ru.bgitu.feature.groups.model.GroupParcelable
 
 @Composable
-fun GroupSearchRoute(
-    backResultType: String
-) {
+fun GroupSearchRoute(resultKey: String) {
     val navController = LocalNavController.current
     val viewModel: GroupSearchViewModel = koinViewModel()
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    ClearFocusWithImeEffect()
-
     GroupSearchScreen(
         uiState = uiState,
         searchFieldState = viewModel.searchFieldState,
         onSelect = { group ->
-            navController.previousBackStackEntry?.run {
-                when (backResultType) {
-                    RESULT_PRIMARY_GROUP -> savedStateHandle.setPrimaryGroup(group)
-                    RESULT_SECONDARY_GROUP -> savedStateHandle.setSecondaryGroup(group)
-                }
-            }
+            navController.previousBackStackEntry
+                ?.savedStateHandle
+                ?.set(resultKey, GroupParcelable(group.id, group.name))
             navController.back()
         },
         onBack = navController::back

@@ -35,16 +35,17 @@ class FirstOfflineScheduleRepository(
         return scheduleDao.getLessonsStream(
             DateTimeUtil.getStartOfWeek(currentDate).minus(preloadWeekCount, DateTimeUnit.WEEK),
             DateTimeUtil.getEndOfWeek(currentDate).plus(preloadWeekCount, DateTimeUnit.WEEK)
-        ).map {
-            if (it.isEmpty()) return@map ScheduleLoadState.Loading
+        )
+            .map<List<PopulatedLesson>, ScheduleLoadState> {
+                if (it.isEmpty()) return@map ScheduleLoadState.Success(emptyMap())
 
-            val lessons = it.map(PopulatedLesson::toExternalModel)
-            ScheduleLoadState.Success(
-                data = lessons.groupBy { lesson -> lesson.date }.toMap()
-            )
-        }
+                val lessons = it.map(PopulatedLesson::toExternalModel)
+                ScheduleLoadState.Success(
+                    data = lessons.groupBy { lesson -> lesson.date }.toMap()
+                )
+            }
             .onEmpty {
-                emit(ScheduleLoadState.Loading)
+                emit(ScheduleLoadState.Success(emptyMap()))
             }
             .catch {
                 it.printStackTrace()
@@ -118,7 +119,6 @@ class FirstOfflineScheduleRepository(
         synchronizer.updateChangeListVersions {
             copy(
                 scheduleDataVersion = remoteDataVersion.scheduleVersion,
-                lastForceUpdateVersion = remoteDataVersion.lastForceUpdateVersion
             )
         }
         return true

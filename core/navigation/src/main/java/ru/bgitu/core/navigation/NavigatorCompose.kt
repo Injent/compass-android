@@ -1,7 +1,6 @@
 package ru.bgitu.core.navigation
 
 import android.annotation.SuppressLint
-import androidx.annotation.RestrictTo
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
@@ -9,9 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.serialization.generateHashCode
 import kotlinx.serialization.InternalSerializationApi
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.serializer
-import kotlin.reflect.KClass
 
 val LocalNavController = staticCompositionLocalOf<NavController> {
     error("Navigator not provided")
@@ -53,7 +50,7 @@ fun NavController.replaceAll(destination: Screen) {
 }
 
 @OptIn(InternalSerializationApi::class)
-fun NavController.push(destination: Screen) {
+fun NavController.push(destination: Any) {
     if (currentDestination?.id == destination::class.serializer().hashCode()) return
     navigate(destination)
 }
@@ -64,16 +61,14 @@ fun NavController.back(): Boolean {
     } else false
 }
 
-inline fun <reified T : Screen> NavBackStackEntry.isScreen(): Boolean {
-    return this.destination.id == getId<T>()
-}
-
 fun NavBackStackEntry.parent(navController: NavController): NavBackStackEntry {
-    return navController.getBackStackEntry(
-        requireNotNull(this.destination.parent?.route) {
-            "Route can't be null. Error when building navigation tree"
-        }
-    )
+    return runCatching {
+        navController.getBackStackEntry(
+            requireNotNull(this.destination.parent?.route) {
+                "Route can't be null. Error when building navigation tree"
+            }
+        )
+    }.getOrDefault(this)
 }
 
 @SuppressLint("RestrictedApi")

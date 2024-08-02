@@ -7,8 +7,6 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.bgitu.core.common.di.CommonQualifiers
-import ru.bgitu.core.data.repository.CompassAuthenticator
-import ru.bgitu.core.data.repository.DefaultCompassAuthenticator
 
 val FlavoredDataModule = module {
 

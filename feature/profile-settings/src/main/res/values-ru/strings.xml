@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="profile_settings">Настройки профиля</string>
-    <string name="profile_permissions">Разрешения</string>
-    <string name="request_permission">Запросить</string>
-    <string name="view_gradebook">Просмотреть</string>
     <string name="gradebook">Зачетная книжка №%s</string>
-    <string name="in_development">В разработке</string>
     <string name="my_group">Моя группа</string>
-    <string name="change_group">изменить</string>
     <string name="add_link">Добавить ссылку</string>
-    <string name="last_name">Фамилия</string>
-    <string name="first_name">Имя</string>
+    <string name="display_name">Отображаемое имя</string>
     <string name="bio">О себе</string>
     <string name="public_profile">Виден в поиске</string>
+    <string name="enter_display_name">Введите имя</string>
+    <string name="hint_bio">Добавьте описание</string>
+    <string name="profile_photo">Фото профиля</string>
+    <string name="hint_avatar">Скопируйте прямую ссылку на картинку, которую хотите поставить как аватар для профиля</string>
+    <string name="avatar_empty">Буфер обмена пуст</string>
+    <string name="avatar_filled">Эта картинка из буфера обмена</string>
+    <string name="current_clipboard">Скопированный текст</string>
+    <string name="avatar_invalid">Скопированный текст не является прямой ссылкой на картинку</string>
+    <string name="public_profile_description">Ваш профиль будет виден в поиске для других студентов в с теми же вариантами как и у вас</string>
 </resources>

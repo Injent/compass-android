@@ -5,6 +5,16 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven("https://developer.huawei.com/repo")
+        maven("https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/")
+    }
+
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "com.huawei.agconnect") {
+                useModule("com.huawei.agconnect:agcp:1.9.1.300")
+            }
+        }
     }
 }
 dependencyResolutionManagement {
@@ -13,7 +23,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://jitpack.io")
-        maven("https://artifactory-external.vkpartner.ru/artifactory/maven")
+        maven(url = "https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/")
     }
 }
 
@@ -24,10 +34,12 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(
     ":app",
     ":core:data",
+    ":core:data-test",
     ":core:designsystem",
     ":feature:home",
     ":feature:login",
     ":core:datastore",
+    ":core:datastore-test",
     ":core:network",
     ":core:model",
     ":core:domain",
@@ -38,6 +50,7 @@ include(
     ":core:testing",
     ":core:database",
     ":components:sync",
+    ":components:signin",
     ":core:notifications",
     ":components:updates:api",
     ":components:updates:impl",
@@ -53,5 +66,4 @@ include(
     ":feature:findmate",
     ":feature:groups",
 )
-include(":core:data-test")
-include(":core:datastore-test")
+include(":feature:input")

@@ -4,7 +4,7 @@
 
     </style>
 
-    <style name="Theme.BgituSchedule.Starting" parent="Theme.SplashScreen">
+    <style name="Theme.Compass.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/splash_background</item>
 
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_splash</item>

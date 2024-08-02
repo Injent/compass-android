@@ -109,14 +109,17 @@ fun LessonItem(
     modifier: Modifier = Modifier,
     expanded: Boolean = false
 ) {
-    LessonLayout(
-        modifier = modifier,
-        params = LessonLayoutParams(
+    val layoutParams = remember {
+        LessonLayoutParams(
             indicatorSpaceWidth = 12.dp,
             gap = 24.dp,
             verticalGap = 8.dp,
             firstItem = lesson.isFirst
         )
+    }
+    LessonLayout(
+        modifier = modifier,
+        params = layoutParams
     ) {
         val startTime = remember(lesson.startTime) {
             DateTimeUtil.formatTime(lesson.startTime)
@@ -141,7 +144,6 @@ fun LessonItem(
         Text(
             text = startTime,
             fontWeight = FontWeight.Bold,
-            style = AppTheme.typography.callout,
             color = AppTheme.colorScheme.foreground1,
             maxLines = 1,
             overflow = TextOverflow.Visible,
@@ -212,7 +214,6 @@ fun LessonItem(
             Box(
                 modifier = Modifier
                     .layoutId(LessonComponentId.INDICATOR_GRADIENT)
-
                     .background(
                         brush = Brush.verticalGradient(
                             listOf(Color.Transparent, AppTheme.colorScheme.background2),

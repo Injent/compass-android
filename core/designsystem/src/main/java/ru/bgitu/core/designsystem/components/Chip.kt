@@ -27,7 +27,7 @@ fun AppChip(
     val color by animateColorAsState(
         targetValue = if (selected) {
             AppTheme.colorScheme.foreground
-        } else AppTheme.colorScheme.backgroundTouchable,
+        } else AppTheme.colorScheme.background3,
         label = "transition"
     )
     Surface(

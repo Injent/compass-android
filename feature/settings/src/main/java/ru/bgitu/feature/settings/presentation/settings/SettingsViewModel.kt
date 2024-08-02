@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.bgitu.core.common.eventChannel
-import ru.bgitu.core.data.repository.CompassAuthenticator
 import ru.bgitu.core.datastore.SettingsRepository
 import ru.bgitu.core.model.settings.UiTheme
 import ru.bgitu.core.model.settings.UserPrefs
@@ -27,7 +26,6 @@ sealed interface SettingsIntent {
     data class IgnoreMinorUpdate(val ignoreUpdates: Boolean) : SettingsIntent
     data class ChangeUiTheme(val uiTheme: UiTheme) : SettingsIntent
     data class SwitchScheduleNotifier(val enabled: Boolean) : SettingsIntent
-    data object Logout : SettingsIntent
     data object NavigateBack : SettingsIntent
     data object NavigateToAbout : SettingsIntent
     data object NavigateToHelp : SettingsIntent
@@ -42,7 +40,6 @@ sealed interface SettingsEvent {
 
 class SettingsViewModel(
     private val settings: SettingsRepository,
-    private val compassAuthenticator: CompassAuthenticator,
     private val scheduleNotifier: ScheduleNotifier
 ) : ViewModel() {
     private val _events = eventChannel<SettingsEvent>()
@@ -68,10 +65,6 @@ class SettingsViewModel(
                     settings.updateUserPrefs {
                         it.copy(theme = intent.uiTheme)
                     }
-                }
-                SettingsIntent.Logout -> {
-                    compassAuthenticator.signOut()
-                    _events.send(SettingsEvent.Logout)
                 }
                 SettingsIntent.NavigateBack -> {
                     _events.send(SettingsEvent.NavigateBack)

@@ -9,9 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImagePainter.State.Error
 import coil.compose.AsyncImagePainter.State.Loading
 import coil.compose.rememberAsyncImagePainter
@@ -23,6 +21,7 @@ fun DynamicAsyncImage(
     imageUrl: String?,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
+    onResult: ((Boolean) -> Unit)? = null,
     placeholder: (@Composable () -> Unit)? = null,
 ) {
     var isLoading by remember { mutableStateOf(true) }
@@ -33,6 +32,8 @@ fun DynamicAsyncImage(
         onState = { state ->
             isLoading = state is Loading
             isError = state is Error
+
+            onResult?.invoke(!isError)
         },
     )
 

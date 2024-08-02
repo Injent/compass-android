@@ -2,6 +2,7 @@ package ru.bgitu.core.datastore
 
 import androidx.datastore.core.Serializer
 import com.google.protobuf.InvalidProtocolBufferException
+import ru.bgitu.core.model.UserRole
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -10,6 +11,9 @@ object SettingsSerializer : Serializer<SettingsPb> {
         .copy {
             prefs = userPrefsPb {
                 showGroupsOnMainScreen = true
+            }
+            userdata = userDataPb {
+                role = UserRole.REGULAR.name
             }
         }
 

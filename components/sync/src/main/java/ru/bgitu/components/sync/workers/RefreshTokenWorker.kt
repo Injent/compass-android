@@ -12,10 +12,9 @@ import androidx.work.workDataOf
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import ru.bgitu.components.sync.util.successOrRetryUntil
 import ru.bgitu.components.sync.util.toForegroundInfo
+import ru.bgitu.core.common.Result
 import ru.bgitu.core.data.model.CloudMessagingTokenType
-import ru.bgitu.core.data.repository.CompassAuthenticator
 import ru.bgitu.core.datastore.SettingsRepository
 import ru.bgitu.core.notifications.Notifier
 import kotlin.time.Duration.Companion.hours
@@ -24,7 +23,6 @@ import kotlin.time.toJavaDuration
 class RefreshTokenWorker(
     appContext: Context,
     params: WorkerParameters,
-    private val authenticator: CompassAuthenticator,
     private val settingsRepository: SettingsRepository,
     private val notifier: Notifier,
     private val ioDispatcher: CoroutineDispatcher
@@ -43,11 +41,12 @@ class RefreshTokenWorker(
         if (token == null || type == null)
             return@withContext Result.failure()
 
-        val success = authenticator.refreshCmt(
-            token = token,
-            type = CloudMessagingTokenType.valueOf(type)
-        ) is ru.bgitu.core.common.Result.Success
-        successOrRetryUntil(success = success)
+
+//        val success = authenticator.refreshCmt(
+//            token = token,
+//            type = CloudMessagingTokenType.valueOf(type)
+//        ) is ru.bgitu.core.common.Result.Success
+        Result.success()
     }
 
     companion object {

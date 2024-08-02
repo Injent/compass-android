@@ -141,7 +141,7 @@ private fun AboutScreenContent(
                                 linkInteractionListener = { context.shareAppLink() }
                             )
                         ) {
-                            append(context.getString(R.string.user_agreement))
+                            append(context.getString(R.string.share_app))
                         }
                     },
                     color = AppTheme.colorScheme.foreground,

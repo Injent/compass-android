@@ -2,19 +2,18 @@
 <resources>
     <string name="profile">Профиль</string>
     <string name="settings">Настройки</string>
-    <string name="documents">Документы</string>
     <string name="about_app">О приложении</string>
     <string name="help">Помощь и поддержка</string>
     <string name="sign_out">Выйти</string>
-    <string name="statement">Ведомости</string>
-    <string name="educational_material">Учебный материал</string>
     <string name="edit">Редактировать</string>
     <string name="about_me">Обо мне</string>
     <string name="contacts">Связь</string>
     <string name="variants">Варианты</string>
     <string name="enter_about_me">Укажите свои контакты, чтобы к вам могли обращатся</string>
     <string name="option_specify">Заполнить</string>
-    <string name="student_of">Студент %s</string>
     <string name="my_groups">Мои группы</string>
     <string name="are_you_sure_you_want_to_sign_out">Вы уверены что хотите выйти?</string>
+    <string name="try_find_mates">Ищите помощников!</string>
+    <string name="new_feature_dialog_text">Войдите со своим аккаунтом от {ВК}, {Telegram} или {Google}</string>
+    <string name="new_feature_dialog_text_warning">Будет произведен выход из приложения</string>
 </resources>

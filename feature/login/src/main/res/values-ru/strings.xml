@@ -3,19 +3,12 @@
     <string name="label_login">Логин</string>
     <string name="label_password">Пароль</string>
     <string name="button_login">Войти</string>
-    <string name="authorization">Авторизация ЭОС</string>
-    <string name="error_eos_does_not_responds">Сервис ЭОС не доступен</string>
-    <string name="error_unknown">Неизвестная ошибка</string>
+    <string name="authorization">Вход</string>
     <string name="enter_your_registration_email">На указанную почту придёт новый пароль</string>
-    <string name="why_eos">Зачем ЭОС?</string>
-    <string name="explanation_dialog_text">Авторизация ЭОС позволяет установить вашу личность. В дальнейшем это будет нужно для некоторых функций приложения.\n\nСейчас они находятся в разработке. Вы можете войти как гость и авторизоваться позже когда вам это будет удобно</string>
     <string name="user_agreement_text">Продолжая использовать сервис вы принимаете {пользовательское соглашение}</string>
-    <string name="sign_in_with_eos">Войти с ЭОС</string>
     <string name="sign_in_as_guest">Войти как гость</string>
     <string name="user_agreement">Пользовательское соглашение</string>
     <string name="pick_group">Выберите свою группу</string>
-    <string name="your_selected_group">Вы выбрали группу %s</string>
-    <string name="group_not_selected">Группа не выбрана</string>
     <string name="button_continue">Продолжить</string>
     <string name="alternative">ИЛИ</string>
     <string name="confirm_account">Подтвердить аккаунт</string>
@@ -37,4 +30,6 @@
     <string name="desc_show_password">Показать пароль</string>
     <string name="desc_hide_password">Скрыть пароль</string>
     <string name="desc_login">Войти</string>
+    <string name="sign_in_with_google">Войти с Google</string>
+    <string name="sign_in_with_telegram">Войти с Telegram</string>
 </resources>

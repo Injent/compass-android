@@ -17,7 +17,6 @@ val SyncModule = module {
             params = get(),
             settings = get(),
             scheduleRepository = get(),
-            notifier = get()
         )
     } bind SyncWorker::class
 
@@ -25,17 +24,16 @@ val SyncModule = module {
         RefreshTokenWorker(
             appContext = androidContext(),
             params = get(),
-            authenticator = get(),
             settingsRepository = get(),
             notifier = get(),
             ioDispatcher = get(CommonQualifiers.DispatcherIO)
         )
     } bind RefreshTokenWorker::class
 
-    single<SyncManager> {
+    single {
         WorkManagerSyncManager(
             context = androidContext(),
             settingsRepository = get()
         )
-    }
+    } bind SyncManager::class
 }

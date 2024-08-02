@@ -5,6 +5,8 @@ import android.app.Notification
 interface Notifier {
     fun backgroundWorkNotification(): Notification
 
+    fun cancel(notificationId: Int)
+
     fun isNotificationVisible(notificationId: Int): Boolean
 
     companion object {

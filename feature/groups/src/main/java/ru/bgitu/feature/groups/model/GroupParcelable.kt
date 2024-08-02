@@ -2,11 +2,7 @@ package ru.bgitu.feature.groups.model
 
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.lifecycle.SavedStateHandle
 import ru.bgitu.core.model.Group
-
-internal const val RESULT_PRIMARY_GROUP = "result_primary_group"
-internal const val RESULT_SECONDARY_GROUP = "result_secondary_group"
 
 internal data class GroupParcelable(
     val id: Int,
@@ -37,20 +33,4 @@ internal data class GroupParcelable(
     }
 }
 
-private fun GroupParcelable.toExternalModel() = Group(id = id, name = name)
-
-fun SavedStateHandle.setPrimaryGroup(group: Group) {
-    set(RESULT_PRIMARY_GROUP, GroupParcelable(id = group.id, name = group.name))
-}
-
-fun SavedStateHandle.getPrimaryGroup(): Group? {
-    return get<GroupParcelable?>(RESULT_PRIMARY_GROUP)?.toExternalModel()
-}
-
-fun SavedStateHandle.setSecondaryGroup(group: Group) {
-    set(RESULT_SECONDARY_GROUP, GroupParcelable(id = group.id, name = group.name))
-}
-
-fun SavedStateHandle.getSecondaryGroup(): Group? {
-    return get<GroupParcelable?>(RESULT_SECONDARY_GROUP)?.toExternalModel()
-}
+internal fun GroupParcelable.toExternalModel() = Group(id = id, name = name)

@@ -10,6 +10,7 @@ enum class ProfileItem(
     @DrawableRes val iconRes: Int
 ) {
     MY_GROUPS(R.string.my_groups, AppIcons.Group),
+    SETTINGS(R.string.settings, AppIcons.SettingsOutlined),
     HELP(R.string.help, AppIcons.Help),
     ABOUT(R.string.about_app, AppIcons.SmartPhone),
 }
