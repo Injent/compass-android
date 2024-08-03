@@ -17,7 +17,7 @@ val LocalNavController = staticCompositionLocalOf<NavController> {
 fun NavController.navigateTopDestination(tab: Tab) {
     val navigatingId = when(tab) {
         Tab.HOME -> getId<Screen.Home>()
-        Tab.PROFESSOR_SEARCH -> getId<Screen.ProfessorSearch>()
+        Tab.PROFESSOR_SEARCH -> getId<Screen.TeacherSearch>()
         Tab.MATES -> getId<Screen.SearchMate>()
         Tab.PROFILE -> getId<Screen.Profile>()
     }
@@ -27,7 +27,7 @@ fun NavController.navigateTopDestination(tab: Tab) {
     navigate(
         when (tab) {
             Tab.HOME -> Screen.Home
-            Tab.PROFESSOR_SEARCH -> Screen.ProfessorSearch()
+            Tab.PROFESSOR_SEARCH -> Screen.TeacherSearch()
             Tab.MATES -> Screen.SearchMate
             Tab.PROFILE -> Screen.ProfileGraph
         }
@@ -38,14 +38,6 @@ fun NavController.navigateTopDestination(tab: Tab) {
 
         launchSingleTop = true
         restoreState = true
-    }
-}
-
-fun NavController.replaceAll(destination: Screen) {
-    navigate(destination) {
-        popUpTo(graph.findStartDestination().id) {
-            inclusive = true
-        }
     }
 }
 

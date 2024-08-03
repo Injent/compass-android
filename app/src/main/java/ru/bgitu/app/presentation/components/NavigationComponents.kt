@@ -144,7 +144,7 @@ fun NavigationItems(
 private fun NavDestination.isCurrentTab(tab: Tab): Boolean {
     return when (tab) {
         Tab.HOME -> id == getId<Screen.Home>()
-        Tab.PROFESSOR_SEARCH -> id == getId<Screen.ProfessorSearch>()
+        Tab.PROFESSOR_SEARCH -> id == getId<Screen.TeacherSearch>()
         Tab.MATES -> id == getId<Screen.SearchMate>()
         Tab.PROFILE -> id == getId<Screen.Profile>()
     }

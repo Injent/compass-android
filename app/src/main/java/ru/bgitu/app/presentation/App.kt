@@ -42,7 +42,6 @@ import ru.bgitu.core.model.settings.UiTheme
 import ru.bgitu.core.navigation.LocalNavController
 import ru.bgitu.core.navigation.Screen
 import ru.bgitu.core.navigation.getId
-import ru.bgitu.core.navigation.replaceAll
 import ru.bgitu.core.ui.listenEvents
 import ru.bgitu.feature.update.presentation.DownloadProgressSnackbarEffect
 
@@ -94,10 +93,23 @@ fun App(
                 }
                 when (uiState.authState) {
                     AuthState.AUTHED, AuthState.ANONYMOUS -> {
-                        navHostController.clearBackStack<Screen.Loading>()
-                        navHostController.replaceAll(Screen.MainGraph)
+                        navHostController.navigate(
+                            route = Screen.MainGraph
+                        ) {
+                            popUpTo<Screen.Loading> {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     }
-                    AuthState.NOT_AUTHED -> navHostController.replaceAll(Screen.LoginGraph)
+                    AuthState.NOT_AUTHED -> navHostController.navigate(
+                        route = Screen.LoginGraph
+                    ) {
+                        popUpTo<Screen.Loading> {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
                     else -> Unit
                 }
             }
@@ -158,7 +170,7 @@ private fun AppMainScreenContent(
                     AppBottomNavigation {
                         NavigationItems(
                             avatarUrl = uiState.avatarUrl,
-                            hideMateTab = uiState.authState == AuthState.ANONYMOUS,
+                            hideMateTab = uiState.authState != AuthState.AUTHED,
                             modifier = Modifier
                                 .weight(1f)
                         )
@@ -188,7 +200,7 @@ private fun shouldUseDarkTheme(uiState: MainActivityUiState): Boolean {
 fun NavDestination?.isTopLevelDestination(): Boolean {
     return listOf(
         getId<Screen.Home>(),
-        getId<Screen.ProfessorSearch>(),
+        getId<Screen.TeacherSearch>(),
         getId<Screen.SearchMate>(),
         getId<Screen.Profile>()
     ).contains(this?.id)

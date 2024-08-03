@@ -21,34 +21,29 @@ import ru.bgitu.core.data.repository.CompassRepository
 import ru.bgitu.core.datastore.SettingsRepository
 import ru.bgitu.core.designsystem.util.textAsFlow
 
-sealed class ProfessorSearchIntent {
-    data class SelectProfessor(val professorName: String) : ProfessorSearchIntent()
-    data object SeenAlert : ProfessorSearchIntent()
-    data object ClearSearch : ProfessorSearchIntent()
-    data class SetStartDestination(val professorName: String? = null) : ProfessorSearchIntent()
+sealed class TeacherSearchIntent {
+    data class SelectTeacher(val professorName: String) : TeacherSearchIntent()
+    data object SeenAlert : TeacherSearchIntent()
+    data object ClearSearch : TeacherSearchIntent()
 }
 
-sealed class ProfessorSearchEvent {
-    data class ShowError(val errorDetails: TextResource) : ProfessorSearchEvent()
-    data class NavigateToProfessorDetails(val professorName: String) : ProfessorSearchEvent()
+sealed class TeacherSearchEvent {
+    data class ShowError(val errorDetails: TextResource) : TeacherSearchEvent()
+    data class NavigateToTeacherDetails(val teacherName: String) : TeacherSearchEvent()
 }
 
-data class ProfessorSearchUiState internal constructor(
+data class TeacherSearchUiState internal constructor(
     val recentSearchResults: List<String> = emptyList(),
     val searchResults: List<String> = emptyList(),
     val seenScheduleAlert: Boolean = true,
     val isLoading: Boolean = true
 )
 
-class ProfessorSearchViewModel(
+class TeacherSearchViewModel(
     compassRepository: CompassRepository,
-    professorName: String? = null,
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
-    var professorName = professorName
-        private set
-
-    private val _events = eventChannel<ProfessorSearchEvent>()
+    private val _events = eventChannel<TeacherSearchEvent>()
     val events = _events.receiveAsFlow()
 
     val searchFieldState = TextFieldState()
@@ -73,7 +68,7 @@ class ProfessorSearchViewModel(
         compassRepository.getRecentProfessors(),
         settingsRepository.metadata
     ) { results, recentResults, metadata ->
-        ProfessorSearchUiState(
+        TeacherSearchUiState(
             searchResults = results,
             recentSearchResults = recentResults,
             isLoading = false,
@@ -83,32 +78,29 @@ class ProfessorSearchViewModel(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = ProfessorSearchUiState()
+            initialValue = TeacherSearchUiState()
         )
 
-    fun onIntent(intent: ProfessorSearchIntent) {
+    fun onIntent(intent: TeacherSearchIntent) {
         when (intent) {
-            is ProfessorSearchIntent.SelectProfessor -> {
+            is TeacherSearchIntent.SelectTeacher -> {
                 _events.trySend(
-                    ProfessorSearchEvent.NavigateToProfessorDetails(intent.professorName)
+                    TeacherSearchEvent.NavigateToTeacherDetails(intent.professorName)
                 )
             }
-            ProfessorSearchIntent.SeenAlert -> {
+            TeacherSearchIntent.SeenAlert -> {
                 viewModelScope.launch {
                     settingsRepository.updateMetadata {
                         it.copy(seenTeacherScheduleAlert = true)
                     }
                 }
             }
-            ProfessorSearchIntent.ClearSearch -> {
+            TeacherSearchIntent.ClearSearch -> {
                 viewModelScope.launch {
                     settingsRepository.updateMetadata {
                         it.copy(recentProfessorSearch = emptyList())
                     }
                 }
-            }
-            is ProfessorSearchIntent.SetStartDestination -> {
-                professorName = intent.professorName
             }
         }
     }

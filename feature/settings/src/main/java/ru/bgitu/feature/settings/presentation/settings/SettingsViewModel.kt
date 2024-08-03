@@ -35,7 +35,6 @@ sealed interface SettingsEvent {
     data object NavigateBack : SettingsEvent
     data object NavigateToAbout : SettingsEvent
     data object NavigateToHelp : SettingsEvent
-    data object Logout : SettingsEvent
 }
 
 class SettingsViewModel(

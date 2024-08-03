@@ -50,9 +50,8 @@ import ru.bgitu.core.designsystem.util.TopGoneLayout
 import ru.bgitu.core.designsystem.util.asString
 import ru.bgitu.core.designsystem.util.rememberImeState
 import ru.bgitu.core.navigation.LocalNavController
-import ru.bgitu.core.navigation.Tab
+import ru.bgitu.core.navigation.Screen
 import ru.bgitu.core.navigation.back
-import ru.bgitu.core.navigation.navigateTopDestination
 import ru.bgitu.core.ui.listenEvents
 import ru.bgitu.feature.login.R
 import ru.bgitu.feature.login.presentation.components.OneTaps
@@ -80,7 +79,14 @@ fun LoginRoute(
                 snackbarController.dismiss()
             }
             LoginEvent.NavigateToMainScreen -> {
-                navController.navigateTopDestination(Tab.HOME)
+                navController.navigate(Screen.Home) {
+                    popUpTo<Screen.LoginGraph> {
+                        inclusive = true
+                    }
+
+                    launchSingleTop = true
+                    restoreState = true
+                }
                 snackbarController.dismiss()
             }
             LoginEvent.ReadUserAgreement -> {

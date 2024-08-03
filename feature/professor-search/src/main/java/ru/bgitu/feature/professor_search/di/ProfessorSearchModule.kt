@@ -2,22 +2,23 @@ package ru.bgitu.feature.professor_search.di
 
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
-import ru.bgitu.feature.professor_search.presentation.details.ProfessorDetailsViewModel
-import ru.bgitu.feature.professor_search.presentation.search.ProfessorSearchViewModel
+import ru.bgitu.feature.professor_search.presentation.details.TeacherDetailsViewModel
+import ru.bgitu.feature.professor_search.presentation.search.TeacherSearchViewModel
 
 val ProfessorSearchModule = module {
-    viewModel { params ->
-        ProfessorSearchViewModel(
+    viewModel {
+        TeacherSearchViewModel(
             compassRepository = get(),
             settingsRepository = get(),
-            professorName = params.getOrNull()
         )
     }
-    viewModel {
-        ProfessorDetailsViewModel(
+    viewModel { params ->
+        TeacherDetailsViewModel(
             compassRepository = get(),
-            professorNameArg = it.get(),
-            settingsRepository = get()
+            settingsRepository = get(),
+            teacherName = checkNotNull(params.getOrNull()) {
+                "Teacher name not provided in ViewModel params"
+            },
         )
     }
 }

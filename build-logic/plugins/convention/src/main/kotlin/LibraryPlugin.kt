@@ -1,12 +1,10 @@
 
-import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.kotlin
-import ru.bgitu.buildlogic.androidTestImplementation
 import ru.bgitu.buildlogic.configureFlavors
 import ru.bgitu.buildlogic.configureKotlin
 import ru.bgitu.buildlogic.libs
@@ -25,6 +23,10 @@ class LibraryPlugin : Plugin<Project> {
             defaultConfig.targetSdk = libs.findVersion("targetSdk").get().toString().toInt()
             testOptions.animationsDisabled = true
             configureFlavors(this)
+
+            defaultConfig {
+                consumerProguardFiles("consumer-proguard-rules.pro")
+            }
 
             sourceSets.getByName("demo").assets.srcDirs(files("$projectDir/sampledata"))
         }

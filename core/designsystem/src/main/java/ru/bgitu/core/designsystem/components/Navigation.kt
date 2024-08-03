@@ -4,7 +4,6 @@ import android.view.SoundEffectConstants
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.CubicBezierEasing
-import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.background
@@ -156,11 +155,10 @@ fun TabItem(
                         animatable.animateTo(
                             targetValue = 0f,
                             animationSpec = keyframes {
-                                durationMillis = 300
-                                0f at 0 using FastOutLinearInEasing
-                                0.8f at 100 using  FastOutSlowInEasing
-                                1f at 150 // ms
-                                0f at 300 using CubicBezierEasing(1f, 0.2f, 0.0f, 0.4f)
+                                durationMillis = 200
+                                0f at 0
+                                1f at 90 using CubicBezierEasing(1f, 0.2f, 0.0f, 0.4f)
+                                0f at 200 using FastOutSlowInEasing
                             }
                         )
                     }

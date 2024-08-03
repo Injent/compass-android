@@ -28,8 +28,7 @@ class DefaultCompassAuthenticator(
 
     override val authState: Flow<AuthState> = combine(
         settingsRepository.data.distinctUntilChanged { old, new ->
-            (old.isAuthorized != new.isAuthorized)
-                    || (old.isAnonymous != new.isAnonymous)
+            (old.isAuthorized != new.isAuthorized) || (old.isAnonymous != new.isAnonymous)
         },
         networkMonitor.isOnline
     ) { userData, isOnline ->
@@ -64,7 +63,6 @@ class DefaultCompassAuthenticator(
     }
 
     override suspend fun signInAnonymously(): SignInResult {
-        settingsRepository.clearUserData()
         settingsRepository.updateMetadata {
             it.copy(isAnonymousUser = true)
         }

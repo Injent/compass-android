@@ -1,7 +1,9 @@
 package ru.bgitu.feature.professor_search.presentation.details
 
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -47,6 +49,8 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import ru.bgitu.core.common.CommonStrings
 import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.common.LessonDataUtils
@@ -54,28 +58,32 @@ import ru.bgitu.core.common.iterator
 import ru.bgitu.core.designsystem.components.AppChip
 import ru.bgitu.core.designsystem.components.AppIconButton
 import ru.bgitu.core.designsystem.components.AppTextButton
+import ru.bgitu.core.designsystem.components.CompassLoading
 import ru.bgitu.core.designsystem.components.LocalSnackbarController
 import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.icon.AppIllustrations
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.util.asString
 import ru.bgitu.core.model.ProfessorClass
-import ru.bgitu.core.navigation.LocalNavController
-import ru.bgitu.core.navigation.back
 import ru.bgitu.core.ui.listenEvents
 import ru.bgitu.feature.professor_search.R
+import ru.bgitu.feature.professor_search.presentation.KEY_TEACHER_VIEWMODEL
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun ProfessorDetailsScreen(
-    viewModel: ProfessorDetailsViewModel,
+fun TeacherDetailsScreen(
+    teacherName: String,
     onBack: () -> Unit
 ) {
-    val navController = LocalNavController.current
-    val snackbarController = LocalSnackbarController.current
     val context = LocalContext.current
+    val viewModel: TeacherDetailsViewModel = koinViewModel(
+        key = KEY_TEACHER_VIEWMODEL,
+        viewModelStoreOwner = context as ComponentActivity,
+        parameters = { parametersOf(teacherName) }
+    )
+    val snackbarController = LocalSnackbarController.current
 
     viewModel.events.listenEvents { event ->
         when (event) {
@@ -93,11 +101,11 @@ fun ProfessorDetailsScreen(
         }
     }
 
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     BackHandler {
         onBack()
     }
+
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ProfessorDetailsScreenContent(
         uiState = uiState,
@@ -123,6 +131,9 @@ private fun ProfessorDetailsScreenContent(
             .statusBarsPadding()
     ) { paddingValues ->
         LazyColumn(
+            verticalArrangement = if (uiState.isLoading) {
+                Arrangement.Center
+            } else Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = PaddingValues(
                 start = AppTheme.spacing.s,
@@ -191,7 +202,19 @@ private fun ProfessorDetailsScreenContent(
                         }
                     }
                 }
+                else -> loading()
             }
+        }
+    }
+}
+
+private fun LazyListScope.loading() {
+    item {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            CompassLoading()
         }
     }
 }
@@ -403,6 +426,7 @@ private fun ProfessorDetailsTopBar(
                     Spacer(Modifier.width(AppTheme.spacing.s))
                 }
             }
+            else -> Unit
         }
     }
 }

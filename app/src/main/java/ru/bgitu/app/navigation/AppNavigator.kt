@@ -18,8 +18,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import ru.bgitu.core.common.CommonDrawables
 import ru.bgitu.core.navigation.Screen
+import ru.bgitu.feature.about.navigation.about
+import ru.bgitu.feature.findmate.navigation.findMateGraph
+import ru.bgitu.feature.groups.navigation.groupsScreen
+import ru.bgitu.feature.help.navigation.help
+import ru.bgitu.feature.home.impl.navigation.homeScreen
+import ru.bgitu.feature.input.navigation.inputScreen
+import ru.bgitu.feature.login.navigation.loginGraph
+import ru.bgitu.feature.professor_search.navigation.professorSearchScreen
 import ru.bgitu.feature.profile.navigation.profileRoute
 import ru.bgitu.feature.profile_settings.navigation.profileSettings
+import ru.bgitu.feature.settings.navigation.settings
 
 @Composable
 fun AppNavigator(
@@ -32,29 +41,28 @@ fun AppNavigator(
         modifier = modifier
     ) {
         composable<Screen.Loading> { LoadingScreen() }
-        //inputScreen()
-        //about()
-        //help()
-        //settings()
-        //profileSettings()
-        //groupsScreen()
+        inputScreen()
+        about()
+        help()
+        settings()
+        profileSettings()
+        groupsScreen()
 
-        //loginGraph()
+        loginGraph()
         mainGraph()
     }
 }
 
 private fun NavGraphBuilder.mainGraph() {
     navigation<Screen.MainGraph>(
-        startDestination = Screen.Loading,
+        startDestination = Screen.Home,
         enterTransition = { fadeIn() },
         exitTransition = { fadeOut() }
     ) {
-        composable<Screen.Loading> {  }
-        //homeScreen()
-        //professorSearchScreen()
-        //findMateGraph()
-        //profileGraph()
+        homeScreen()
+        professorSearchScreen()
+        findMateGraph()
+        profileGraph()
     }
 }
 

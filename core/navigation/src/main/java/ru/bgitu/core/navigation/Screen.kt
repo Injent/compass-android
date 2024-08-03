@@ -26,9 +26,9 @@ sealed interface Screen {
 
     @Serializable data object Recovery : Screen
 
-    @Serializable data class ProfessorSearch(val professorName: String? = null) : Screen
+    @Serializable data class TeacherSearch(val teacherName: String? = null) : Screen
 
-    @Serializable data class ProfessorSchedule(val professorName: String) : Screen
+    @Serializable data class TeacherSchedule(val teacherName: String) : Screen
 
     @Serializable data object Profile : Screen
 

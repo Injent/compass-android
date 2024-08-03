@@ -6,6 +6,7 @@ import android.os.Build.VERSION.SDK_INT
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -26,7 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.androidx.compose.koinViewModel
-import ru.bgitu.core.designsystem.components.AppChip
 import ru.bgitu.core.designsystem.components.AppSnackbarHost
 import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.theme.AppTheme
@@ -37,23 +37,21 @@ import ru.bgitu.core.navigation.LocalNavController
 import ru.bgitu.core.navigation.Screen
 import ru.bgitu.core.navigation.back
 import ru.bgitu.core.navigation.push
-import ru.bgitu.core.navigation.replaceAll
 import ru.bgitu.core.ui.AppBackButton
 import ru.bgitu.core.ui.listenEvents
 import ru.bgitu.feature.settings.R
-import ru.bgitu.feature.settings.presentation.components.ChipsOption
 import ru.bgitu.feature.settings.presentation.components.SettingsOption
 import ru.bgitu.feature.settings.presentation.components.SwitchOption
+import ru.bgitu.feature.settings.presentation.components.ThemeItem
 
 @Composable
 fun SettingsScreen() {
     val navController = LocalNavController.current
-    val screenModel: SettingsViewModel = koinViewModel()
+    val viewModel: SettingsViewModel = koinViewModel()
 
-    val settingsUiState by screenModel.settingsUiState.collectAsStateWithLifecycle()
-    screenModel.events.listenEvents { event ->
+    val settingsUiState by viewModel.settingsUiState.collectAsStateWithLifecycle()
+    viewModel.events.listenEvents { event ->
         when (event) {
-            is SettingsEvent.Logout -> navController.replaceAll(Screen.LoginGraph)
             SettingsEvent.NavigateBack -> navController.back()
             SettingsEvent.NavigateToAbout -> navController.push(Screen.About)
             SettingsEvent.NavigateToHelp -> navController.push(Screen.Help)
@@ -63,7 +61,7 @@ fun SettingsScreen() {
     (settingsUiState as? SettingsUiState.Success)?.let { state ->
         SettingsScreenContent(
             uiState = state,
-            onIntent = screenModel::onIntent,
+            onIntent = viewModel::onIntent,
         )
     }
 }
@@ -102,22 +100,32 @@ private fun SettingsScreenContent(
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(horizontal = AppTheme.spacing.xl)
+                .padding(top = AppTheme.spacing.xl)
                 .verticalScroll(scrollState),
         ) {
-            SettingsOption(icon = AppIcons.Moon) {
-                ChipsOption(
-                    text = stringResource(R.string.app_theme),
-                    itemCount = UiTheme.entries.size,
-                ) { index ->
-                    val uiTheme = UiTheme.entries[index]
-                    AppChip(
-                        selected = uiState.prefs.theme == uiTheme,
-                        onClick = { onIntent(SettingsIntent.ChangeUiTheme(uiTheme)) },
-                        label = LocalContext.current.resources
-                            .getStringArray(R.array.ui_themes)[index]
-                    )
-                }
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                ThemeItem(
+                    theme = UiTheme.LIGHT,
+                    selected = uiState.prefs.theme == UiTheme.LIGHT,
+                    onClick = { onIntent(SettingsIntent.ChangeUiTheme(UiTheme.LIGHT)) }
+                )
+                ThemeItem(
+                    theme = UiTheme.DARK,
+                    isContrast = uiState.prefs.theme == UiTheme.LIGHT,
+                    selected = uiState.prefs.theme == UiTheme.DARK,
+                    onClick = { onIntent(SettingsIntent.ChangeUiTheme(UiTheme.DARK)) }
+                )
+                ThemeItem(
+                    theme = UiTheme.SYSTEM,
+                    isContrast = uiState.prefs.theme == UiTheme.LIGHT,
+                    selected = uiState.prefs.theme == UiTheme.SYSTEM,
+                    onClick = { onIntent(SettingsIntent.ChangeUiTheme(UiTheme.SYSTEM)) }
+                )
             }
+
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth(),
                 color = AppTheme.colorScheme.background1

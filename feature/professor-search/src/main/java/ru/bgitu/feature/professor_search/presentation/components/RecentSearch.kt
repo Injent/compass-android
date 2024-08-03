@@ -23,11 +23,11 @@ import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.ui.onClick
 import ru.bgitu.feature.professor_search.R
-import ru.bgitu.feature.professor_search.presentation.search.ProfessorSearchUiState
+import ru.bgitu.feature.professor_search.presentation.search.TeacherSearchUiState
 
 @Composable
 fun RecentProfessorSearch(
-    uiState: ProfessorSearchUiState,
+    uiState: TeacherSearchUiState,
     onClick: (String) -> Unit,
     onClear: () -> Unit,
     modifier: Modifier = Modifier

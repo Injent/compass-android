@@ -39,15 +39,6 @@ fun WidgetPreview(
             .widthIn(min = 300.dp)
             .heightIn(min = 240.dp, max = 290.dp)
     ) {
-//        Image(
-//            painter = painterResource(R.drawable.widget_preview_background),
-//            contentDescription = null,
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .matchParentSize()
-//                .clip(AppTheme.shapes.default),
-//        )
-
         AndroidView(
             factory = { context ->
                 LayoutInflater.from(context)

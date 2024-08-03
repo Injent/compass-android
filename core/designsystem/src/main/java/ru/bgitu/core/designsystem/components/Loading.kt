@@ -11,16 +11,18 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.bgitu.core.common.CommonDrawables
 import ru.bgitu.core.designsystem.R
@@ -29,7 +31,8 @@ import ru.bgitu.core.designsystem.theme.CompassTheme
 
 @Composable
 fun CompassLoading(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    loadingSize: Dp = 48.dp,
 ) {
     val arrowPainter = painterResource(CommonDrawables.ic_compass_arrow)
 
@@ -57,18 +60,23 @@ fun CompassLoading(
         ),
     )
 
-    Icon(
-        painter = arrowPainter,
-        contentDescription = null,
-        tint = AppTheme.colorScheme.backgroundBrand,
-        modifier = modifier
-            .sizeIn(
-                minWidth = 24.dp,
-                minHeight = 24.dp
-            )
-            .padding(8.dp)
-            .rotate(rotation - additionalRotation)
-    )
+    Box(
+        contentAlignment = Alignment.Center
+    ) {
+        AppCircularLoading(
+            modifier = Modifier.size(loadingSize),
+            tint = AppTheme.colorScheme.foreground
+        )
+        Icon(
+            painter = arrowPainter,
+            contentDescription = null,
+            tint = AppTheme.colorScheme.foreground,
+            modifier = modifier
+                .size(loadingSize)
+                .padding(loadingSize / 6)
+                .rotate(rotation - additionalRotation)
+        )
+    }
 }
 
 @Composable
@@ -122,6 +130,6 @@ private fun AppDoubleLoadingPreview() {
 @Composable
 private fun CompassLoadingPreview() {
     CompassTheme {
-        CompassLoading()
+        CompassLoading(loadingSize = 48.dp)
     }
 }

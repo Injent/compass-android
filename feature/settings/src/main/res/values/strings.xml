@@ -8,8 +8,6 @@
         <item>System</item>
         <item>Light</item>
         <item>Dark</item>
-        <item>AMOLED</item>
-        <item>Dynamic</item>
     </string-array>
     <string name="logout">Logout</string>
     <string name="show_pinned_schedule">Show schedule as notification</string>
@@ -19,4 +17,7 @@
     <string name="please_allow_notification">Please allow notifications</string>
     <string name="notification_sound">Pinned schedule sound</string>
     <string name="audio_not_selected">Default</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
 </resources>

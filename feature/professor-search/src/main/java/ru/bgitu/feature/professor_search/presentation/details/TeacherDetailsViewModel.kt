@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -52,26 +52,26 @@ data class ProfessorDetailsUiState internal constructor(
     val toDate: LocalDate = DateTimeUtil.getEndOfWeek(fromDate.plus(2, DateTimeUnit.WEEK)),
     val dateBoundary: ClosedRange<LocalDate> = fromDate..toDate,
     val professorName: String,
-    val filteredSchedule: FilteredSchedule = FilteredSchedule.ByWeek(),
+    val filteredSchedule: FilteredSchedule? = null,
+    val isLoading: Boolean = true
 ) {
     val filteredByWeek: Boolean
         get() = filteredSchedule is FilteredSchedule.ByWeek
 }
 
-class ProfessorDetailsViewModel(
+class TeacherDetailsViewModel(
     private val compassRepository: CompassRepository,
-    professorNameArg: String,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    val teacherName: String,
 ) : ViewModel() {
     private val _events = eventChannel<ProfessorDetailsEvent>()
     val events = _events.receiveAsFlow()
 
-    val professorName = MutableStateFlow(professorNameArg)
-    private val _uiState = MutableStateFlow(ProfessorDetailsUiState(professorName = professorName.value))
-    private val fullSchedule = professorName.mapLatest { professor ->
+    private val _uiState = MutableStateFlow(ProfessorDetailsUiState(professorName = teacherName))
+    private val fullSchedule = flow {
         var id = 0L
-        compassRepository.getProfessorSchedule(
-            professorName = professor,
+        val lessons = compassRepository.getProfessorSchedule(
+            professorName = teacherName,
             from = _uiState.value.fromDate,
             to = _uiState.value.toDate
         )
@@ -80,6 +80,7 @@ class ProfessorDetailsViewModel(
                 id++
                 it.copy(id = id)
             }
+        emit(lessons)
     }
     private val selectedDate = MutableStateFlow<LocalDate?>(null)
     private val selectedWeek = MutableStateFlow(_uiState.value.fromDate.dayOfWeek)
@@ -110,18 +111,17 @@ class ProfessorDetailsViewModel(
         }
 
         _uiState.updateAndGet {
-            it.copy(filteredSchedule = filteredSchedule)
+            it.copy(
+                filteredSchedule = filteredSchedule,
+                isLoading = false
+            )
         }
     }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = ProfessorDetailsUiState(professorName = professorNameArg)
+            initialValue = ProfessorDetailsUiState(professorName = teacherName)
         )
-
-    fun changeProfessorName(name: String) {
-
-    }
 
     fun onIntent(intent: ProfessorDetailsIntent) {
         when (intent) {

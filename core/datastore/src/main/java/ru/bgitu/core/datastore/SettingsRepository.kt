@@ -273,6 +273,7 @@ class SettingsRepository(
                 metadata = metadataPb {
                     newestUpdateChecksum = persistentMetadata.newestUpdateChecksum
                     availableVersionCode = persistentMetadata.availableVersionCode
+                    isAnonymousUser = false
                 }
             }
         }

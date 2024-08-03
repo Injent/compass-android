@@ -8,8 +8,6 @@
         <item>Системная</item>
         <item>Светлая</item>
         <item>Темная</item>
-        <item>AMOLED</item>
-        <item>Динамическая</item>
     </string-array>
     <string name="logout">Выйти</string>
     <string name="show_pinned_schedule">Показывать расписание в шторке уведомлений</string>
@@ -19,4 +17,7 @@
     <string name="please_allow_notification">Включите уведомления</string>
     <string name="notification_sound">Звук прикрепленного расписания</string>
     <string name="audio_not_selected">Системный</string>
+    <string name="theme_system">Системная</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Темная</string>
 </resources>

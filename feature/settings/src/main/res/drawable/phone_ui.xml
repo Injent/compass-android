@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:width="60dp"
+        android:height="120dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="6dp" />
+            <solid android:color="?attr/background2" />
+        </shape>
+    </item>
+
+    <item android:width="60dp"
+        android:height="60dp"
+        android:gravity="bottom">
+        <shape android:shape="rectangle">
+            <corners android:radius="6dp" />
+            <solid android:color="?attr/background1" />
+        </shape>
+    </item>
+
+    <item android:width="52dp"
+        android:height="20dp"
+        android:gravity="center"
+        android:top="30dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="4dp" />
+            <solid android:color="?attr/background3" />
+        </shape>
+    </item>
+
+    <item android:width="52dp"
+        android:height="16dp"
+        android:gravity="center"
+        android:bottom="38dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="4dp" />
+            <solid android:color="?attr/background3" />
+        </shape>
+    </item>
+
+    <item android:width="52dp"
+        android:height="20dp"
+        android:gravity="center_horizontal|top"
+        android:top="8dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="4dp" />
+            <solid android:color="?attr/background3" />
+        </shape>
+    </item>
+
+    <item android:width="52dp"
+        android:height="12dp"
+        android:gravity="center_horizontal|bottom"
+        android:bottom="20dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="4dp" />
+            <solid android:color="?attr/background3" />
+        </shape>
+    </item>
+
+    <item android:width="52dp"
+        android:height="12dp"
+        android:gravity="center_horizontal|bottom"
+        android:bottom="5dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="4dp" />
+            <solid android:color="?attr/backgroundBrand" />
+        </shape>
+    </item>
+</layer-list>

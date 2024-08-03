@@ -68,7 +68,6 @@ import ru.bgitu.core.designsystem.util.shimmer
 import ru.bgitu.core.navigation.LocalNavController
 import ru.bgitu.core.navigation.Screen
 import ru.bgitu.core.navigation.push
-import ru.bgitu.core.navigation.replaceAll
 import ru.bgitu.core.ui.ProfileImage
 import ru.bgitu.core.ui.listenEvents
 import ru.bgitu.core.ui.onClick
@@ -90,7 +89,14 @@ internal fun ProfileScreen() {
         when (event) {
             is ProfileEvent.NavigateToLogin -> {
                 if (event.autoSignOut)
-                    navController.replaceAll(Screen.LoginGraph)
+                    navController.navigate(Screen.LoginGraph) {
+                        popUpTo<Screen.MainGraph> {
+                            inclusive = true
+                        }
+
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 else
                     navController.push(Screen.Login(compactScreen = true))
             }

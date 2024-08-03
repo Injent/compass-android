@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ThemePhoneUiDark">
+        <item name="backgroundBrand">#0C86FF</item>
+        <item name="background1">#26262C</item>
+        <item name="background2">#16161A</item>
+        <item name="background3">#1E1E24</item>
+    </style>
+    <style name="ThemePhoneUiDarkContrast">
+        <item name="backgroundBrand">#0C86FF</item>
+        <item name="background1">#42424D</item>
+        <item name="background2">#1E1E24</item>
+        <item name="background3">#2A2A35</item>
+    </style>
+    <style name="ThemePhoneUiLight">
+        <item name="backgroundBrand">#0C86FF</item>
+        <item name="background1">#ffffff</item>
+        <item name="background2">#E0E0E0</item>
+        <item name="background3">#f2f3f5</item>
+    </style>
+</resources>

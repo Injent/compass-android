@@ -1,7 +1,9 @@
 package ru.bgitu.feature.professor_search.presentation.search
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -31,8 +33,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import org.koin.androidx.compose.koinViewModel
 import ru.bgitu.core.common.CYRILLIC_REGEX
 import ru.bgitu.core.designsystem.components.AppSearchField
+import ru.bgitu.core.designsystem.components.CompassLoading
 import ru.bgitu.core.designsystem.components.InputRegex
 import ru.bgitu.core.designsystem.components.LocalSnackbarController
 import ru.bgitu.core.designsystem.icon.AppIcons
@@ -44,23 +48,27 @@ import ru.bgitu.core.designsystem.util.thenIf
 import ru.bgitu.core.ui.AppSearchItem
 import ru.bgitu.core.ui.listenEvents
 import ru.bgitu.feature.professor_search.R
+import ru.bgitu.feature.professor_search.presentation.KEY_TEACHER_VIEWMODEL
 import ru.bgitu.feature.professor_search.presentation.components.RecentProfessorSearch
 import ru.bgitu.feature.professor_search.presentation.components.TeacherScheduleAlertDialog
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun ProfessorSearchRoute(
-    viewModel: ProfessorSearchViewModel,
-    onNavigateToDetails: (professorName: String) -> Unit
+internal fun TeacherSearchRoute(
+    onNavigateToDetails: (teacherName: String) -> Unit,
 ) {
     val snackbarController = LocalSnackbarController.current
     val context = LocalContext.current
+    val viewModel: TeacherSearchViewModel = koinViewModel(
+        key = KEY_TEACHER_VIEWMODEL,
+        viewModelStoreOwner = context as ComponentActivity
+    )
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchFieldState = viewModel.searchFieldState
 
     viewModel.events.listenEvents { event ->
         when (event) {
-            is ProfessorSearchEvent.ShowError -> {
+            is TeacherSearchEvent.ShowError -> {
                 snackbarController.show(
                     duration = 3.seconds,
                     message = event.errorDetails.asString(context),
@@ -69,21 +77,13 @@ fun ProfessorSearchRoute(
                 )
             }
 
-            is ProfessorSearchEvent.NavigateToProfessorDetails -> {
-                onNavigateToDetails(event.professorName)
+            is TeacherSearchEvent.NavigateToTeacherDetails -> {
+                onNavigateToDetails(event.teacherName)
             }
         }
     }
 
-    if (!uiState.seenScheduleAlert) {
-        TeacherScheduleAlertDialog(
-            onConfirm = {
-                viewModel.onIntent(ProfessorSearchIntent.SeenAlert)
-            }
-        )
-    }
-
-    ProfessorSearchScreen(
+    TeacherSearchScreen(
         uiState = uiState,
         searchFieldState = searchFieldState,
         onIntent = viewModel::onIntent
@@ -91,11 +91,19 @@ fun ProfessorSearchRoute(
 }
 
 @Composable
-private fun ProfessorSearchScreen(
-    uiState: ProfessorSearchUiState,
+private fun TeacherSearchScreen(
+    uiState: TeacherSearchUiState,
     searchFieldState: TextFieldState,
-    onIntent: (ProfessorSearchIntent) -> Unit
+    onIntent: (TeacherSearchIntent) -> Unit
 ) {
+    if (!uiState.seenScheduleAlert) {
+        TeacherScheduleAlertDialog(
+            onConfirm = {
+                onIntent(TeacherSearchIntent.SeenAlert)
+            }
+        )
+    }
+
     Scaffold(
         contentWindowInsets = WindowInsets(0),
         topBar = {
@@ -112,10 +120,10 @@ private fun ProfessorSearchScreen(
             SearchResults(
                 uiState = uiState,
                 onSelect = { professorName ->
-                    onIntent(ProfessorSearchIntent.SelectProfessor(professorName))
+                    onIntent(TeacherSearchIntent.SelectTeacher(professorName))
                 },
                 onClear = {
-                    onIntent(ProfessorSearchIntent.ClearSearch)
+                    onIntent(TeacherSearchIntent.ClearSearch)
                 },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -125,7 +133,7 @@ private fun ProfessorSearchScreen(
 
 @Composable
 private fun SearchResults(
-    uiState: ProfessorSearchUiState,
+    uiState: TeacherSearchUiState,
     onSelect: (String) -> Unit,
     onClear: () -> Unit,
     modifier: Modifier = Modifier,
@@ -172,7 +180,15 @@ private fun SearchResults(
                 modifier = modifier
             )
         }
-        !uiState.isLoading -> {
+        uiState.isLoading -> {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                CompassLoading()
+            }
+        }
+        else -> {
             Column(
                 verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s, Alignment.CenterVertically),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -229,8 +245,8 @@ private fun ProfessorSearchTopBar(
 @Composable
 private fun ProfessorSearchScreenPreview() {
     CompassTheme {
-        ProfessorSearchScreen(
-            uiState = ProfessorSearchUiState(),
+        TeacherSearchScreen(
+            uiState = TeacherSearchUiState(),
             searchFieldState = TextFieldState(),
             onIntent = {}
         )

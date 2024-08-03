@@ -25,3 +25,5 @@
 -keep class com.vk.id.onetap.compose.onetap.sheet.style.OneTapSheetCornersStyle { *; }
 -keep class com.vk.id.onetap.common.button.style.OneTapButtonCornersStyle { *; }
 -keep class com.vk.id.onetap.common.button.style.OneTapButtonSizeStyle { *; }
+
+-keep class ru.bgitu.core.navigation.** { *; }
