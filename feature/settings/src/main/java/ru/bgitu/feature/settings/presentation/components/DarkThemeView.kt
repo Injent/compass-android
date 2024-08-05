@@ -12,6 +12,8 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -34,11 +36,48 @@ import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
 import ru.bgitu.core.model.settings.UiTheme
+import ru.bgitu.core.ui.Headline
 import ru.bgitu.core.ui.onClick
 import ru.bgitu.feature.settings.R
 
 @Composable
-fun ThemeItem(
+fun AppThemeView(
+    currentTheme: UiTheme,
+    onChangeTheme: (UiTheme) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.mNudge)
+    ) {
+        Headline(text = stringResource(R.string.app_theme))
+        Row(
+            horizontalArrangement = Arrangement.SpaceAround,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            ThemeItem(
+                theme = UiTheme.LIGHT,
+                selected = currentTheme == UiTheme.LIGHT,
+                onClick = { onChangeTheme(UiTheme.LIGHT) }
+            )
+            ThemeItem(
+                theme = UiTheme.DARK,
+                isContrast = currentTheme == UiTheme.LIGHT,
+                selected = currentTheme == UiTheme.DARK,
+                onClick = { onChangeTheme(UiTheme.DARK) }
+            )
+            ThemeItem(
+                theme = UiTheme.SYSTEM,
+                isContrast = currentTheme == UiTheme.LIGHT,
+                selected = currentTheme == UiTheme.SYSTEM,
+                onClick = { onChangeTheme(UiTheme.SYSTEM) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun ThemeItem(
     theme: UiTheme,
     selected: Boolean,
     onClick: () -> Unit,
@@ -100,6 +139,7 @@ private fun PhoneView(
 
     AnimatedContent(
         targetState = isDarkTheme,
+        modifier = modifier,
         transitionSpec = {
             fadeIn(
                 animationSpec = tween(easing = LinearEasing)
@@ -109,7 +149,6 @@ private fun PhoneView(
         }
     ) { darkTheme ->
         AndroidView(
-            modifier = modifier,
             factory = { context ->
                 ImageView(context).apply {
                     setImageDrawable(context.getDrawable(R.drawable.phone_ui))
@@ -132,7 +171,7 @@ private fun PhoneView(
         if (theme != UiTheme.SYSTEM) {
             return@LaunchedEffect
         }
-        delay(2000)
+        delay(3000)
         isDarkTheme = !isDarkTheme
     }
 }

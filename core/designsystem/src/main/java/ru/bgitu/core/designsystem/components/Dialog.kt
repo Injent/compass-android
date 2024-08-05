@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +30,50 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.util.thenIf
+
+@Composable
+fun AppDialog(
+    title: String,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    properties: DialogProperties = DialogProperties(),
+    buttons: @Composable RowScope.() -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    BasicAlertDialog(
+        onDismissRequest = onDismissRequest,
+        properties = properties,
+        modifier = modifier.background(
+            color = AppTheme.colorScheme.background2,
+            shape = AppTheme.shapes.default
+        ),
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.l),
+            modifier = Modifier
+                .padding(
+                    horizontal = AppTheme.spacing.l,
+                    vertical = AppTheme.spacing.m
+                ),
+        ) {
+            Text(
+                text = title,
+                style = AppTheme.typography.title3,
+                color = AppTheme.colorScheme.foreground1,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally),
+            )
+            content()
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
+                modifier = Modifier.fillMaxWidth(),
+                content = buttons
+            )
+        }
+
+    }
+}
 
 @Composable
 fun AppDialogBase(

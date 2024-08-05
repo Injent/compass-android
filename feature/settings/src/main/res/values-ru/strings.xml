@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="settings">Настройки</string>
-    <string name="ignore_minor_updates">Игнорировать необязательные обновления</string>
-    <string name="ignore_minor_updates_description">Всплывающие окна c рекомендацией обновиться будут скрыты</string>
     <string name="app_theme">Тема приложения</string>
-    <string-array name="ui_themes">
-        <item>Системная</item>
-        <item>Светлая</item>
-        <item>Темная</item>
-    </string-array>
     <string name="logout">Выйти</string>
-    <string name="show_pinned_schedule">Показывать расписание в шторке уведомлений</string>
-    <string name="show_pinned_schedule_description">Текущее расписание будет видно в центре уведомлений весь день</string>
+    <string name="schedule_in_notification">Расписание в уведомлении</string>
+    <string name="show_schedule_details">Расписание вашей группы будет видно в шторке уведомлений и на экране блокировки.\n\nУведомление автоматически скрывается когда пары еще не начались или уже закончились</string>
     <string name="changelog">Список обновлений</string>
     <string name="report_error">Сообщить об ошибке</string>
     <string name="please_allow_notification">Включите уведомления</string>
@@ -20,4 +13,9 @@
     <string name="theme_system">Системная</string>
     <string name="theme_light">Светлая</string>
     <string name="theme_dark">Темная</string>
+    <string name="dialog_title_permission">Дайте разрешение</string>
+    <string name="dialog_notification_text">Разрешите уведомления, чтобы уведомление с расписанием было вам видно</string>
+    <string name="dialog_alarm_text">Разрешите выполнять задачи вовремя, чтобы всегда видеть актуальное расписание</string>
+    <string name="more_detailed">Подробнее</string>
+    <string name="show_schedule">Показывать расписание</string>
 </resources>

@@ -51,7 +51,6 @@ class SyncWorker(
     companion object {
         fun start() = OneTimeWorkRequestBuilder<SyncWorker>()
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            .setConstraints(SyncWorkerConstraints)
             .build()
     }
 }

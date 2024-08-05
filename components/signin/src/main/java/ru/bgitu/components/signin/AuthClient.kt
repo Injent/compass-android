@@ -1,12 +1,12 @@
 package ru.bgitu.components.signin
 
+import android.accounts.AccountManager
 import android.content.Context
 import androidx.activity.ComponentActivity
 import com.google.android.gms.common.GoogleApiAvailability
 import com.vk.id.AccessToken
 import kotlinx.coroutines.CoroutineScope
 import ru.bgitu.components.signin.google.GoogleAuthClient
-import ru.bgitu.components.signin.model.AuthMethod
 import ru.bgitu.components.signin.model.SignInParams
 import ru.bgitu.components.signin.telegram.TelegramAuthClient
 import ru.bgitu.components.signin.vk.VkAuthClient
@@ -17,14 +17,6 @@ interface AuthClient {
     fun signIn()
 
     companion object {
-        fun getAvailableAuthMethods(context: Context): List<AuthMethod> {
-            val authMethods = mutableListOf(AuthMethod.VK, AuthMethod.TELEGRAM)
-
-            if (context.isGooglePlayServicesAvailable()) {
-                authMethods += AuthMethod.GOOGLE
-            }
-            return authMethods
-        }
 
         inline fun <reified T : AuthClient> createClient(
             activity: ComponentActivity,
@@ -57,4 +49,8 @@ interface AuthClient {
 fun Context.isGooglePlayServicesAvailable(): Boolean {
     return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) ==
             com.google.android.gms.common.ConnectionResult.SUCCESS
+}
+
+fun Context.isTelegramAvailable(): Boolean {
+    return AccountManager.get(this).getAccountsByType("org.telegram").isNotEmpty()
 }

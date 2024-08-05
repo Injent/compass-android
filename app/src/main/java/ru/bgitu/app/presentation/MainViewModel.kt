@@ -51,8 +51,12 @@ class MainViewModel(
         compassAuthenticator.authState,
         settingsRepository.data,
         appUpdateManager.appUpdateInfo,
-        appUpdateManager.installState
+        appUpdateManager.installState,
     ) { authState, data, updateInfo, installState ->
+        val showUpdateSheet = (updateInfo as? UpdateInfo.NativeUpdate)?.let {
+            updateInfo.updateAvailability == UpdateAvailability.UPDATE_AVAILABLE
+        } ?: false
+
         MainActivityUiState(
             isLoading = authState == AuthState.LOADING,
             authState = authState,
@@ -60,13 +64,12 @@ class MainViewModel(
             updateInfo = updateInfo,
             installState = installState,
             avatarUrl = data.userProfile?.avatarUrl,
-            showUpdateSheet = updateInfo is UpdateInfo.NativeUpdate
-                    && updateInfo.updateAvailability == UpdateAvailability.UPDATE_AVAILABLE
+            showUpdateSheet = showUpdateSheet
         )
     }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
+            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = MainActivityUiState()
         )
 

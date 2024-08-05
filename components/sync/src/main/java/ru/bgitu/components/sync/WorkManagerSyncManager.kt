@@ -10,22 +10,18 @@ import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
 import ru.bgitu.components.sync.workers.RefreshTokenWorker
 import ru.bgitu.components.sync.workers.SyncWorker
 import ru.bgitu.core.data.model.CloudMessagingTokenType
 import ru.bgitu.core.data.util.SyncManager
 import ru.bgitu.core.data.util.SyncStatus
-import ru.bgitu.core.datastore.SettingsRepository
 
 internal const val SyncWorkName = "SyncWorkName"
 internal const val ServicesRefreshTokenWorkName = "ServicesRefreshTokenName"
 
 class WorkManagerSyncManager(
     context: Context,
-    private val settingsRepository: SettingsRepository,
 ) : SyncManager {
     private val workManager = WorkManager.getInstance(context)
 
@@ -45,11 +41,8 @@ class WorkManagerSyncManager(
             .conflate()
 
     override fun fullSync() {
-        val notAuthed = runBlocking { settingsRepository.credentials.first() == null }
-        if (notAuthed) {
-            return
-        }
         requestSync()
+
         Firebase.messaging.token.addOnSuccessListener { token ->
             refreshServicesToken(token, CloudMessagingTokenType.GMS)
         }

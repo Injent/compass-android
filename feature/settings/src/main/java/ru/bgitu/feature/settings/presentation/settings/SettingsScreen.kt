@@ -1,12 +1,7 @@
 package ru.bgitu.feature.settings.presentation.settings
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.os.Build.VERSION.SDK_INT
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -19,16 +14,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.androidx.compose.koinViewModel
 import ru.bgitu.core.designsystem.components.AppSnackbarHost
-import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
 import ru.bgitu.core.model.settings.UiTheme
@@ -40,9 +31,8 @@ import ru.bgitu.core.navigation.push
 import ru.bgitu.core.ui.AppBackButton
 import ru.bgitu.core.ui.listenEvents
 import ru.bgitu.feature.settings.R
-import ru.bgitu.feature.settings.presentation.components.SettingsOption
-import ru.bgitu.feature.settings.presentation.components.SwitchOption
-import ru.bgitu.feature.settings.presentation.components.ThemeItem
+import ru.bgitu.feature.settings.presentation.components.AppThemeView
+import ru.bgitu.feature.settings.presentation.components.ScheduleNotificationView
 
 @Composable
 fun SettingsScreen() {
@@ -103,72 +93,22 @@ private fun SettingsScreenContent(
                 .padding(top = AppTheme.spacing.xl)
                 .verticalScroll(scrollState),
         ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceAround,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                ThemeItem(
-                    theme = UiTheme.LIGHT,
-                    selected = uiState.prefs.theme == UiTheme.LIGHT,
-                    onClick = { onIntent(SettingsIntent.ChangeUiTheme(UiTheme.LIGHT)) }
-                )
-                ThemeItem(
-                    theme = UiTheme.DARK,
-                    isContrast = uiState.prefs.theme == UiTheme.LIGHT,
-                    selected = uiState.prefs.theme == UiTheme.DARK,
-                    onClick = { onIntent(SettingsIntent.ChangeUiTheme(UiTheme.DARK)) }
-                )
-                ThemeItem(
-                    theme = UiTheme.SYSTEM,
-                    isContrast = uiState.prefs.theme == UiTheme.LIGHT,
-                    selected = uiState.prefs.theme == UiTheme.SYSTEM,
-                    onClick = { onIntent(SettingsIntent.ChangeUiTheme(UiTheme.SYSTEM)) }
-                )
-            }
-
+            AppThemeView(
+                currentTheme = uiState.prefs.theme,
+                onChangeTheme = { theme ->
+                    onIntent(SettingsIntent.ChangeUiTheme(theme))
+                }
+            )
             HorizontalDivider(
                 modifier = Modifier.fillMaxWidth(),
                 color = AppTheme.colorScheme.background1
             )
-            SettingsOption(icon = AppIcons.Notification) {
-                val context = LocalContext.current
-                val permissionAllowed = remember {
-                    if (SDK_INT < 33) return@remember true
-                    ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.POST_NOTIFICATIONS
-                    ) == PackageManager.PERMISSION_GRANTED
+            ScheduleNotificationView(
+                enabled = uiState.prefs.showPinnedSchedule,
+                onSwitch = { enabled ->
+                    onIntent(SettingsIntent.SwitchScheduleNotifier(enabled))
                 }
-
-                SwitchOption(
-                    text = stringResource(R.string.show_pinned_schedule),
-                    checked = uiState.prefs.showPinnedSchedule,
-                    onCheckedChange = { checked ->
-                        if (permissionAllowed || !checked) {
-                            onIntent(SettingsIntent.SwitchScheduleNotifier(checked))
-                        } else {
-                            Toast.makeText(
-                                context,
-                                R.string.please_allow_notification,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    },
-                    description = stringResource(R.string.show_pinned_schedule_description)
-                )
-            }
-//            HorizontalDivider(
-//                modifier = Modifier.fillMaxWidth(),
-//                color = AppTheme.colorScheme.background1
-//            )
-//            SettingsOption(icon = AppIcons.Download) {
-//                SwitchOption(
-//                    text = stringResource(R.string.ignore_minor_updates),
-//                    checked = uiState.prefs.ignoreMinorUpdates,
-//                    onCheckedChange = { onIntent(SettingsIntent.IgnoreMinorUpdate(it)) },
-//                    description = stringResource(R.string.ignore_minor_updates_description)
-//                )
-//            }
+            )
         }
     }
 }

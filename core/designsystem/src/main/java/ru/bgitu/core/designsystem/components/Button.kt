@@ -341,7 +341,7 @@ fun AppConfirmButton(
         containerColor = containerColor,
         contentColor = contentColor,
         enabled = enabled,
-        modifier = modifier,
+        modifier = modifier.height(58.dp),
         contentPadding = PaddingValues(horizontal = AppTheme.spacing.s, vertical = AppTheme.spacing.s)
     ) {
         Icon(

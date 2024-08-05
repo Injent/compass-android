@@ -68,6 +68,7 @@ import ru.bgitu.core.designsystem.util.shimmer
 import ru.bgitu.core.navigation.LocalNavController
 import ru.bgitu.core.navigation.Screen
 import ru.bgitu.core.navigation.push
+import ru.bgitu.core.ui.Headline
 import ru.bgitu.core.ui.ProfileImage
 import ru.bgitu.core.ui.listenEvents
 import ru.bgitu.core.ui.onClick
@@ -389,7 +390,10 @@ private fun AboutMeCard(
     AppCard(
         modifier = modifier,
     ) {
-        Headline(text = stringResource(R.string.about_me))
+        Headline(
+            text = stringResource(R.string.about_me),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
         when (uiState) {
             is ProfileUiState.Empty -> SpecifyCardContent(onClick = onSpecifyRequest)
             is ProfileUiState.Error -> Unit
@@ -412,7 +416,10 @@ private fun ContactsCard(
     modifier: Modifier = Modifier,
 ) {
     AppCard(modifier = modifier) {
-        Headline(text = stringResource(R.string.contacts))
+        Headline(
+            text = stringResource(R.string.contacts),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
 
         when (uiState) {
             is ProfileUiState.Empty -> SpecifyCardContent(onClick = onSpecifyRequest)
@@ -457,7 +464,10 @@ private fun VariantsCard(
     AppCard(
         modifier = modifier.fillMaxWidth(),
     ) {
-        Headline(text = stringResource(R.string.variants))
+        Headline(
+            text = stringResource(R.string.variants),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
         when (uiState) {
             is ProfileUiState.Empty -> SpecifyCardContent(onClick = onSpecifyRequest)
             is ProfileUiState.Error -> Unit
@@ -504,16 +514,6 @@ private fun ShimmerLoading() {
             .fillMaxWidth()
             .height(24.dp)
             .shimmer(shape = AppTheme.shapes.small)
-    )
-}
-
-@Composable
-private fun Headline(text: String, modifier: Modifier = Modifier) {
-    Text(
-        text = text,
-        style = AppTheme.typography.subheadline,
-        color = AppTheme.colorScheme.foreground2,
-        modifier = modifier.padding(bottom = 8.dp)
     )
 }
 

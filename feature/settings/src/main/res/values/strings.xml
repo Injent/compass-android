@@ -1,17 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="settings">Settings</string>
-    <string name="ignore_minor_updates">Ignore minor updates</string>
-    <string name="ignore_minor_updates_description">Notifications of optional updates will be hidden</string>
     <string name="app_theme">App theme</string>
-    <string-array name="ui_themes">
-        <item>System</item>
-        <item>Light</item>
-        <item>Dark</item>
-    </string-array>
     <string name="logout">Logout</string>
-    <string name="show_pinned_schedule">Show schedule as notification</string>
-    <string name="show_pinned_schedule_description">Part of the schedule for today will be displayed in the notification center throughout the school day</string>
+    <string name="schedule_in_notification">Schedule in notification</string>
+    <string name="show_schedule_details">Your group\'s schedule will be visible in the notification curtain and on the lock screen.\n\nThe notification is automatically hidden when the classes have not started yet or have already ended</string>
     <string name="changelog">Changelog</string>
     <string name="report_error">Report Error</string>
     <string name="please_allow_notification">Please allow notifications</string>
@@ -20,4 +13,9 @@
     <string name="theme_system">System</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+    <string name="dialog_title_permission">Allow permission</string>
+    <string name="dialog_notification_text">Allow notifications so that the schedule notification is visible to you</string>
+    <string name="dialog_alarm_text">Allow tasks to be completed on time so that you always see the current schedule</string>
+    <string name="more_detailed">Details</string>
+    <string name="show_schedule">Show schedule</string>
 </resources>

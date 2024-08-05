@@ -15,4 +15,6 @@
     <string name="action_select_group">Select group</string>
     <string name="select_group_description">You can change the group later or add several others</string>
     <string name="your_group">Your group</string>
+    <string name="synced">Synced</string>
+    <string name="loaded_offline">Loaded offline</string>
 </resources>

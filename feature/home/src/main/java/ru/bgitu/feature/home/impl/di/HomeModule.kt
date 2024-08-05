@@ -13,7 +13,8 @@ val HomeModule = module {
             scheduleRepository = get(),
             context = androidContext(),
             settings = get(),
-            syncManager = get()
+            syncManager = get(),
+            networkMonitor = get()
         )
     }
 }

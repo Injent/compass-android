@@ -28,6 +28,7 @@ import ru.bgitu.core.common.eventbus.EventBus
 import ru.bgitu.core.common.eventbus.GlobalAppEvent
 import ru.bgitu.core.data.model.ScheduleLoadState
 import ru.bgitu.core.data.repository.ScheduleRepository
+import ru.bgitu.core.data.util.NetworkMonitor
 import ru.bgitu.core.data.util.SyncManager
 import ru.bgitu.core.data.util.SyncStatus
 import ru.bgitu.core.datastore.SettingsRepository
@@ -60,7 +61,7 @@ sealed interface HomeUiState {
         val selectedGroup: Group? = null,
         val savedGroups: List<Group> = emptyList(),
         val showGroups: Boolean,
-        val isSyncing: Boolean = false
+        val syncStatus: SyncStatus = SyncStatus.IDLE
     ) : HomeUiState
     data object GroupNotSelected : HomeUiState
     data object Loading : HomeUiState
@@ -72,6 +73,7 @@ class HomeViewModel(
     private val settings: SettingsRepository,
     scheduleRepository: ScheduleRepository,
     syncManager: SyncManager,
+    networkMonitor: NetworkMonitor,
     context: Context,
 ) : ViewModel() {
 
@@ -93,7 +95,8 @@ class HomeViewModel(
         _selectedGroup,
         settings.data,
         syncManager.syncState,
-    ) { selectedGroup, userdata, syncStatus ->
+        networkMonitor.isOnline,
+    ) { selectedGroup, userdata, syncStatus, isOnline ->
         if (userdata.primaryGroup == null) {
             return@combine HomeUiState.GroupNotSelected
         }
@@ -101,7 +104,7 @@ class HomeViewModel(
             selectedGroup = selectedGroup,
             savedGroups = listOf(userdata.primaryGroup!!) + userdata.userPrefs.savedGroups,
             showGroups = userdata.userPrefs.showGroupsOnMainScreen,
-            isSyncing = syncStatus == SyncStatus.RUNNUNG
+            syncStatus = if (!isOnline) SyncStatus.FAILED else syncStatus
         )
     }
         .stateIn(

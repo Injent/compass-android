@@ -32,8 +32,7 @@ val SyncModule = module {
 
     single {
         WorkManagerSyncManager(
-            context = androidContext(),
-            settingsRepository = get()
+            context = androidContext()
         )
     } bind SyncManager::class
 }

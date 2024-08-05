@@ -7,10 +7,7 @@ import androidx.core.content.FileProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -56,7 +53,7 @@ internal fun Context.updateApkFile(versionCode: Long): File {
 
 class BgituAppUpdateManager(
     private val context: Context,
-    private val serviceApi: CompassService,
+    private val compassService: CompassService,
     private val settings: SettingsRepository,
     private val ioDispatcher: CoroutineDispatcher
 ) : AppUpdateManager {
@@ -66,7 +63,7 @@ class BgituAppUpdateManager(
 
     override val appUpdateInfo = flow<UpdateInfo> {
         val currentVersionCode = context.versionCode
-        val updateResponse = serviceApi.getUpdateAvailability().getOrThrow()
+        val updateResponse = compassService.getUpdateAvailability().getOrThrow()
 
         if (updateResponse.versionCode > currentVersionCode) {
             settings.updateMetadata {
@@ -78,13 +75,11 @@ class BgituAppUpdateManager(
             emit(updateResponse.toExtrenalModel(currentVersionCode = currentVersionCode))
         }
     }
-        .buffer(1)
+        .onStart { emit(UpdateInfo.Unknown) }
         .catch {
             it.printStackTrace()
             emit(UpdateInfo.Unknown)
-            currentCoroutineContext().cancel()
         }
-        .onStart { emit(UpdateInfo.Unknown) }
 
     override val installState = callbackFlow {
         val (availableVersionCode, updateChecksum) = with(settings.metadata.first()) {

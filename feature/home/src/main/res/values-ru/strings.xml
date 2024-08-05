@@ -15,4 +15,6 @@
     <string name="action_select_group">Выбрать группу</string>
     <string name="select_group_description">Группу можно изменить позже или добавить несколько других</string>
     <string name="your_group">Твоя группа</string>
+    <string name="synced">Обновлено</string>
+    <string name="loaded_offline">Загружено офлайн</string>
 </resources>

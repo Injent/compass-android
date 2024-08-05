@@ -12,7 +12,7 @@ import ru.bgitu.core.common.di.CommonQualifiers
 val UpdatesModule = module {
     single {
         BgituAppUpdateManager(
-            serviceApi = get(),
+            compassService = get(),
             context = androidContext(),
             settings = get(),
             ioDispatcher = get(CommonQualifiers.DispatcherIO)
