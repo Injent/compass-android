@@ -9,7 +9,6 @@
     <string name="report_error">Report Error</string>
     <string name="please_allow_notification">Please allow notifications</string>
     <string name="notification_sound">Pinned schedule sound</string>
-    <string name="audio_not_selected">Default</string>
     <string name="theme_system">System</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
@@ -18,4 +17,8 @@
     <string name="dialog_alarm_text">Allow tasks to be completed on time so that you always see the current schedule</string>
     <string name="more_detailed">Details</string>
     <string name="show_schedule">Show schedule</string>
+    <string name="action_select_group">Select group</string>
+    <string name="dialog_title_groupNotSelected">Group not selected</string>
+    <string name="dialog_group_descrition">Select the group whose schedule you would like to see</string>
+    <string name="scheduled_at">Scheduled at %s</string>
 </resources>

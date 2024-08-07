@@ -1,30 +1,14 @@
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.bgitu.library)
     alias(libs.plugins.bgitu.koin)
     alias(libs.plugins.bgitu.serialization)
     alias(libs.plugins.secrets)
+    alias(libs.plugins.bgitu.vkplaceholders)
 }
 
 android {
     namespace = "ru.bgitu.components.signin"
     buildFeatures.buildConfig = true
-
-    defaultConfig {
-        val props = Properties().apply {
-            rootProject.file("secrets.properties").inputStream().use { load(it) }
-        }
-
-        addManifestPlaceholders(
-            mapOf(
-                "VKIDClientID" to props.getProperty("VKIDClientID"),
-                "VKIDClientSecret" to props.getProperty("VKIDClientSecret"),
-                "VKIDRedirectHost" to "vk.com",
-                "VKIDRedirectScheme" to "vk${props.getProperty("VKIDClientID")}",
-            )
-        )
-    }
 }
 
 dependencies {

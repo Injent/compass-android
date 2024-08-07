@@ -48,10 +48,7 @@ fun AppCard(
     color: Color = AppTheme.colorScheme.background1,
     shape: Shape = AppTheme.shapes.default,
     shadowEnabled: Boolean = true,
-    contentPadding: PaddingValues = PaddingValues(
-        horizontal = AppTheme.spacing.xl,
-        vertical = AppTheme.spacing.xl - 6.dp
-    ),
+    contentPadding: PaddingValues = AppCardTokens.ContentPadding,
     content: @Composable ColumnScope.() -> Unit
 ) {
     CompositionLocalProvider(
@@ -209,4 +206,11 @@ private fun AppCardPreview() {
             )
         }
     }
+}
+
+object AppCardTokens {
+    val ContentPadding = PaddingValues(
+        horizontal = 20.dp,
+        vertical = 14.dp
+    )
 }

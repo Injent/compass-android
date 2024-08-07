@@ -18,7 +18,6 @@ import ru.bgitu.core.datastore.SettingsRepository
 import ru.bgitu.core.model.Group
 import ru.bgitu.core.model.ProfessorClass
 import ru.bgitu.core.model.RemoteDataVersions
-import ru.bgitu.core.network.BuildConfig
 import ru.bgitu.core.network.CompassService
 import ru.bgitu.core.network.model.NetworkLesson
 import ru.bgitu.core.network.model.NetworkSearchMateItem
@@ -32,11 +31,10 @@ import ru.bgitu.core.network.model.response.RefreshTokenResponse
 import ru.bgitu.core.network.model.response.UpdateAvailabilityResponse
 
 internal object CompassRoutes {
-    private const val BASE_URL = BuildConfig.BACKEND_URL
+    private const val BASE_URL = "http://api.bgitu-compass.ru"
     const val USER_ROUTE = "$BASE_URL/user"
     const val SEARCH_MATE = "$BASE_URL/mates"
     const val CHOOSE_GROUP = "$BASE_URL/account/chooseGroup"
-    const val ACCOUNT = "$BASE_URL/account"
     const val REFRESH_TOKEN = "$BASE_URL/refreshToken"
     const val LESSONS = "$BASE_URL/lessons"
     const val UPDATE_AVAILABILITY = "$BASE_URL/updateAvailability"

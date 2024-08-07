@@ -1,8 +1,6 @@
 package ru.bgitu.feature.login.presentation.login
 
-import android.app.Activity
 import android.content.res.Configuration
-import android.view.WindowManager
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,14 +18,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -65,10 +61,7 @@ fun LoginRoute(
     val snackbarController = LocalSnackbarController.current
 
     val context = LocalContext.current
-
-    SideEffect {
-        (context as Activity).window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-    }
+    
     viewModel.events.listenEvents { event ->
         when (event) {
             LoginEvent.Back -> {
@@ -80,7 +73,7 @@ fun LoginRoute(
             }
             LoginEvent.NavigateToMainScreen -> {
                 navController.navigate(Screen.Home) {
-                    popUpTo<Screen.LoginGraph> {
+                    popUpTo<Screen.Login> {
                         inclusive = true
                     }
 
@@ -163,7 +156,6 @@ private fun LoginSection(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val focusManager = LocalFocusManager.current
 
     Column(
         modifier = modifier

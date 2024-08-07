@@ -46,7 +46,7 @@ internal enum class DevContact(
         )
     );
 
-    private val baseUrl = "${BuildConfig.COMPASS_SITE_URL}contacts/$fullName/"
+    private val baseUrl = "${BuildConfig.COMPASS_SITE}/contacts/$fullName/"
 
     val socials: List<Social>
         get() = _socials.map {

@@ -29,6 +29,7 @@ import ru.bgitu.core.designsystem.theme.CompassTheme
 fun AppSwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
+    enabled: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val thumbRadius = (TrackHeight / 2) - Gap
@@ -43,12 +44,17 @@ fun AppSwitch(
     )
 
     val trackColor by animateColorAsState(
-        targetValue = if (checked) {
-            AppTheme.colorScheme.backgroundBrand
-        } else AppTheme.colorScheme.backgroundDisabled,
+        targetValue = when {
+            !enabled -> AppTheme.colorScheme.backgroundDisabled.copy(.5f)
+            checked -> AppTheme.colorScheme.backgroundBrand
+            else -> AppTheme.colorScheme.backgroundDisabled
+        },
         animationSpec = tween()
     )
-    val thumbColor = AppTheme.colorScheme.foregroundOnBrand
+    val thumbColor = if (enabled) {
+        AppTheme.colorScheme.foregroundOnBrand
+    } else AppTheme.colorScheme.foregroundDisabled
+
     Canvas(
         modifier = modifier
             .size(width = TrackWidth, height = TrackHeight)

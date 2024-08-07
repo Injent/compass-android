@@ -66,6 +66,10 @@ gradlePlugin {
             id = "bgitu.detekt"
             implementationClass = "DetektPlugin"
         }
+        register("vkPlaceholders") {
+            id = "bgitu.vkplaceholders"
+            implementationClass = "VKPlaceholders"
+        }
         register("androidTest") {
             id = "bgitu.android.test"
             implementationClass = "AndroidTest"

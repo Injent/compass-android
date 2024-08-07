@@ -65,5 +65,5 @@ include(
     ":feature:professor-search",
     ":feature:findmate",
     ":feature:groups",
+    ":feature:input"
 )
-include(":feature:input")

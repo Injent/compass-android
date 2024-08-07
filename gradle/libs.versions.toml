@@ -98,7 +98,7 @@ androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "
 # AndroidX
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
-datastore = { group = "androidx.datastore", name = "datastore-core", version.ref = "datastore" }
+datastore = { group = "androidx.datastore", name = "datastore", version.ref = "datastore" }
 splashScreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
 startup = { group = "androidx.startup", name = "startup-runtime", version.ref = "startup" }
 tracing-ktx = { group = "androidx.tracing", name = "tracing-ktx", version.ref = "androidxTracing" }
@@ -225,4 +225,5 @@ bgitu-library-compose = { id = "bgitu.library.compose", version = "unspecified" 
 bgitu-serialization = { id = "bgitu.serialization", version = "unspecified" }
 bgitu-android-test = { id = "bgitu.android.test", version = "unspecified" }
 bgitu-app-jacoco = { id = "bgitu.app.jacoco", version = "unspecified" }
+bgitu-vkplaceholders = { id = "bgitu.vkplaceholders", version = "unspecified" }
 bgitu-library-jacoco = { id = "bgitu.library.jacoco", version = "unspecified" }

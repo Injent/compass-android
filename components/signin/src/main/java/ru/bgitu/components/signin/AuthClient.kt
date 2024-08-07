@@ -1,6 +1,5 @@
 package ru.bgitu.components.signin
 
-import android.accounts.AccountManager
 import android.content.Context
 import androidx.activity.ComponentActivity
 import com.google.android.gms.common.GoogleApiAvailability
@@ -49,8 +48,4 @@ interface AuthClient {
 fun Context.isGooglePlayServicesAvailable(): Boolean {
     return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) ==
             com.google.android.gms.common.ConnectionResult.SUCCESS
-}
-
-fun Context.isTelegramAvailable(): Boolean {
-    return AccountManager.get(this).getAccountsByType("org.telegram").isNotEmpty()
 }

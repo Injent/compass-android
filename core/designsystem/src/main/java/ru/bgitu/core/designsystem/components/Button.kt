@@ -369,7 +369,7 @@ fun AppDismissButton(
         onClick = onClick,
         containerColor = contentColor.copy(.1f),
         contentColor = contentColor,
-        modifier = modifier,
+        modifier = modifier.height(58.dp),
         contentPadding = PaddingValues(horizontal = AppTheme.spacing.s, vertical = AppTheme.spacing.s)
     ) {
         Icon(

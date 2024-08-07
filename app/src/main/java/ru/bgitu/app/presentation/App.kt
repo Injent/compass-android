@@ -103,7 +103,7 @@ fun App(
                         }
                     }
                     AuthState.NOT_AUTHED -> navHostController.navigate(
-                        route = Screen.LoginGraph
+                        route = Screen.Login()
                     ) {
                         popUpTo<Screen.Loading> {
                             inclusive = true

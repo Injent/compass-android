@@ -39,6 +39,4 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.protobuf.kotlin.lite)
     implementation(libs.protobuf.protoc)
-
-    testImplementation(libs.junit)
 }

@@ -30,7 +30,7 @@ class ScheduleNotifierAlarm(
 ) : ScheduleNotifier {
 
     private val notificationManager by lazy { NotificationManagerCompat.from(context) }
-    private val alarmManager = context.getSystemService<AlarmManager>()
+    private val alarmManager = context.getSystemService<AlarmManager>()!!
 
     override fun enable(): Boolean {
         if (ContextCompat.checkSelfPermission(
@@ -42,11 +42,8 @@ class ScheduleNotifierAlarm(
             return false
         }
 
-        if (SDK_INT >= 31 &&
-            alarmManager?.canScheduleExactAlarms() == false) {
-            context.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            })
+        if (SDK_INT >= 31 && !alarmManager.canScheduleExactAlarms()) {
+            context.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM))
             Toast.makeText(context, R.string.alarm_disabled, Toast.LENGTH_SHORT).show()
             return false
         }
@@ -62,12 +59,15 @@ class ScheduleNotifierAlarm(
     }
 
     override fun disable(forToday: Boolean) {
-        alarmManager?.cancel(context.getAlarmPendingIntent())
+        alarmManager.cancel(context.getAlarmPendingIntent())
         notificationManager.cancel(Notifier.PINNED_SCHEDULE_NOTIFICATION_ID)
         if (!forToday) {
             runBlocking {
                 settingsRepository.updateUserPrefs {
                     it.copy(showPinnedSchedule = false)
+                }
+                settingsRepository.updateMetadata {
+                    it.copy(scheduleNotifierAlarmDateTime = null)
                 }
             }
         }
@@ -93,7 +93,7 @@ class ScheduleNotifierAlarm(
 
     @SuppressLint("MissingPermission")
     internal fun scheduleAlarmAt(triggerAt: LocalDateTime, moved: Boolean = false) {
-        alarmManager?.setExactAndAllowWhileIdle(
+        alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC,
             triggerAt.toJavaLocalDateTime()
                 .atZone(ZoneId.systemDefault()).toEpochSecond() * 1000,

@@ -24,7 +24,7 @@ import ru.bgitu.feature.groups.navigation.groupsScreen
 import ru.bgitu.feature.help.navigation.help
 import ru.bgitu.feature.home.impl.navigation.homeScreen
 import ru.bgitu.feature.input.navigation.inputScreen
-import ru.bgitu.feature.login.navigation.loginGraph
+import ru.bgitu.feature.login.navigation.loginRoute
 import ru.bgitu.feature.professor_search.navigation.professorSearchScreen
 import ru.bgitu.feature.profile.navigation.profileRoute
 import ru.bgitu.feature.profile_settings.navigation.profileSettings
@@ -47,8 +47,8 @@ fun AppNavigator(
         settings()
         profileSettings()
         groupsScreen()
+        loginRoute()
 
-        loginGraph()
         mainGraph()
     }
 }

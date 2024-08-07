@@ -66,7 +66,8 @@ val AppModule = module {
         MainViewModel(
             appUpdateManager = get(),
             compassAuthenticator = get(),
-            settingsRepository = get()
+            settingsRepository = get(),
+            syncManager = get()
         )
     }
 

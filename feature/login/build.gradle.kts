@@ -1,17 +1,13 @@
 plugins {
     alias(libs.plugins.bgitu.feature)
     alias(libs.plugins.secrets)
+    alias(libs.plugins.bgitu.vkplaceholders)
 }
 
 android {
     namespace = "ru.bgitu.feature.login"
 
     buildFeatures.buildConfig = true
-
-    defaultConfig {
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        testOptions.animationsDisabled = true
-    }
 }
 
 dependencies {
@@ -19,8 +15,4 @@ dependencies {
 
     implementation(libs.vk.id.oneTapCompose)
     implementation(libs.vk.id)
-
-    testImplementation(projects.core.dataTest)
-
-    androidTestImplementation(libs.core.test)
 }

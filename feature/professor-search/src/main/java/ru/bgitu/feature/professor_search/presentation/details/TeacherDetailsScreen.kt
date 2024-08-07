@@ -346,7 +346,7 @@ private fun ProfessorDetailsTopBar(
     modifier: Modifier = Modifier
 ) {
     val coroutineScope = rememberCoroutineScope()
-    Column(modifier) {
+    Column(modifier.padding(bottom = AppTheme.spacing.s)) {
         TopAppBar(
             title = {
                 Text(

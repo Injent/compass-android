@@ -167,7 +167,8 @@ private fun GroupsScreen(
                     Spacer(modifier = Modifier.height(AppTheme.spacing.l))
 
                     GroupsVisibilitySetting(
-                        visible = uiState.showGroupsOnMainScreen && uiState.primaryGroup != null,
+                        enabled = uiState.primaryGroup != null,
+                        visible = uiState.showGroupsOnMainScreen,
                         onClick = {
                             onIntent(GroupsIntent.SetGroupVisibility(!uiState.showGroupsOnMainScreen))
                         }
@@ -195,6 +196,7 @@ private fun GroupsScreen(
 
 @Composable
 private fun GroupsVisibilitySetting(
+    enabled: Boolean,
     visible: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -217,6 +219,7 @@ private fun GroupsVisibilitySetting(
                     .padding(end = AppTheme.spacing.l)
             )
             AppSwitch(
+                enabled = enabled,
                 checked = visible,
                 onCheckedChange = { onClick() }
             )

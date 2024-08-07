@@ -51,7 +51,6 @@ class MainActivity : ComponentActivity() {
         var uiState by mutableStateOf(MainActivityUiState())
 
         initializeWorkers()
-        launchGlobalEventObserver()
 
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -88,22 +87,6 @@ class MainActivity : ComponentActivity() {
             setTo(baseContext.resources.configuration)
             fontScale = fontScale.coerceAtMost(1.5f)
             applyOverrideConfiguration(this)
-        }
-    }
-
-    private fun launchGlobalEventObserver() {
-        fun collectEvent(event: Any) {
-            when (event) {
-                is GlobalAppEvent.ChangeGroup -> {
-                    SyncWorker.start()
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                EventBus.subscribe<Any>(::collectEvent)
-            }
         }
     }
 

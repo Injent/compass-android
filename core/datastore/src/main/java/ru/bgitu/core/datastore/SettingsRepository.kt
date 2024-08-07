@@ -9,11 +9,19 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import ru.bgitu.core.CredentialsPb
+import ru.bgitu.core.DataVersionPb
+import ru.bgitu.core.GroupSlotPb
+import ru.bgitu.core.SettingsPb
+import ru.bgitu.core.UserDataPb
+import ru.bgitu.core.copy
 import ru.bgitu.core.datastore.model.StoreVariants
 import ru.bgitu.core.datastore.model.toDataStoreModel
 import ru.bgitu.core.datastore.model.toExternalModel
 import ru.bgitu.core.datastore.util.toKotlinType
 import ru.bgitu.core.datastore.util.toProtobuf
+import ru.bgitu.core.idOrNull
+import ru.bgitu.core.metadataPb
 import ru.bgitu.core.model.Contacts
 import ru.bgitu.core.model.Group
 import ru.bgitu.core.model.UserProfile
@@ -23,6 +31,7 @@ import ru.bgitu.core.model.settings.UiTheme
 import ru.bgitu.core.model.settings.UserCredentials
 import ru.bgitu.core.model.settings.UserPrefs
 import ru.bgitu.core.model.settings.UserSettings
+import ru.bgitu.core.userPrefsPb
 
 private const val MAX_RECENT_SEARCH_POOL = 10
 
@@ -30,7 +39,6 @@ class SettingsRepository(
     private val datastore: DataStore<SettingsPb>,
     private val json: Json,
 ) {
-
     val data: Flow<UserSettings> = datastore.data.map {
         UserSettings(
             userId = it.credentials.userId,
@@ -38,9 +46,9 @@ class SettingsRepository(
             groupName = it.credentials.groupName.takeIf { name -> name.isNotEmpty() },
             currentAppVersionCode = it.dataVersions.currAppVersionCode,
             newFeaturesVersion = it.dataVersions.newFeaturesVersion,
-            userPrefs = getUserPrefs(),
+            userPrefs = getUserPrefs(it),
             isAuthorized = !it.metadata.isAnonymousUser && it.credentials.userId != 0L,
-            userProfile = getProfile(),
+            userProfile = getProfile(it),
             isAnonymous = it.metadata.isAnonymousUser
         )
     }
@@ -91,8 +99,8 @@ class SettingsRepository(
         }
     }
 
-    suspend fun getProfile(): UserProfile? {
-        return with(datastore.data.first()) {
+    private fun getProfile(data: SettingsPb): UserProfile? {
+        return with(data) {
             if (credentials.userId == 0L) {
                 return null
             }
@@ -108,10 +116,16 @@ class SettingsRepository(
                     json.decodeFromString<List<StoreVariants>>(userdata.variantsJson)
                         .map(StoreVariants::toExternalModel)
                 }.getOrElse { emptyList() },
-                userRole = UserRole.valueOf(userdata.role),
+                userRole = runCatching {
+                    UserRole.valueOf(userdata.role)
+                }.getOrDefault(UserRole.REGULAR),
                 publicProfile = userdata.publicProfile
             )
         }
+    }
+
+    suspend fun getProfile(): UserProfile? {
+        return getProfile(datastore.data.first())
     }
 
     suspend fun updateMetadata(block: (AppMetadata) -> AppMetadata) {
@@ -184,11 +198,10 @@ class SettingsRepository(
         }
     }
 
-    private suspend fun getUserPrefs(): UserPrefs {
-        return with(datastore.data.first().prefs) {
+    private fun getUserPrefs(data: SettingsPb): UserPrefs {
+        return with(data.prefs) {
             UserPrefs(
                 theme = UiTheme.valueOf(theme.ifEmpty { "SYSTEM" }),
-                ignoreMinorUpdates = ignoreMinorUpdates,
                 showPinnedSchedule = showPinnedSchedule,
                 teacherSortByWeeks = teacherSortByWeeks,
                 savedGroups = savedGroupsList
@@ -213,7 +226,6 @@ class SettingsRepository(
             it.copy {
                 prefs = it.prefs.copy {
                     theme = new.theme.toString()
-                    ignoreMinorUpdates = new.ignoreMinorUpdates
                     showPinnedSchedule = new.showPinnedSchedule
                     teacherSortByWeeks = new.teacherSortByWeeks
                     savedGroups.apply {

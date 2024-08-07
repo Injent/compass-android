@@ -1,6 +1,7 @@
 
 plugins {
     alias(libs.plugins.bgitu.feature)
+    alias(libs.plugins.bgitu.vkplaceholders)
 }
 
 android.namespace = "ru.bgitu.feature.profile"

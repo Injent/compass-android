@@ -6,8 +6,6 @@ sealed interface Screen {
 
     @Serializable data object MainGraph : Screen
 
-    @Serializable data object LoginGraph : Screen
-
     @Serializable data object FindMateGraph : Screen
 
     @Serializable data object ProfileGraph : Screen
@@ -24,11 +22,7 @@ sealed interface Screen {
 
     @Serializable data class Login(val compactScreen: Boolean = false) : Screen
 
-    @Serializable data object Recovery : Screen
-
     @Serializable data class TeacherSearch(val teacherName: String? = null) : Screen
-
-    @Serializable data class TeacherSchedule(val teacherName: String) : Screen
 
     @Serializable data object Profile : Screen
 

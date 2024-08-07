@@ -32,7 +32,6 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
 
     @SuppressLint("MissingPermission")
     override fun onReceive(context: Context, intent: Intent) {
-        val notificationManager = NotificationManagerCompat.from(context)
         val scheduleNotifier = _scheduleNotifier as ScheduleNotifierAlarm
 
         val now = DateTimeUtil.currentDateTime
@@ -42,21 +41,6 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
             classes = classes
         )
         val alarmData = context.getAlarmData(msg)
-
-        if (alarmData.notification != null) {
-            notificationManager.notify(
-                Notifier.PINNED_SCHEDULE_NOTIFICATION_ID,
-                alarmData.notification
-            )
-        } else {
-            Toast.makeText(
-                context,
-                R.string.will_be_enabled_on_the_next_classroom,
-                Toast.LENGTH_SHORT
-            ).show()
-
-            notificationManager.cancel(Notifier.PINNED_SCHEDULE_NOTIFICATION_ID)
-        }
 
         scheduleNotifier.scheduleAlarmAt(
             triggerAt = alarmData.triggerAt,

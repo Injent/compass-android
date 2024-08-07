@@ -2,6 +2,7 @@ package ru.bgitu.app.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -9,12 +10,16 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.bgitu.components.signin.model.AuthState
 import ru.bgitu.components.signin.repository.CompassAuthenticator
+import ru.bgitu.components.sync.workers.SyncWorker
 import ru.bgitu.components.updates.api.AppUpdateManager
 import ru.bgitu.components.updates.api.model.InstallState
 import ru.bgitu.components.updates.api.model.UpdateAvailability
 import ru.bgitu.components.updates.api.model.UpdateInfo
 import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.common.eventChannel
+import ru.bgitu.core.common.eventbus.EventBus
+import ru.bgitu.core.common.eventbus.GlobalAppEvent
+import ru.bgitu.core.data.util.SyncManager
 import ru.bgitu.core.datastore.SettingsRepository
 import ru.bgitu.core.model.settings.UiTheme
 
@@ -41,11 +46,20 @@ sealed interface MainActivityEvent {
 class MainViewModel(
     compassAuthenticator: CompassAuthenticator,
     private val appUpdateManager: AppUpdateManager,
-    settingsRepository: SettingsRepository
+    settingsRepository: SettingsRepository,
+    syncManager: SyncManager
 ) : ViewModel() {
 
     private val _events = eventChannel<MainActivityEvent>()
     val events = _events.receiveAsFlow()
+
+    init {
+        viewModelScope.launch {
+            EventBus.subscribe<GlobalAppEvent.ChangeGroup> {
+                syncManager.requestSync()
+            }
+        }
+    }
 
     val uiState = combine(
         compassAuthenticator.authState,

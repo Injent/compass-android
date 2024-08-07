@@ -64,7 +64,10 @@ fun AppDialog(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally),
             )
-            content()
+            Column(
+                modifier = Modifier.padding(horizontal = AppTheme.spacing.xxl),
+                content = content
+            )
             Row(
                 horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
                 modifier = Modifier.fillMaxWidth(),

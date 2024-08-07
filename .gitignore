@@ -18,3 +18,4 @@ RELEASE_KEYSTORE.txt
 /build-logic/.idea
 # Project exclude paths
 /feature/professor-search/build/
+/secrets.properties

@@ -90,7 +90,7 @@ internal fun ProfileScreen() {
         when (event) {
             is ProfileEvent.NavigateToLogin -> {
                 if (event.autoSignOut)
-                    navController.navigate(Screen.LoginGraph) {
+                    navController.navigate(Screen.Login()) {
                         popUpTo<Screen.MainGraph> {
                             inclusive = true
                         }

@@ -2,16 +2,16 @@ package ru.bgitu.core.datastore.migrations
 
 import androidx.datastore.core.DataMigration
 import kotlinx.serialization.json.Json
-import ru.bgitu.core.datastore.SettingsPb
-import ru.bgitu.core.datastore.copy
-import ru.bgitu.core.datastore.credentialsPb
-import ru.bgitu.core.datastore.dataVersionPb
+import ru.bgitu.core.SettingsPb
+import ru.bgitu.core.copy
+import ru.bgitu.core.credentialsPb
+import ru.bgitu.core.dataVersionPb
 import ru.bgitu.core.datastore.model.DeprecatedStudentInfo
-import ru.bgitu.core.datastore.userDataPb
-import ru.bgitu.core.datastore.userPrefsPb
+import ru.bgitu.core.userDataPb
+import ru.bgitu.core.userPrefsPb
 import ru.bgitu.core.model.settings.UiTheme
 
-class MultipleMessageMigration : DataMigration<SettingsPb> {
+class MigrationV1 : DataMigration<SettingsPb> {
     override suspend fun cleanUp() = Unit
 
     override suspend fun migrate(currentData: SettingsPb): SettingsPb {
@@ -26,7 +26,6 @@ class MultipleMessageMigration : DataMigration<SettingsPb> {
 
             // Migrate to UserPrefs
             prefs = userPrefsPb {
-                ignoreMinorUpdates = false
                 theme = UiTheme.entries[currentData.deprecatedUiTheme].toString()
                 showPinnedSchedule = currentData.deprecatedShowPinnedSchedule
             }

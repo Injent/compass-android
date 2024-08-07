@@ -45,6 +45,7 @@ fun SettingsScreen() {
             SettingsEvent.NavigateBack -> navController.back()
             SettingsEvent.NavigateToAbout -> navController.push(Screen.About)
             SettingsEvent.NavigateToHelp -> navController.push(Screen.Help)
+            SettingsEvent.NavigateToGroups -> navController.push(Screen.Groups)
         }
     }
 
@@ -62,8 +63,6 @@ private fun SettingsScreenContent(
     uiState: SettingsUiState.Success,
     onIntent: (SettingsIntent) -> Unit,
 ) {
-
-
     Scaffold(
         modifier = Modifier.systemBarsPadding(),
         topBar = {
@@ -104,7 +103,10 @@ private fun SettingsScreenContent(
                 color = AppTheme.colorScheme.background1
             )
             ScheduleNotificationView(
-                enabled = uiState.prefs.showPinnedSchedule,
+                uiState = uiState,
+                onGroupSelectRequest = {
+                    onIntent(SettingsIntent.NavigateToGroups)
+                },
                 onSwitch = { enabled ->
                     onIntent(SettingsIntent.SwitchScheduleNotifier(enabled))
                 }
@@ -122,11 +124,12 @@ private fun SettingsScreenPreview() {
                 prefs = UserPrefs(
                     theme = UiTheme.SYSTEM,
                     showPinnedSchedule = false,
-                    ignoreMinorUpdates = false,
                     teacherSortByWeeks = false,
                     savedGroups = emptyList(),
                     showGroupsOnMainScreen = true
-                )
+                ),
+                isGroupSelected = true,
+                nextScheduleNotification = null
             ),
             onIntent = {},
         )

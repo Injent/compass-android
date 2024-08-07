@@ -20,9 +20,9 @@ import com.vk.id.onetap.common.button.style.OneTapButtonSizeStyle
 import ru.bgitu.components.signin.AuthClient
 import ru.bgitu.components.signin.google.GoogleAuthClient
 import ru.bgitu.components.signin.isGooglePlayServicesAvailable
-import ru.bgitu.components.signin.isTelegramAvailable
 import ru.bgitu.components.signin.model.SignInParams
 import ru.bgitu.components.signin.telegram.TelegramAuthClient
+import ru.bgitu.components.signin.vk.VkAuthClient
 import ru.bgitu.core.common.Result
 import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.designsystem.theme.AppTheme
@@ -56,7 +56,7 @@ fun OneTaps(
                 )
             },
             onAuth = { _, accessToken ->
-                authClient = AuthClient.createClient(
+                authClient = AuthClient.createClient<VkAuthClient>(
                     activity = context as ComponentActivity,
                     coroutineScope = coroutineScope,
                     accessToken = accessToken,
@@ -70,22 +70,17 @@ fun OneTaps(
             modifier = Modifier
                 .height(48.dp)
         )
-        val isTelegramAuthAvailable = remember {
-            context.isTelegramAvailable()
-        }
-        if (isTelegramAuthAvailable) {
-            TelegramSignInButton(
-                onClick = {
-                    authClient = AuthClient.createClient<TelegramAuthClient>(
-                        activity = context as ComponentActivity,
-                        coroutineScope = coroutineScope,
-                        onResult = onResult
-                    )
-                    authClient?.signIn()
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+        TelegramSignInButton(
+            onClick = {
+                authClient = AuthClient.createClient<TelegramAuthClient>(
+                    activity = context as ComponentActivity,
+                    coroutineScope = coroutineScope,
+                    onResult = onResult
+                )
+                authClient?.signIn()
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
 
         val googleAuthAvailable = remember {
             context.isGooglePlayServicesAvailable()

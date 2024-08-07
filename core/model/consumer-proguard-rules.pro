@@ -1,0 +1,1 @@
+-keep class ru.bgitu.core.model.settings.UserPrefs { *; }

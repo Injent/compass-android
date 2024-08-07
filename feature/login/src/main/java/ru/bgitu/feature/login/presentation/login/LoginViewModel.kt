@@ -2,6 +2,7 @@ package ru.bgitu.feature.login.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +17,7 @@ import ru.bgitu.core.common.R
 import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.common.eventChannel
 import ru.bgitu.core.data.util.NetworkMonitor
+import ru.bgitu.core.model.settings.UserCredentials
 
 data class LoginUiState(
     val error: TextResource? = null,
@@ -39,8 +41,10 @@ sealed class LoginEvent {
 
 class LoginViewModel(
     private val compassAuthenticator: CompassAuthenticator,
-    private val networkMonitor: NetworkMonitor,
+    private val networkMonitor: NetworkMonitor
 ) : ViewModel() {
+
+    private var signInJob: Job? = null
 
     private val _events = eventChannel<LoginEvent?>()
     val events = _events.receiveAsFlow()
@@ -68,8 +72,10 @@ class LoginViewModel(
     fun onIntent(intent: LoginIntent) {
         when (intent) {
             is LoginIntent.SignIn -> {
+                if (signInJob != null) return
+
                 _events.trySend(LoginEvent.HideSnackbar)
-                viewModelScope.launch {
+                signInJob = viewModelScope.launch {
                     val result = if (intent.signInParams != null) {
                         compassAuthenticator.signIn(intent.signInParams)
                     } else {
@@ -86,9 +92,7 @@ class LoginViewModel(
                 _events.trySend(LoginEvent.HideSnackbar)
                 _events.trySend(LoginEvent.ReadUserAgreement)
             }
-            LoginIntent.Back -> {
-                _events.trySend(LoginEvent.Back)
-            }
+            LoginIntent.Back -> _events.trySend(LoginEvent.Back)
         }
     }
 }

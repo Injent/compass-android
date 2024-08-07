@@ -111,7 +111,7 @@ fun LessonLayout(
 
             leftTimeIndicator?.placeRelative(
                 x = indicatorOffsetX - leftTimeIndicator.width / 2,
-                y = indicator.height - leftTimeIndicator.height
+                y = indicator.height - leftTimeIndicator.height + 15
             )
         }
     }

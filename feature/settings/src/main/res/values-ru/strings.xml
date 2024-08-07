@@ -9,7 +9,6 @@
     <string name="report_error">Сообщить об ошибке</string>
     <string name="please_allow_notification">Включите уведомления</string>
     <string name="notification_sound">Звук прикрепленного расписания</string>
-    <string name="audio_not_selected">Системный</string>
     <string name="theme_system">Системная</string>
     <string name="theme_light">Светлая</string>
     <string name="theme_dark">Темная</string>
@@ -18,4 +17,8 @@
     <string name="dialog_alarm_text">Разрешите выполнять задачи вовремя, чтобы всегда видеть актуальное расписание</string>
     <string name="more_detailed">Подробнее</string>
     <string name="show_schedule">Показывать расписание</string>
+    <string name="action_select_group">Выбрать группу</string>
+    <string name="dialog_title_groupNotSelected">Группа не выбрана</string>
+    <string name="dialog_group_descrition">Выберите группу расписание которой хотели бы видеть</string>
+    <string name="scheduled_at">Запланировано на %s</string>
 </resources>

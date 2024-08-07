@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option java_package = "ru.bgitu.core.datastore";
+option java_package = "ru.bgitu.core";
 option java_multiple_files = true;
 
 import "google/protobuf/wrappers.proto";
@@ -12,13 +12,13 @@ message GroupSlotPb {
 }
 
 message UserPrefsPb {
-    bool ignore_minor_updates = 1;
     string theme = 2;
     bool show_pinned_schedule = 3;
     bool teacher_sort_by_weeks = 4;
     repeated GroupSlotPb saved_groups = 5;
     bool show_groups_on_main_screen = 6;
 
+    bool deprecated_ignore_minor_updates = 1;
 }
 
 message DataVersionPb {
