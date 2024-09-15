@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="variants" translatable="false" type="string" />
+    <item name="contacts" translatable="false" type="string" />
+    <item name="about_me" translatable="false" type="string" />
+</resources>

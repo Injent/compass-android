@@ -20,14 +20,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -75,6 +73,7 @@ import ru.bgitu.core.ui.onClick
 import ru.bgitu.feature.profile.R
 import ru.bgitu.feature.profile.model.ProfileItem
 import ru.bgitu.feature.profile.presentation.components.SignOutDialog
+import ru.bgitu.feature.profile.presentation.components.SupportDevelopersCard
 import ru.bgitu.feature.profile.presentation.components.TryNewFeatureCard
 import ru.bgitu.feature.profile.presentation.components.TryNewFeatureDialog
 import kotlin.math.roundToInt
@@ -102,7 +101,7 @@ internal fun ProfileScreen() {
                     navController.push(Screen.Login(compactScreen = true))
             }
             ProfileEvent.NavigateToSettings -> navController.push(Screen.Settings)
-            ProfileEvent.NavigatoToProfileSettings -> navController.push(Screen.ProfileSettings)
+            ProfileEvent.NavigateToProfileSettings -> navController.push(Screen.ProfileSettings)
             ProfileEvent.NavigateToAboutApp -> navController.push(Screen.About)
             ProfileEvent.NavigateToHelp -> navController.push(Screen.Help)
             ProfileEvent.NavigateToGroups -> navController.push(Screen.Groups)
@@ -272,7 +271,7 @@ private fun NewProfileScreenContent(
                 }
 
                 AnimatedVisibility(
-                    visible = (uiState as? ProfileUiState.Empty)?.isMateBannerVisible ?: false,
+                    visible = (uiState as? ProfileUiState.Empty)?.shouldShowMateBanner ?: false,
                     enter = expandVertically(
                         animationSpec = tween(durationMillis = 400)
                     ) + fadeIn(
@@ -313,30 +312,37 @@ private fun NewProfileScreenContent(
                     )
                 }
 
-                AppCard(
-                    onClick = { showSignOutDialog = true }
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(AppIcons.Logout),
-                            contentDescription = null,
-                            tint = AppTheme.colorScheme.foregroundError,
-                            modifier = Modifier
-                                .sizeIn(maxWidth = 20.dp, maxHeight = 20.dp)
-                        )
-
-                        Text(
-                            text = stringResource(R.string.sign_out),
-                            style = AppTheme.typography.headline1,
-                            color = AppTheme.colorScheme.foreground1,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                }
+                SupportDevelopersCard(
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
+
+
+                // TODO("Add signout button in future releases"
+//                AppCard(
+//                    onClick = { showSignOutDialog = true }
+//                ) {
+//                    Row(
+//                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+//                        verticalAlignment = Alignment.CenterVertically
+//                    ) {
+//                        Icon(
+//                            painter = painterResource(AppIcons.Logout),
+//                            contentDescription = null,
+//                            tint = AppTheme.colorScheme.foregroundError,
+//                            modifier = Modifier
+//                                .sizeIn(maxWidth = 20.dp, maxHeight = 20.dp)
+//                        )
+//
+//                        Text(
+//                            text = stringResource(R.string.sign_out),
+//                            style = AppTheme.typography.headline1,
+//                            color = AppTheme.colorScheme.foreground1,
+//                            modifier = Modifier.weight(1f)
+//                        )
+//                    }
+//                }
+
         }
     }
 }
@@ -399,11 +405,15 @@ private fun AboutMeCard(
             is ProfileUiState.Error -> Unit
             ProfileUiState.Loading -> ShimmerLoading()
             is ProfileUiState.Success -> {
-                Text(
-                    text = uiState.profile.bio,
-                    style = AppTheme.typography.body,
-                    color = AppTheme.colorScheme.foreground1
-                )
+                if (uiState.profile.bio.isBlank()) {
+                    SpecifyCardContent(onClick = onSpecifyRequest)
+                } else {
+                    Text(
+                        text = uiState.profile.bio,
+                        style = AppTheme.typography.body,
+                        color = AppTheme.colorScheme.foreground1
+                    )
+                }
             }
         }
     }
@@ -524,7 +534,7 @@ private fun SpecifyCardContent(
     HorizontalDivider(
         modifier = Modifier.fillMaxWidth(),
         thickness = 1.2.dp,
-        color = AppTheme.colors.blueChateau
+        color = AppTheme.colorScheme.stroke1
     )
     Spacer(Modifier.height(6.dp))
     AppTextButton(

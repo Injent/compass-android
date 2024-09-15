@@ -52,7 +52,7 @@ import ru.bgitu.feature.schedule_widget.model.WidgetTextColor
 import ru.bgitu.feature.schedule_widget.model.WidgetTheme
 import ru.bgitu.feature.schedule_widget.model.provideWidgetColors
 import ru.bgitu.feature.schedule_widget.rememberWidgetOptions
-import ru.bgitu.feature.schedule_widget.ui.WidgetPreview
+import ru.bgitu.feature.schedule_widget.presentation.component.WidgetPreview
 import kotlin.math.round
 
 @SuppressLint("InflateParams")
@@ -177,7 +177,7 @@ fun WidgetSettingsScreen(
                     val themes = remember {
                         WidgetTheme.entries.let {
                             if (SDK_INT < 31) {
-                                it.subtract(listOf(WidgetTheme.DYNAMIC))
+                                it.subtract(setOf(WidgetTheme.DYNAMIC))
                             } else it
                         }
                     }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rustore_dialog_title">RuStore not found</string>
+    <string name="rustore_dialog_message">The app was downloaded from RuStore. Without it, app will not be able to update and work properly</string>
+    <string name="rustore_dialog_action_download">Download RuStore</string>
+</resources>

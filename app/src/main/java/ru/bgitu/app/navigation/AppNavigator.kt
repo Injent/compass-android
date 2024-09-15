@@ -18,17 +18,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import ru.bgitu.core.common.CommonDrawables
 import ru.bgitu.core.navigation.Screen
-import ru.bgitu.feature.about.navigation.about
+import ru.bgitu.feature.about.navigation.aboutRoute
 import ru.bgitu.feature.findmate.navigation.findMateGraph
-import ru.bgitu.feature.groups.navigation.groupsScreen
-import ru.bgitu.feature.help.navigation.help
-import ru.bgitu.feature.home.impl.navigation.homeScreen
-import ru.bgitu.feature.input.navigation.inputScreen
+import ru.bgitu.feature.groups.navigation.groupsRoute
+import ru.bgitu.feature.help.navigation.helpRoute
+import ru.bgitu.feature.home.impl.navigation.homeRoute
+import ru.bgitu.feature.input.navigation.inputRoute
 import ru.bgitu.feature.login.navigation.loginRoute
-import ru.bgitu.feature.professor_search.navigation.professorSearchScreen
+import ru.bgitu.feature.onboarding.navigation.onboardingRoute
+import ru.bgitu.feature.professor_search.navigation.professorSearchRoute
 import ru.bgitu.feature.profile.navigation.profileRoute
-import ru.bgitu.feature.profile_settings.navigation.profileSettings
-import ru.bgitu.feature.settings.navigation.settings
+import ru.bgitu.feature.profile_settings.navigation.profileSettingsRoutes
+import ru.bgitu.feature.settings.navigation.settingsRoute
 
 @Composable
 fun AppNavigator(
@@ -41,12 +42,13 @@ fun AppNavigator(
         modifier = modifier
     ) {
         composable<Screen.Loading> { LoadingScreen() }
-        inputScreen()
-        about()
-        help()
-        settings()
-        profileSettings()
-        groupsScreen()
+        onboardingRoute()
+        inputRoute()
+        aboutRoute()
+        helpRoute()
+        settingsRoute()
+        profileSettingsRoutes()
+        groupsRoute()
         loginRoute()
 
         mainGraph()
@@ -59,8 +61,8 @@ private fun NavGraphBuilder.mainGraph() {
         enterTransition = { fadeIn() },
         exitTransition = { fadeOut() }
     ) {
-        homeScreen()
-        professorSearchScreen()
+        homeRoute()
+        professorSearchRoute()
         findMateGraph()
         profileGraph()
     }
@@ -71,7 +73,7 @@ private fun NavGraphBuilder.profileGraph() {
         startDestination = Screen.Profile,
     ) {
         profileRoute()
-        profileSettings()
+        profileSettingsRoutes()
     }
 }
 

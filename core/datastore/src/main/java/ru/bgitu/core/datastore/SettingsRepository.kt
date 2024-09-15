@@ -49,7 +49,9 @@ class SettingsRepository(
             userPrefs = getUserPrefs(it),
             isAuthorized = !it.metadata.isAnonymousUser && it.credentials.userId != 0L,
             userProfile = getProfile(it),
-            isAnonymous = it.metadata.isAnonymousUser
+            isAnonymous = it.metadata.isAnonymousUser,
+            shouldShowOnboarding = it.metadata.shouldShowOnboarding,
+            shouldShowDataResetAlert = it.metadata.shouldShowDataResetAlert
         )
     }
 
@@ -69,11 +71,12 @@ class SettingsRepository(
                 newestUpdateChecksum = newestUpdateChecksum,
                 seenTeacherScheduleAlert = seenTeacherScheduleAlert,
                 availableVersionCode = availableVersionCode,
-                scheduleNotifierAlarmDateTime = scheduleNotifierAlarmDateTime.takeIf { date ->
-                    date.isNotBlank()
-                }?.toLocalDateTime(),
+                scheduleNotifierAlarmDateTime = scheduleNotifierAlarmDateTime
+                    .takeIf(String::isNotEmpty)?.toLocalDateTime(),
                 isAnonymousUser = isAnonymousUser,
-                isMateBannerClosed = isMateBannerClosed
+                shouldShowMateBanner = shouldShowMateBanner,
+                shouldShowOnboarding = shouldShowOnboarding,
+                shouldShowDataResetAlert = shouldShowDataResetAlert
             )
         }
     }
@@ -144,7 +147,9 @@ class SettingsRepository(
                     scheduleNotifierAlarmDateTime =
                         new.scheduleNotifierAlarmDateTime?.toString() ?: ""
                     isAnonymousUser = new.isAnonymousUser
-                    isMateBannerClosed = new.isMateBannerClosed
+                    shouldShowMateBanner = new.shouldShowMateBanner
+                    shouldShowOnboarding = new.shouldShowOnboarding
+                    shouldShowDataResetAlert = new.shouldShowDataResetAlert
                 }
             }
         }
@@ -229,8 +234,8 @@ class SettingsRepository(
                     showPinnedSchedule = new.showPinnedSchedule
                     teacherSortByWeeks = new.teacherSortByWeeks
                     savedGroups.apply {
-                        this.clear()
-                        this.addAll(
+                        clear()
+                        addAll(
                             new.savedGroups.mapIndexed { index, group ->
                                 GroupSlotPb.newBuilder()
                                     .setSlotIndex(index)
@@ -253,6 +258,7 @@ class SettingsRepository(
                     scheduleDataVersion = scheduleVersion,
                     newFeaturesVersion = newFeaturesVersion,
                     currentAppVersionCode = currAppVersionCode,
+                    userDataVersion = userdataVersion
                 )
             }
         }.first()
@@ -266,6 +272,31 @@ class SettingsRepository(
                     scheduleVersion = versions.scheduleDataVersion
                     newFeaturesVersion = versions.newFeaturesVersion
                     currAppVersionCode = versions.currentAppVersionCode
+                    userdataVersion = versions.userDataVersion
+                }
+            }
+        }
+    }
+
+    suspend fun updateUserDataVersion(userDataVersion: Int, group: Group?) {
+        datastore.updateData {
+            it.copy {
+                // Show reset data alert if group is not null
+                metadata = metadata.copy {
+                    shouldShowDataResetAlert = group == null
+                }
+
+                credentials = credentials.copy {
+                    groupId = group?.id ?: 0
+                    groupName = group?.name ?: ""
+                }
+
+                prefs = prefs.copy {
+                    savedGroups.clear()
+                }
+                dataVersions = dataVersions.copy {
+                    scheduleVersion = 0
+                    this.userdataVersion = userDataVersion
                 }
             }
         }

@@ -1,6 +1,8 @@
 package ru.bgitu.components.signin.telegram
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
@@ -8,12 +10,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import ru.bgitu.components.signin.AuthClient
+import ru.bgitu.components.signin.R
 import ru.bgitu.components.signin.model.AuthMethod
 import ru.bgitu.components.signin.model.SignInParams
 import ru.bgitu.core.common.Result
+import ru.bgitu.core.common.TELEGRAM_BOT_DOMAIN
 import java.util.UUID
 
-private const val TELEGRAM_DEEPLINK = "tg://resolve?domain=sbdfiusdfbsfhbsjhbdhfhnbot&start"
+private const val TELEGRAM_DEEPLINK = "tg://resolve?domain=$TELEGRAM_BOT_DOMAIN&start"
 
 class TelegramAuthClient(
     private val activity: ComponentActivity,
@@ -27,7 +31,12 @@ class TelegramAuthClient(
             data = "$TELEGRAM_DEEPLINK=$idToken".toUri()
         }
 
-        activity.startActivity(intent)
+        try {
+            activity.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(activity, R.string.telegram_appNotFound, Toast.LENGTH_SHORT).show()
+            return
+        }
 
         coroutineScope.launch {
             activity.repeatOnLifecycle(Lifecycle.State.RESUMED) {
@@ -39,7 +48,5 @@ class TelegramAuthClient(
     private fun createSignInParams(idToken: String) = SignInParams(
         authMethod = AuthMethod.TELEGRAM,
         idToken = idToken,
-        fullName = "",
-        avatarUrl = null
     )
 }

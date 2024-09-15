@@ -52,8 +52,10 @@ fun AppDialog(
             verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.l),
             modifier = Modifier
                 .padding(
-                    horizontal = AppTheme.spacing.l,
-                    vertical = AppTheme.spacing.m
+                    start = AppTheme.spacing.m,
+                    end = AppTheme.spacing.m,
+                    bottom = AppTheme.spacing.m,
+                    top = AppTheme.spacing.l
                 ),
         ) {
             Text(
@@ -373,7 +375,7 @@ fun AppConfirmDialog(
 }
 
 fun Modifier.bottomAlignedDialog() = layout { measurable, constraints ->
-    val placeable = measurable.measure(constraints);
+    val placeable = measurable.measure(constraints)
     layout(constraints.maxWidth, constraints.maxHeight){
         placeable.place(0, constraints.maxHeight - placeable.height, 10f)
     }

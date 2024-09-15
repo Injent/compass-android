@@ -3,9 +3,13 @@ package ru.bgitu.feature.about.presentation
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -67,6 +71,7 @@ private fun AboutScreenContent(
     val context = LocalContext.current
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0),
         topBar = {
             TopAppBar(
                 title = {
@@ -86,6 +91,10 @@ private fun AboutScreenContent(
     ) { paddingValues ->
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(
+                bottom = WindowInsets.navigationBars.asPaddingValues()
+                    .calculateBottomPadding() + AppTheme.spacing.l
+            ),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)

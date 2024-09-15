@@ -30,14 +30,14 @@ fun AppCheckBox(
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     text: String? = null,
-    shape: Shape = RoundedCornerShape(4.dp),
+    shape: Shape = RoundedCornerShape(6.dp),
     enabled: Boolean = true
 ) {
     val (checkedColor, checkColor, borderColor) = when {
         checked && enabled -> arrayOf(AppTheme.colorScheme.foreground, AppTheme.colorScheme.foregroundOnBrand, null)
         !checked && enabled -> arrayOf(AppTheme.colorScheme.background1, null, AppTheme.colorScheme.foreground3)
         checked && !enabled -> arrayOf(AppTheme.colorScheme.foreground3, AppTheme.colorScheme.backgroundTouchable, null)
-        else -> arrayOf(AppTheme.colors.blueChateau, null, AppTheme.colorScheme.foreground3)
+        else -> arrayOf(AppTheme.colorScheme.foreground, null, AppTheme.colorScheme.foreground3)
     }
 
     Row(

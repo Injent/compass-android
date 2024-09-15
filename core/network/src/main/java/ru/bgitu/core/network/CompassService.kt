@@ -7,7 +7,6 @@ import ru.bgitu.core.model.ProfessorClass
 import ru.bgitu.core.model.RemoteDataVersions
 import ru.bgitu.core.network.model.NetworkLesson
 import ru.bgitu.core.network.model.NetworkSearchMateItem
-import ru.bgitu.core.network.model.NetworkSubject
 import ru.bgitu.core.network.model.NetworkUserProfile
 import ru.bgitu.core.network.model.request.ExternalAuthRequest
 import ru.bgitu.core.network.model.request.RegisterCmtRequest
@@ -24,13 +23,14 @@ interface CompassService {
     suspend fun searchMates(subjectName: String, variant: Int): Result<List<NetworkSearchMateItem>>
 
     suspend fun chooseGroup(group: Group): Result<Unit>
+    suspend fun getUserDataVersion(): Result<Int>
 
     suspend fun getScheduleVersion(groupId: Int): Result<RemoteDataVersions>
-    suspend fun getSubjects(groupId: Int): Result<List<NetworkSubject>>
     suspend fun getSchedule(
         groupId: Int,
         fromDate: LocalDate,
-        toDate: LocalDate
+        toDate: LocalDate,
+        userDataVersion: Int
     ): Result<List<NetworkLesson>>
     suspend fun registerCmt(request: RegisterCmtRequest): Result<Unit>
     suspend fun refreshToken(refreshToken: String): Result<RefreshTokenResponse>

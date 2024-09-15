@@ -37,7 +37,7 @@ class CompassRepository(
     }
 
     suspend fun searchMates(subjectName: String): Result<List<SearchMateItem>> {
-        return compassService.searchMates(subjectName, TODO()).map(NetworkSearchMateItem::toExternalModel)
+        return compassService.searchMates(subjectName, 1).map(NetworkSearchMateItem::toExternalModel)
     }
 
     suspend fun getProfessorSchedule(

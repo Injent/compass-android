@@ -70,8 +70,7 @@ class WidgetScheduleWorker(
             }
             ScheduleWidget().updateAll(applicationContext)
             Result.success()
-        }.getOrElse { e ->
-            e.printStackTrace()
+        }.getOrElse {
             if (runAttemptCount <= DEFAULT_WORK_RETRY_ATTEMPTS) {
                 Result.retry()
             } else Result.failure()

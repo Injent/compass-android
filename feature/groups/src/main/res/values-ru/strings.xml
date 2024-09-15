@@ -14,4 +14,5 @@
     <string name="hint_groups">Зажмите карточку и переместите группу в нужное место</string>
     <string name="group_not_selected">Не выбрано</string>
     <string name="alert_group_not_selected">Группа не выбрана</string>
+    <string name="error_groups_not_loaded">Данные еще не загружены</string>
 </resources>

@@ -23,4 +23,5 @@
     <string name="text_color_white">White</string>
     <string name="widget_text_color">Text color</string>
     <string name="widget_elements_color">Buttons color</string>
+    <string name="toast_failed_to_open_settings">Failed to open widget settings</string>
 </resources>

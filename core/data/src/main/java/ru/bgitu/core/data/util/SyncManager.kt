@@ -6,7 +6,7 @@ import ru.bgitu.core.data.model.CloudMessagingTokenType
 interface SyncManager {
     val syncState: Flow<SyncStatus>
 
-    fun requestSync()
+    fun requestSync(isFirstSync: Boolean = false)
 
     fun refreshServicesToken(token: String, type: CloudMessagingTokenType)
 

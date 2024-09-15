@@ -7,7 +7,7 @@ import ru.bgitu.core.navigation.Screen
 import ru.bgitu.feature.groups.presentation.groups.GroupsRoute
 import ru.bgitu.feature.groups.presentation.search.GroupSearchRoute
 
-fun NavGraphBuilder.groupsScreen() {
+fun NavGraphBuilder.groupsRoute() {
     composable<Screen.Groups> {
         GroupsRoute()
     }

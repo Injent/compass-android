@@ -13,7 +13,7 @@ data class WidgetColors(
     val background: Color,
     val onBackground: Color,
     val container: Color,
-    val onContainer: Color
+    val onContainer: Color,
 )
 
 fun provideWidgetColors(context: Context, options: WidgetOptions): WidgetColors {

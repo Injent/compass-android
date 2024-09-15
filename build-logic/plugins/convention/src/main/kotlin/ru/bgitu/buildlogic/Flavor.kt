@@ -12,7 +12,6 @@ enum class FlavorDimension {
 
 @Suppress("EnumEntryName")
 enum class Flavor(val dimension: FlavorDimension, val applicationIdSuffix: String? = null) {
-    demo(FlavorDimension.contentType, applicationIdSuffix = "demo"),
     prod(FlavorDimension.contentType),
     rustore(FlavorDimension.contentType)
 }

@@ -20,21 +20,27 @@ import io.ktor.http.URLProtocol
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.common.di.CommonQualifiers
 import ru.bgitu.core.common.exception.DetailedException
+import ru.bgitu.core.network.CompassService
 import ru.bgitu.core.network.R
+import ru.bgitu.core.network.crypto.IgnoreTrustManager
+import ru.bgitu.core.network.ktor.KtorDataSource
 
 val NetworkModule = module {
-    includes(FlavoredNetworkModule)
-
     single {
         HttpClient(CIO) {
             expectSuccess = true
             followRedirects = true
 
             engine {
+                https {
+                    serverName = "bgitu-compass.ru"
+                    trustManager = IgnoreTrustManager(this)
+                }
                 endpoint {
                     keepAliveTime = 5000
                     connectTimeout = 5000
@@ -56,7 +62,7 @@ val NetworkModule = module {
             }
 
             install(HttpCache) {
-                privateStorage(
+                publicStorage(
                     FileStorage(
                         directory = androidContext().cacheDir,
                         dispatcher = get(CommonQualifiers.DispatcherIO)
@@ -74,6 +80,13 @@ val NetworkModule = module {
             }
         }
     }
+
+    single {
+        KtorDataSource(
+            client = get(),
+            settingsRepository = get()
+        )
+    } bind CompassService::class
 }
 
 private fun HttpClientConfig<*>.configureResponseValidator() {

@@ -4,4 +4,8 @@
         <item name="avatar_background">#e8e8e8</item>
         <item name="avatar_foreground">#C5C5C5</item>
     </style>
+    <style name="AvatarPlaceholderNight">
+        <item name="avatar_background">#d9d9d9</item>
+        <item name="avatar_foreground">#a7a7a7</item>
+    </style>
 </resources>

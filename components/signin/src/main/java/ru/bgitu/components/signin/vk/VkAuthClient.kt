@@ -22,8 +22,6 @@ import ru.bgitu.core.common.Result
 import ru.bgitu.core.common.getOrElse
 import ru.bgitu.core.common.runResulting
 
-private const val VK_API_BASE_URL = "https://api.vk.com/method"
-
 class VkAuthClient(
     private val accessToken: AccessToken,
     private val coroutineScope: CoroutineScope,
@@ -32,41 +30,14 @@ class VkAuthClient(
 
     override fun signIn() {
         coroutineScope.launch {
-            val lastName = getLastName(accessToken.token)
-                .getOrElse { return@launch }
-
             onResult(
                 Result.Success(
-                    createSignInParams(
-                        accessToken = accessToken,
-                        lastName = lastName
+                    SignInParams(
+                        authMethod = AuthMethod.VK,
+                        idToken = accessToken.idToken!!
                     )
                 )
             )
-        }
-    }
-
-    private fun createSignInParams(accessToken: AccessToken, lastName: String) = SignInParams(
-        authMethod = AuthMethod.VK,
-        idToken = checkNotNull(accessToken.idToken) { "idToken can't be null" },
-        fullName = "${accessToken.userData.firstName} $lastName",
-        avatarUrl = accessToken.userData.photo200
-    )
-
-    private suspend fun getLastName(accessToken: String): Result<String> = runResulting {
-        HttpClient(CIO).use { client ->
-            client.post {
-                url {
-                    encodedPath = "$VK_API_BASE_URL/account.getProfileInfo"
-                    contentType(ContentType.Application.FormUrlEncoded)
-                }
-                setBody(
-                    formData {
-                        append("access_token", accessToken)
-                        append("v", "5.199")
-                    }
-                )
-            }.body<JsonObject>()["response"]!!.jsonObject["last_name"]!!.jsonPrimitive.content
         }
     }
 }

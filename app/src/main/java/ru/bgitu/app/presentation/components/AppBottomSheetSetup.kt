@@ -11,8 +11,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import ru.bgitu.app.presentation.MainActivityUiState
 import ru.bgitu.components.updates.api.model.InstallState
+import ru.bgitu.components.updates.api.model.NativeUpdateInfo
 import ru.bgitu.components.updates.api.model.UpdateAvailability
-import ru.bgitu.components.updates.api.model.UpdateInfo
 import ru.bgitu.feature.update.model.AppUpdateSheetData
 import ru.bgitu.feature.update.presentation.AppUpdateBottomSheet
 
@@ -30,7 +30,7 @@ fun AppUpdateBottomSheetSetup(uiState: MainActivityUiState) {
 
     LaunchedEffect(uiState, sheetData) {
         when (val info = uiState.updateInfo) {
-            is UpdateInfo.NativeUpdate -> {
+            is NativeUpdateInfo -> {
                 if (uiState.installState !is InstallState.Unknown
                     && uiState.installState !is InstallState.NothingToInstall) {
                     sheetData = null

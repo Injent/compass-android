@@ -5,7 +5,7 @@ import androidx.navigation.compose.composable
 import ru.bgitu.core.navigation.Screen
 import ru.bgitu.feature.about.presentation.AboutScreen
 
-fun NavGraphBuilder.about() {
+fun NavGraphBuilder.aboutRoute() {
     composable<Screen.About> {
         AboutScreen()
     }

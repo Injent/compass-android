@@ -17,7 +17,7 @@ import ru.bgitu.core.model.UserProfile
 sealed interface ProfileUiState {
     data object Loading : ProfileUiState
     data class Empty(
-        val isMateBannerVisible: Boolean
+        val shouldShowMateBanner: Boolean
     ) : ProfileUiState
     data class Success(val profile: UserProfile) : ProfileUiState
     data class Error(val profile: UserProfile) : ProfileUiState
@@ -38,7 +38,7 @@ sealed interface ProfileIntent {
 sealed interface ProfileEvent {
     data class NavigateToLogin(val autoSignOut: Boolean) : ProfileEvent
     data object NavigateToSettings : ProfileEvent
-    data object NavigatoToProfileSettings : ProfileEvent
+    data object NavigateToProfileSettings : ProfileEvent
     data object NavigateToHelp : ProfileEvent
     data object NavigateToAboutApp : ProfileEvent
     data object NavigateToGroups : ProfileEvent
@@ -57,8 +57,9 @@ class ProfileViewModel(
         settingsRepository.metadata
     ) { userData, metaData ->
         if (userData.userProfile == null && userData.isAnonymous) {
-            return@combine ProfileUiState.Empty(isMateBannerVisible = !metaData.isMateBannerClosed)
+            return@combine ProfileUiState.Empty(shouldShowMateBanner = metaData.shouldShowMateBanner)
         }
+
         userData.userProfile?.let { profile ->
             ProfileUiState.Success(profile)
         } ?: ProfileUiState.Empty(false)
@@ -79,7 +80,7 @@ class ProfileViewModel(
             }
             ProfileIntent.NavigateToSettings -> _events.trySend(ProfileEvent.NavigateToSettings)
             ProfileIntent.NavigateToProfileSettings -> _events.trySend(
-                ProfileEvent.NavigatoToProfileSettings
+                ProfileEvent.NavigateToProfileSettings
             )
             ProfileIntent.NavigateToAboutApp -> _events.trySend(ProfileEvent.NavigateToAboutApp)
             ProfileIntent.NavigateToHelp -> _events.trySend(ProfileEvent.NavigateToHelp)
@@ -89,7 +90,7 @@ class ProfileViewModel(
             ProfileIntent.NavigateToGroups -> _events.trySend(ProfileEvent.NavigateToGroups)
             ProfileIntent.CloseMateBanner -> viewModelScope.launch {
                 settingsRepository.updateMetadata {
-                    it.copy(isMateBannerClosed = true)
+                    it.copy(shouldShowMateBanner = false)
                 }
             }
         }

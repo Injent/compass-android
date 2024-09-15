@@ -1,7 +1,6 @@
 package ru.bgitu.core.designsystem.util
 
 import android.content.Context
-import android.view.ViewTreeObserver
 import androidx.annotation.RawRes
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animateFloatAsState
@@ -10,27 +9,18 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -42,7 +32,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
@@ -50,9 +39,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.MotionScene
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsAnimationCompat
-import androidx.core.view.WindowInsetsCompat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapLatest
 import ru.bgitu.core.common.TextResource
@@ -119,74 +105,6 @@ fun TextResource.asString(context: Context): String {
         is TextResource.Plain -> plain
         is TextResource.DynamicString -> context.getString(resId, *args)
     }
-}
-
-class ImeAnimationState {
-    var translationY by mutableFloatStateOf(0f)
-        internal set
-    var screenHeight by mutableIntStateOf(0)
-        internal set
-    var fraction by mutableFloatStateOf(1f)
-        internal set
-}
-
-@Composable
-fun rememberImeAnimationState(): ImeAnimationState {
-    val imeAnimationState by remember {
-        mutableStateOf(ImeAnimationState())
-    }
-
-    val view = LocalView.current
-    val viewTreeObserver = view.viewTreeObserver
-
-    DisposableEffect(viewTreeObserver) {
-        ViewCompat.setWindowInsetsAnimationCallback(
-            view.rootView,
-            object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
-                private var startBottom = 0
-                private var endBottom = 0
-                private var imeVisible = false
-
-                override fun onPrepare(animation: WindowInsetsAnimationCompat) {
-                    super.onPrepare(animation)
-                    startBottom = view.bottom
-                    imeAnimationState.screenHeight = view.rootView.bottom
-                    imeVisible = ViewCompat.getRootWindowInsets(view)
-                        ?.isVisible(WindowInsetsCompat.Type.ime()) ?: true
-                }
-
-                override fun onStart(
-                    animation: WindowInsetsAnimationCompat,
-                    bounds: WindowInsetsAnimationCompat.BoundsCompat
-                ): WindowInsetsAnimationCompat.BoundsCompat {
-                    endBottom = view.bottom
-                    return bounds
-                }
-
-                override fun onProgress(
-                    insets: WindowInsetsCompat,
-                    runningAnimations: MutableList<WindowInsetsAnimationCompat>
-                ): WindowInsetsCompat {
-                    val imeAnimation = runningAnimations.find {
-                        it.typeMask and WindowInsetsCompat.Type.ime() != 0
-                    } ?: return insets
-
-                    imeAnimationState.fraction = if (imeVisible) {
-                        imeAnimation.interpolatedFraction
-                    } else 1 - imeAnimation.interpolatedFraction
-
-                    imeAnimationState.translationY = (startBottom - endBottom) * (1 - imeAnimation.interpolatedFraction)
-                    return insets
-                }
-            }
-        )
-
-        onDispose {
-            ViewCompat.setWindowInsetsAnimationCallback(view, null)
-        }
-    }
-
-    return imeAnimationState
 }
 
 @Composable

@@ -13,8 +13,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import ru.bgitu.core.designsystem.theme.AppTheme
+import ru.bgitu.core.designsystem.theme.SpotCard
+import ru.bgitu.core.designsystem.util.boxShadow
+import ru.bgitu.core.designsystem.util.thenIf
 
 @Composable
 fun AppChip(
@@ -31,7 +35,8 @@ fun AppChip(
         label = "transition"
     )
     Surface(
-        modifier = modifier.height(36.dp),
+        modifier = modifier
+            .height(36.dp),
         color = color,
         shape = shape,
         contentColor = if (selected) {

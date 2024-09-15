@@ -46,7 +46,7 @@ fun AppFilledIconButton(
             colors = IconButtonDefaults.filledIconButtonColors(
                 containerColor = AppTheme.colorScheme.background1,
                 contentColor = tint,
-                disabledContainerColor = AppTheme.colors.grayFooter,
+                disabledContainerColor = AppTheme.colorScheme.foreground3,
                 disabledContentColor = AppTheme.colorScheme.foreground4
             ),
             shape = shape,

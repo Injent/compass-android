@@ -288,7 +288,7 @@ fun AppReadOnlyTextField(
     fieldMinHeight: Dp = 48.dp,
     maxLines: Int = 1,
 ) {
-    val containerColor = AppTheme.colorScheme.background4
+    val containerColor = AppTheme.colorScheme.backgroundTouchable
 
     val iconColor by animateColorAsState(
         targetValue = if (enabled) {

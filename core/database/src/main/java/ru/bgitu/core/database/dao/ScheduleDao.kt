@@ -8,25 +8,24 @@ import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 import ru.bgitu.core.database.entity.LessonEntity
-import ru.bgitu.core.database.model.PopulatedLesson
 
 @Dao
 interface ScheduleDao {
     @Transaction
-    @Query("SELECT * FROM Lesson WHERE date = :queryDate")
-    suspend fun getClasses(queryDate: LocalDate): List<PopulatedLesson>
+    @Query("SELECT * FROM lessons WHERE date = :queryDate")
+    suspend fun getClasses(queryDate: LocalDate): List<LessonEntity>
 
     @Transaction
-    @Query("SELECT * FROM Lesson WHERE date = :queryDate")
-    fun getLessonsStream(queryDate: LocalDate): Flow<List<PopulatedLesson>>
+    @Query("SELECT * FROM lessons WHERE date = :queryDate")
+    fun getLessonsStream(queryDate: LocalDate): Flow<List<LessonEntity>>
 
     @Transaction
-    @Query("SELECT * FROM Lesson WHERE date >= :from AND date <= :to")
-    fun getLessonsStream(from: LocalDate, to: LocalDate): Flow<List<PopulatedLesson>>
+    @Query("SELECT * FROM lessons WHERE date >= :from AND date <= :to")
+    fun getLessonsStream(from: LocalDate, to: LocalDate): Flow<List<LessonEntity>>
 
     @Transaction
-    @Query("SELECT * FROM Lesson WHERE date >= :from AND date <= :to LIMIT :limit")
-    fun getClasses(from: LocalDate, to: LocalDate, limit: Int): List<PopulatedLesson>
+    @Query("SELECT * FROM lessons WHERE date >= :from AND date <= :to LIMIT :limit")
+    fun getClasses(from: LocalDate, to: LocalDate, limit: Int): List<LessonEntity>
 
     @Insert
     suspend fun insertAllClasses(lessons: List<LessonEntity>)
@@ -34,9 +33,9 @@ interface ScheduleDao {
     @Upsert
     suspend fun upsertLesson(lesson: LessonEntity)
 
-    @Query("DELETE FROM Lesson WHERE date < :beforeDate")
+    @Query("DELETE FROM lessons WHERE date < :beforeDate")
     suspend fun deleteClassesBeforeDate(beforeDate: LocalDate)
 
-    @Query("DELETE FROM Lesson")
+    @Query("DELETE FROM lessons")
     suspend fun deleteTable()
 }

@@ -23,28 +23,14 @@ internal fun TeacherScheduleAlertDialog(
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var confirmationDelay by rememberSaveable { mutableIntStateOf(5) }
-
-    LaunchedEffect(Unit) {
-        while (confirmationDelay > 0) {
-            delay(1.seconds)
-            confirmationDelay--
-        }
-    }
-
     AppDialog(
         modifier = modifier,
         title = stringResource(R.string.attention),
         onDismissRequest = {},
         buttons = {
             AppConfirmButton(
-                text = stringResource(android.R.string.ok).let {
-                    if (confirmationDelay > 0) {
-                        "$it ($confirmationDelay)"
-                    } else it
-                },
+                text = stringResource(android.R.string.ok),
                 onClick = onConfirm,
-                enabled = confirmationDelay == 0,
                 modifier = Modifier.weight(1f)
             )
         }

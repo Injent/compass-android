@@ -20,11 +20,13 @@ import com.vk.id.onetap.common.button.style.OneTapButtonSizeStyle
 import ru.bgitu.components.signin.AuthClient
 import ru.bgitu.components.signin.google.GoogleAuthClient
 import ru.bgitu.components.signin.isGooglePlayServicesAvailable
+import ru.bgitu.components.signin.model.AuthMethod
 import ru.bgitu.components.signin.model.SignInParams
 import ru.bgitu.components.signin.telegram.TelegramAuthClient
 import ru.bgitu.components.signin.vk.VkAuthClient
 import ru.bgitu.core.common.Result
 import ru.bgitu.core.common.TextResource
+import ru.bgitu.core.common.getOrThrow
 import ru.bgitu.core.designsystem.theme.AppTheme
 
 @Composable
@@ -56,16 +58,15 @@ fun OneTaps(
                 )
             },
             onAuth = { _, accessToken ->
-                authClient = AuthClient.createClient<VkAuthClient>(
-                    activity = context as ComponentActivity,
-                    coroutineScope = coroutineScope,
-                    accessToken = accessToken,
-                    onResult = onResult
-                )
-                authClient?.signIn()
+                val idToken = accessToken.idToken
+                if (idToken == null) {
+                    onResult(Result.Failure())
+                    return@OneTap
+                }
+                Result.Success(SignInParams(AuthMethod.VK, idToken)).also(onResult)
             },
             onFail = { _, fail ->
-                onResult(Result.Failure(details = TextResource.Plain(fail.description)))
+                Result.Failure(details = TextResource.Plain(fail.description)).also(onResult)
             },
             modifier = Modifier
                 .height(48.dp)
@@ -92,7 +93,7 @@ fun OneTaps(
                     authClient = AuthClient.createClient<GoogleAuthClient>(
                         activity = context as ComponentActivity,
                         coroutineScope = coroutineScope,
-                        onResult = onResult
+                        onResult = { println(it.getOrThrow().idToken) }
                     )
                     authClient?.signIn()
                 },

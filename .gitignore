@@ -19,3 +19,11 @@ RELEASE_KEYSTORE.txt
 # Project exclude paths
 /feature/professor-search/build/
 /secrets.properties
+/app/pepk.jar
+/app/certificate.pem
+/app/rustore/release/output-metadata.json
+/app/rustore/release/baselineProfiles/1/app-rustore-release.dm
+/app/rustore/release/baselineProfiles/0/app-rustore-release.dm
+/app/rustore/release/app-rustore-release.apk
+/app/rustore/release/app-rustore-release.aab
+/app/pepk_out.zip

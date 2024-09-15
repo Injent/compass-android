@@ -14,4 +14,5 @@
     <string name="hint_groups">Hold down the card and move the group to the desired position</string>
     <string name="group_not_selected">Not selected</string>
     <string name="alert_group_not_selected">Group not selected!</string>
+    <string name="error_groups_not_loaded">The data has not been uploaded yet</string>
 </resources>

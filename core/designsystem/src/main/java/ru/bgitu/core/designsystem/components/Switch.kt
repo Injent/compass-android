@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,9 +52,7 @@ fun AppSwitch(
         },
         animationSpec = tween()
     )
-    val thumbColor = if (enabled) {
-        AppTheme.colorScheme.foregroundOnBrand
-    } else AppTheme.colorScheme.foregroundDisabled
+    val thumbColor = Color.White
 
     Canvas(
         modifier = modifier

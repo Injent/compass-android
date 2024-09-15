@@ -192,7 +192,7 @@ private fun MateViewList() {
                             end = 32.dp
                         ),
                     thickness = 1.dp,
-                    color = AppTheme.colors.blueChateau
+                    color = AppTheme.colorScheme.stroke1
                 )
             }
         }

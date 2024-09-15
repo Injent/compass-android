@@ -8,5 +8,6 @@ val Shapes = AppShapes(
     small = RoundedCornerShape(8.dp),
     large = RoundedCornerShape(16.dp),
     defaultTopCarved = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
-    defaultBottomCarved = RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
+    defaultBottomCarved = RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp),
+    extraSmall = RoundedCornerShape(4.dp)
 )

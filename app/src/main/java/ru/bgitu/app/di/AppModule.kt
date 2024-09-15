@@ -24,6 +24,7 @@ import ru.bgitu.feature.findmate.di.FindMateModule
 import ru.bgitu.feature.groups.di.GroupsModule
 import ru.bgitu.feature.home.impl.di.HomeModule
 import ru.bgitu.feature.login.di.LoginModule
+import ru.bgitu.feature.onboarding.di.OnboardingModule
 import ru.bgitu.feature.professor_search.di.ProfessorSearchModule
 import ru.bgitu.feature.profile.di.ProfileModule
 import ru.bgitu.feature.profile_settings.di.ProfileSettingsModule
@@ -60,6 +61,7 @@ val AppModule = module {
         ScheduleWidgetModule,
         FindMateModule,
         GroupsModule,
+        OnboardingModule
     )
 
     viewModel {

@@ -40,21 +40,9 @@ class GoogleAuthClient(
                 googleIdTokenCredential.idToken
             }
                 .onSuccess { googleIdToken ->
-                    val firebaseUser = Firebase.auth.signInWithCredential(
-                        GoogleAuthProvider.getCredential(googleIdToken, null)
-                    ).await().user
-
-                    if (firebaseUser == null) {
-                        onResult(Result.Failure(NullPointerException()))
-                        return@launch
-                    }
-
                     onResult(
                         Result.Success(
-                            createSignInParams(
-                                firebaseUser = firebaseUser,
-                                idToken = googleIdToken
-                            )
+                            SignInParams(AuthMethod.GOOGLE, googleIdToken)
                         )
                     )
                 }
@@ -75,11 +63,4 @@ class GoogleAuthClient(
             .addCredentialOption(googleIdOption)
             .build()
     }
-
-    private fun createSignInParams(firebaseUser: FirebaseUser, idToken: String) = SignInParams(
-        authMethod = AuthMethod.GOOGLE,
-        idToken = idToken,
-        fullName = firebaseUser.displayName.orEmpty(),
-        avatarUrl = firebaseUser.photoUrl?.toString().orEmpty()
-    )
 }

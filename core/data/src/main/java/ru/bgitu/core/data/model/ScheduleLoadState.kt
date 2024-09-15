@@ -12,5 +12,6 @@ sealed class ScheduleLoadState {
         }
     }
     data object Loading : ScheduleLoadState()
+    data object Conflict : ScheduleLoadState()
     data class Error(val throwable: Throwable?) : ScheduleLoadState()
 }

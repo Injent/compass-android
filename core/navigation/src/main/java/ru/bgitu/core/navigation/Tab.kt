@@ -15,12 +15,12 @@ enum class Tab(
         label = R.string.label_professor_search,
         icon = R.drawable.ic_case,
     ),
-    MATES(
-        label = R.string.label_mates,
-        icon = R.drawable.ic_assigment,
-    ),
+//    MATES(
+//        label = R.string.label_mates,
+//        icon = R.drawable.ic_assigment,
+//    ),
     PROFILE(
         label = R.string.label_profile,
-        icon = R.drawable.ic_calendar, // unused,
+        icon = 0, // unused
     )
 }

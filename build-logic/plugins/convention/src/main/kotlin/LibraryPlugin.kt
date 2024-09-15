@@ -27,8 +27,6 @@ class LibraryPlugin : Plugin<Project> {
             defaultConfig {
                 consumerProguardFiles("consumer-proguard-rules.pro")
             }
-
-            sourceSets.getByName("demo").assets.srcDirs(files("$projectDir/sampledata"))
         }
 
         dependencies {

@@ -4,11 +4,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -35,7 +33,6 @@ import ru.bgitu.core.designsystem.components.AppBottomNavigation
 import ru.bgitu.core.designsystem.components.LocalSnackbarController
 import ru.bgitu.core.designsystem.components.rememberSnackbarController
 import ru.bgitu.core.designsystem.icon.AppIcons
-import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
 import ru.bgitu.core.designsystem.util.asString
 import ru.bgitu.core.model.settings.UiTheme
@@ -59,7 +56,7 @@ fun App(
 
     CompassTheme(
         darkTheme = darkTheme,
-        dynamicColorAllowed = dynamicColorAvailable
+        dynamicColorAvailable = dynamicColorAvailable
     ) {
         AppUpdateBottomSheetSetup(uiState = uiState)
 
@@ -91,20 +88,25 @@ fun App(
                 if (navHostController.currentDestination?.id != getId<Screen.Loading>()) {
                     return@LaunchedEffect
                 }
+//                if (uiState.shouldShowOnboarding) {
+//                    navHostController.navigate(Screen.Onboarding) {
+//                        popUpTo<Screen.Loading> {
+//                            inclusive = true
+//                        }
+//                        launchSingleTop = true
+//                    }
+//                    return@LaunchedEffect
+//                }
                 when (uiState.authState) {
                     AuthState.AUTHED, AuthState.ANONYMOUS -> {
-                        navHostController.navigate(
-                            route = Screen.MainGraph
-                        ) {
+                        navHostController.navigate(Screen.MainGraph) {
                             popUpTo<Screen.Loading> {
                                 inclusive = true
                             }
                             launchSingleTop = true
                         }
                     }
-                    AuthState.NOT_AUTHED -> navHostController.navigate(
-                        route = Screen.Login()
-                    ) {
+                    AuthState.NOT_AUTHED -> navHostController.navigate(Screen.Login()) {
                         popUpTo<Screen.Loading> {
                             inclusive = true
                         }
@@ -166,21 +168,16 @@ private fun AppMainScreenContent(
                     .fillMaxWidth()
                     .align(Alignment.BottomStart)
             ) {
-                Column {
-                    AppBottomNavigation {
-                        NavigationItems(
-                            avatarUrl = uiState.avatarUrl,
-                            hideMateTab = uiState.authState != AuthState.AUTHED,
-                            modifier = Modifier
-                                .weight(1f)
-                        )
-                    }
-
-                    Spacer(
-                        Modifier
-                            .fillMaxWidth()
-                            .background(AppTheme.colorScheme.background3)
-                            .navigationBarsPadding()
+                AppBottomNavigation(
+                    modifier = Modifier
+                        .zIndex(1f)
+                        .navigationBarsPadding()
+                ) {
+                    NavigationItems(
+                        avatarUrl = uiState.avatarUrl,
+                        hideMateTab = uiState.authState != AuthState.AUTHED,
+                        modifier = Modifier
+                            .weight(1f)
                     )
                 }
             }

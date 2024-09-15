@@ -13,11 +13,8 @@
     <string name="option_specify">Specify</string>
     <string name="my_groups">My groups</string>
     <string name="are_you_sure_you_want_to_sign_out">Are you sure that you want to sign out?</string>
-    <string name="fakeProfile1_fullName" translatable="false">Лазарева Диана</string>
-    <string name="fakeProfile1_bio" translatable="false">Помогу с математикой</string>
-    <string name="fakeProfile2_fullName" translatable="false">Климов Михаил</string>
-    <string name="fakeProfile2_bio" translatable="false">Ищу помошников по физике</string>
     <string name="try_find_mates">Find mates!</string>
     <string name="new_feature_dialog_text">Log in with your account from {VK}, {Telegram} or {Google}</string>
     <string name="new_feature_dialog_text_warning">The application will be exited</string>
+    <string name="support_devs">Support the developers with words</string>
 </resources>

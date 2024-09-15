@@ -24,12 +24,18 @@ class MigrationV2 : DataMigration<SettingsPb> {
                     theme = UiTheme.SYSTEM.name
                 }
                 showGroupsOnMainScreen = true
+                teacherSortByWeeks = true
             }
             credentials = credentials.copy {
                 accessToken = ""
                 refreshToken = ""
                 lastAuthDate = 0
                 userId = 0
+            }
+            metadata = metadata.copy {
+                shouldShowOnboarding = false
+                shouldShowMateBanner = false
+                isAnonymousUser = true
             }
         }
     }

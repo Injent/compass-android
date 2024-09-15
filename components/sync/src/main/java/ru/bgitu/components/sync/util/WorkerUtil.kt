@@ -3,13 +3,20 @@ package ru.bgitu.components.sync.util
 import android.app.Notification
 import android.content.Context
 import androidx.core.app.NotificationCompat
+import androidx.work.Constraints
 import androidx.work.ForegroundInfo
 import androidx.work.ListenableWorker
+import androidx.work.NetworkType
 import ru.bgitu.components.sync.R
 import ru.bgitu.core.common.CommonDrawables
 import ru.bgitu.core.common.DEFAULT_WORK_RETRY_ATTEMPTS
 import ru.bgitu.core.notifications.Notifier
 import ru.bgitu.core.notifications.channels.AppChannelManager
+
+val SyncManagerConstraints: Constraints
+    get() = Constraints.Builder()
+        .setRequiredNetworkType(NetworkType.CONNECTED)
+        .build()
 
 fun Notification.toForegroundInfo(
     notificationId: Int = Notifier.BACKGROUND_NOTIFICATION_ID

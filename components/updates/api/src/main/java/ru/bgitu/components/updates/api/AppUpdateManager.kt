@@ -17,8 +17,6 @@ interface AppUpdateManager {
     fun startUpdateFlow(updateInfo: UpdateInfo)
 
     suspend fun completeUpdate(): Result<Unit>
-    fun registerListener(listener: InstallStateListener)
-    fun unregisterListener(listener: InstallStateListener)
 
     fun safelyClearUpdates()
 }

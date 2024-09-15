@@ -117,7 +117,7 @@ fun NavigationItems(
     val navController = LocalNavController.current
 
     Tab.entries.forEach { tab ->
-        if (tab == Tab.MATES && hideMateTab) return@forEach
+        //if (tab == Tab.MATES && hideMateTab) return@forEach
 
         val selected = navController.currentBackStackEntryAsState()
             .value
@@ -133,7 +133,7 @@ fun NavigationItems(
             icon = {
                 when (tab) {
                     Tab.HOME -> CalendarIcon(icon = tab.icon)
-                    Tab.PROFESSOR_SEARCH, Tab.MATES -> DefaultIcon(icon = tab.icon)
+                    Tab.PROFESSOR_SEARCH -> DefaultIcon(icon = tab.icon)
                     Tab.PROFILE -> ProfileIcon(selected = selected, avatarUrl = avatarUrl)
                 }
             }
@@ -145,7 +145,7 @@ private fun NavDestination.isCurrentTab(tab: Tab): Boolean {
     return when (tab) {
         Tab.HOME -> id == getId<Screen.Home>()
         Tab.PROFESSOR_SEARCH -> id == getId<Screen.TeacherSearch>()
-        Tab.MATES -> id == getId<Screen.SearchMate>()
+        //Tab.MATES -> id == getId<Screen.SearchMate>()
         Tab.PROFILE -> id == getId<Screen.Profile>()
     }
 }

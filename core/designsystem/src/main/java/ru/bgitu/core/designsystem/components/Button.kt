@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -57,6 +59,8 @@ import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
+import ru.bgitu.core.designsystem.theme.DefaultRippleTheme
+import ru.bgitu.core.designsystem.theme.LocalAppRipple
 import ru.bgitu.core.designsystem.theme.NoRippleTheme
 import ru.bgitu.core.designsystem.util.thenIf
 
@@ -117,6 +121,7 @@ fun AppSecondaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    shape: Shape = AppTheme.shapes.default,
     isLoading: Boolean = false,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -127,8 +132,7 @@ fun AppSecondaryButton(
             !enabled -> AppTheme.colorScheme.backgroundTouchable.copy(.5f)
             isPressed -> AppTheme.colorScheme.backgroundTouchablePressed
             else -> AppTheme.colorScheme.backgroundTouchable
-        },
-        animationSpec = tween(durationMillis = 100, easing = LinearEasing)
+        }
     )
 
     val contentColor by animateColorAsState(
@@ -145,6 +149,8 @@ fun AppSecondaryButton(
         enabled = enabled,
         containerColor = containerColor,
         contentColor = contentColor,
+        shape = shape,
+        rippleTheme = DefaultRippleTheme,
         modifier = modifier
             .height(ButtonTokens.LargeButtonHeight)
     ) {
@@ -237,16 +243,17 @@ private fun BaseButton(
     shape: Shape = AppTheme.shapes.default,
     isLoading: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(horizontal = 20.dp),
+    rippleTheme: RippleTheme = NoRippleTheme,
     content: @Composable RowScope.() -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val buttonScale by animateFloatAsState(
         targetValue = if (isPressed && enabled) 0.975f else 1f,
-        animationSpec = spring(stiffness = Spring.StiffnessHigh)
+        animationSpec = tween(durationMillis = 0)
     )
 
-    AppRippleTheme(NoRippleTheme) {
+    AppRippleTheme(rippleTheme) {
         Surface(
             color = containerColor,
             contentColor = contentColor,

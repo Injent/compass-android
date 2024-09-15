@@ -10,4 +10,6 @@ dependencies {
     implementation(projects.core.common)
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(platform(libs.rustore.bom))
+    implementation(libs.rustore.update)
 }

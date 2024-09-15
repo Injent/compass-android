@@ -44,7 +44,7 @@ data class Input(
     }
 }
 
-fun NavGraphBuilder.inputScreen() {
+fun NavGraphBuilder.inputRoute() {
     composable<Input> { backStackEntry ->
         val params = backStackEntry.toRoute<Input>()
         InputScreenRoute(params = params)

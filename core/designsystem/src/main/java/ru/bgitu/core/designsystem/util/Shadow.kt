@@ -60,7 +60,6 @@ fun Modifier.boxShadow(
                 val paint = Paint()
 
                 paint.asFrameworkPaint().let { frameworkPaint ->
-
                     if (hasBlurRadius) {
                         frameworkPaint.maskFilter = BlurMaskFilter(
                             blurRadius.toPx(),

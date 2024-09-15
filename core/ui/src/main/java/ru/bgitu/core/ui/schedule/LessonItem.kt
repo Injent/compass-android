@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -40,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -77,6 +79,7 @@ import ru.bgitu.core.designsystem.components.AppCard
 import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.LocalAppRipple
+import ru.bgitu.core.designsystem.util.SoftwareLayer
 import ru.bgitu.core.designsystem.util.shimmer
 import ru.bgitu.core.ui.R
 import ru.bgitu.core.ui.model.UiLesson
@@ -106,8 +109,9 @@ fun LessonItem(
     lesson: UiLesson,
     now: LocalDateTime,
     onClick: () -> Unit,
+    minTimeWidth: Dp,
     modifier: Modifier = Modifier,
-    expanded: Boolean = false
+    expanded: Boolean = false,
 ) {
     val layoutParams = remember {
         LessonLayoutParams(
@@ -143,15 +147,16 @@ fun LessonItem(
 
         Text(
             text = startTime,
-            fontWeight = FontWeight.Bold,
+            style = AppTheme.typography.headline2,
             color = AppTheme.colorScheme.foreground1,
             maxLines = 1,
             overflow = TextOverflow.Visible,
-            modifier = Modifier.layoutId(LessonComponentId.START_TIME)
+            modifier = Modifier
+                .width(minTimeWidth)
+                .layoutId(LessonComponentId.START_TIME)
         )
         Text(
             text = endTime,
-            fontWeight = FontWeight.Medium,
             color = AppTheme.colorScheme.foreground3,
             style = AppTheme.typography.caption1,
             maxLines = 1,
@@ -233,7 +238,6 @@ private fun LessonCard(
     val context = LocalContext.current
 
     AppCard(
-        shadowEnabled = false,
         contentPadding = PaddingValues(AppTheme.spacing.m),
         color = AppTheme.colorScheme.backgroundTouchable,
         modifier = modifier,
@@ -341,71 +345,73 @@ private fun LessonIndicator(
         with(density) { options.defaultStrokeWidth.toPx() }
     }
 
-    val lineColor = if (options.passed)
-        AppTheme.colors.blue2
-    else AppTheme.colorScheme.foreground4
-    val highlightedLineColor = AppTheme.colors.blue2
+    val highlightedLineColor = AppTheme.colorScheme.foregroundAccent
+    val lineColor = if (options.passed) highlightedLineColor else AppTheme.colorScheme.foreground4
 
     val infiniteTransition = rememberInfiniteTransition(label = "animated_dash")
 
-    val startOffsetY by infiniteTransition.animateFloat(
-        initialValue = -((dashWidth + dashInterval) / 2) * 2f,
-        targetValue = ((dashWidth + dashInterval) / 2) * 2f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 700, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "animated_dash"
-    )
+    val startOffsetY by if (options.highlighted) {
+        infiniteTransition.animateFloat(
+            initialValue = -((dashWidth + dashInterval) / 2) * 2f,
+            targetValue = ((dashWidth + dashInterval) / 2) * 2f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 700, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            ),
+            label = "animated_dash"
+        )
+    } else remember { mutableFloatStateOf(0f) }
 
     val dashEffect = remember {
         PathEffect.dashPathEffect(floatArrayOf(dashWidth, dashInterval), 0f)
     }
 
-    Canvas(
-        modifier = modifier,
-        onDraw = {
-            if (!options.highlighted) {
-                drawLine(
-                    color = lineColor,
-                    start = Offset(x = center.x, y = if (options.isFirst) 10f else 0f),
-                    end = Offset(x = center.x, y = size.height),
-                    strokeWidth = strokeWidth,
-                    pathEffect = dashEffect,
-                    cap = StrokeCap.Round
-                )
-            } else {
-                val path = Path().apply {
-                    moveTo(size.width, 0f)
-                    addRect(
-                        Rect(
-                            left = -strokeWidth,
-                            top = 0f,
-                            right = strokeWidth,
-                            bottom = size.height
-                        )
-                    )
-                }
-
+    SoftwareLayer(modifier) {
+        Canvas(
+            modifier = Modifier.fillMaxSize(),
+            onDraw = {
                 val offsetX = center.x
-                clipPath(
-                    path = path
-                ) {
+
+                if (!options.highlighted) {
                     drawLine(
-                        color = highlightedLineColor,
-                        start = Offset(
-                            offsetX,
-                            startOffsetY
-                        ),
-                        end = Offset(offsetX, size.height),
-                        pathEffect = dashEffect,
+                        color = lineColor,
+                        start = Offset(x = offsetX, y = if (options.isFirst) 10f else 0f),
+                        end = Offset(x = offsetX, y = size.height),
                         strokeWidth = strokeWidth,
+                        pathEffect = dashEffect,
                         cap = StrokeCap.Round
                     )
+                } else {
+                    val path = Path().apply {
+                        addRect(
+                            Rect(
+                                left = -50f,
+                                top = 0f,
+                                right = 50f,
+                                bottom = size.height
+                            )
+                        )
+                    }
+
+                    clipPath(
+                        path = path
+                    ) {
+                        drawLine(
+                            color = highlightedLineColor,
+                            start = Offset(
+                                offsetX,
+                                startOffsetY
+                            ),
+                            end = Offset(offsetX, size.height),
+                            pathEffect = dashEffect,
+                            strokeWidth = strokeWidth,
+                            cap = StrokeCap.Round
+                        )
+                    }
                 }
             }
-        }
-    )
+        )
+    }
 }
 
 @Composable
@@ -425,7 +431,7 @@ private fun LessonBreakPoint(
     val pointFillColor = if (animated) {
         val infiniteTransition = rememberInfiniteTransition(label = "")
         infiniteTransition.animateColor(
-            initialValue = AppTheme.colorScheme.foregroundOnBrand,
+            initialValue = Color.White,
             targetValue = AppTheme.colorScheme.background2,
             animationSpec = infiniteRepeatable(
                 animation = tween(
@@ -437,7 +443,7 @@ private fun LessonBreakPoint(
             ),
             label = "circle progress animation alpha"
         ).value
-    } else AppTheme.colorScheme.foregroundOnBrand
+    } else Color.White
 
     val circleColor = if (enabled || highlighted) {
         pointFillColor
@@ -498,8 +504,6 @@ private fun LessonBreakPointPopup(
     modifier: Modifier = Modifier,
     offset: IntOffset = IntOffset(x = 0, y = 0)
 ) {
-    val pointColor = AppTheme.colorScheme.foregroundOnBrand
-
     Popup(
         alignment = Alignment.CenterStart,
         offset = offset,
@@ -510,7 +514,7 @@ private fun LessonBreakPointPopup(
             horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
             modifier = modifier
                 .background(
-                    color = AppTheme.colorScheme.foreground,
+                    color = AppTheme.colorScheme.backgroundBrand,
                     shape = AppTheme.shapes.default
                 )
                 .padding(
@@ -535,12 +539,12 @@ private fun LessonBreakPointPopup(
                     modifier = Modifier
                         .size(pointSize)
                         .align(Alignment.Center)
-                        .background(pointColor, CircleShape)
+                        .background(Color.White, CircleShape)
                 )
             }
             Text(
                 text = label,
-                color = Color.White,
+                color = AppTheme.colorScheme.foregroundOnBrand,
                 style = AppTheme.typography.callout
                     .copy(lineHeight = 14.sp),
                 modifier = Modifier.widthIn(max = 300.dp)

@@ -26,7 +26,7 @@ message DataVersionPb {
     int32 curr_app_version_code = 2;
     int32 new_features_version = 4;
     int32 schema_version = 5;
-    int32 account_version = 6;
+    int32 userdata_version = 6;
 
     int32 deprecated_last_force_update_version = 3;
 }
@@ -67,7 +67,9 @@ message MetadataPb {
     int64 available_version_code = 6;
     string schedule_notifier_alarm_date_time = 7;
     bool is_anonymous_user = 8;
-    bool is_mate_banner_closed = 9;
+    bool should_show_mate_banner = 9;
+    bool should_show_onboarding = 10;
+    bool should_show_data_reset_alert = 11;
 
     int64 deprecated_last_statistics_report = 1;
     string deprecated_app_uuid = 2;

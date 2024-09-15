@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.bgitu.library)
     alias(libs.plugins.bgitu.koin)
-    alias(libs.plugins.bgitu.library.jacoco)
 }
 
 android {
@@ -19,7 +18,6 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.database)
 
-    implementation(libs.retrofit.core)
     implementation(libs.kotlinx.serialization)
     implementation(libs.kotlinx.datetime)
     implementation(libs.room)
@@ -27,6 +25,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
 
+    implementation(libs.ktor.core)
+    
     testImplementation(libs.datastore)
     testImplementation(projects.core.dataTest)
     testImplementation(projects.core.datastoreTest)

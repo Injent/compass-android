@@ -4,9 +4,6 @@ plugins {
 }
 
 android.namespace = "ru.bgitu.core.model"
-android.defaultConfig {
-    consumerProguardFiles("consumer-proguard-rules.pro")
-}
 
 dependencies {
     implementation(libs.kotlinx.datetime)

@@ -42,6 +42,14 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
         )
         val alarmData = context.getAlarmData(msg)
 
+        val notificationManager = NotificationManagerCompat.from(context)
+
+        alarmData.notification?.let {
+            notificationManager.notify(Notifier.PINNED_SCHEDULE_NOTIFICATION_ID, it)
+        } ?: run {
+            notificationManager.cancel(Notifier.PINNED_SCHEDULE_NOTIFICATION_ID)
+        }
+
         scheduleNotifier.scheduleAlarmAt(
             triggerAt = alarmData.triggerAt,
             moved = alarmData.notification == null

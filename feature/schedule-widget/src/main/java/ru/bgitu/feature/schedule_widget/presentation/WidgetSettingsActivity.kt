@@ -6,7 +6,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
-import android.view.View.LAYER_TYPE_SOFTWARE
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import ru.bgitu.core.designsystem.theme.CompassTheme
+import ru.bgitu.feature.schedule_widget.R
 import ru.bgitu.feature.schedule_widget.copy
 import ru.bgitu.feature.schedule_widget.model.WidgetOptions
 import ru.bgitu.feature.schedule_widget.model.toProtoModel
@@ -34,15 +35,21 @@ class WidgetSettingsActivity : ComponentActivity() {
             window.isStatusBarContrastEnforced = false
             window.isNavigationBarContrastEnforced = false
         }
-        if (SDK_INT < 29) {
-            window.decorView.rootView.setLayerType(LAYER_TYPE_SOFTWARE, null)
-        }
         super.onCreate(savedInstanceState)
 
         val appWidgetId = intent?.extras?.getInt(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
         ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
+
+        if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            Toast.makeText(
+                this,
+                R.string.toast_failed_to_open_settings,
+                Toast.LENGTH_LONG
+            ).show()
+            finish()
+        }
 
         var options by mutableStateOf(WidgetOptions())
         lifecycleScope.launch {

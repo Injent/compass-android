@@ -1,6 +1,7 @@
 package ru.bgitu.core.common
 
 import ru.bgitu.core.common.exception.DetailedException
+import java.nio.channels.UnresolvedAddressException
 
 /**
  * The class is used to safely receive data and handle possible exceptions.
@@ -75,7 +76,11 @@ inline fun <reified T> runResulting(
         e.printStackTrace()
         Result.Failure(
             throwable = e,
-            details = (e as? DetailedException)?.details ?: TextResource.Id(R.string.error_unknown),
+            details = when (e) {
+                is DetailedException -> e.details
+                is UnresolvedAddressException -> TextResource.Id(CommonStrings.error_no_internet_connection)
+                else -> TextResource.Id(R.string.error_unknown)
+            },
         )
     }
 }
@@ -127,7 +132,7 @@ inline fun <R, T : R> Result<T>.getOrElse(onFailure: (Result.Failure) -> R): R {
 }
 
 /**
- * @return a successful data that constains in [Result.Success] or throws an exception that
+ * @return a successful data that contains in [Result.Success] or throws an exception that
  * contains in [Result.Failure]
  */
 fun <R, T : R> Result<T>.getOrThrow(): R {
@@ -139,7 +144,7 @@ fun <R, T : R> Result<T>.getOrThrow(): R {
 }
 
 /**
- * @return a successful data that constains in [Result.Success] or `null` if result is
+ * @return a successful data that contains in [Result.Success] or `null` if result is
  * [Result.Failure]
  */
 inline fun <reified T> Result<T>.getOrNull(): T? {

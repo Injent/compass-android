@@ -9,7 +9,7 @@ import ru.bgitu.core.navigation.Screen
 import ru.bgitu.core.navigation.getId
 import ru.bgitu.feature.professor_search.presentation.TeacherRoute
 
-fun NavGraphBuilder.professorSearchScreen() {
+fun NavGraphBuilder.professorSearchRoute() {
     composable<Screen.TeacherSearch>(
         popEnterTransition = { slideInHorizontally { -it } },
         exitTransition = {

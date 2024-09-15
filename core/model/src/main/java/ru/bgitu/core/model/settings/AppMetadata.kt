@@ -7,7 +7,9 @@ data class AppMetadata(
     val newestUpdateChecksum: String,
     val availableVersionCode: Long,
     val seenTeacherScheduleAlert: Boolean,
-    val scheduleNotifierAlarmDateTime: LocalDateTime? = null,
+    val scheduleNotifierAlarmDateTime: LocalDateTime?,
     val isAnonymousUser: Boolean,
-    val isMateBannerClosed: Boolean
+    val shouldShowMateBanner: Boolean,
+    val shouldShowOnboarding: Boolean,
+    val shouldShowDataResetAlert: Boolean
 )

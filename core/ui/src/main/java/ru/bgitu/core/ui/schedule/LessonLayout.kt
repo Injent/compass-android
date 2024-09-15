@@ -7,7 +7,6 @@ import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.util.fastFirstOrNull
 import kotlin.math.roundToInt
 
 enum class LessonComponentId {
@@ -59,7 +58,7 @@ fun LessonLayout(
         val indicatorOffsetX = startTime.width + gap
 
         val lessonCardConstraints = constraints.copy(
-            maxWidth = constraints.maxWidth - (indicatorOffsetX + gap)
+            maxWidth = (constraints.maxWidth - (indicatorOffsetX + gap)).coerceAtLeast(0)
         )
         val lessonCard = measurables.createPlaceable(LessonComponentId.LESSON_CARD)
             .measure(lessonCardConstraints)
@@ -93,7 +92,7 @@ fun LessonLayout(
             endTime.placeRelative(x = 0, y = startTime.height)
 
             indicator.placeRelative(
-                x = indicatorOffsetX,
+                x = indicatorOffsetX - (indicator.width / 2),
                 y = 0
             )
             longBreak.placeRelative(
@@ -118,11 +117,11 @@ fun LessonLayout(
 }
 
 private fun List<Measurable>.createOptionalPlaceable(layoutId: LessonComponentId): Measurable? {
-    return this.fastFirstOrNull { it.layoutId == layoutId }
+    return this.firstOrNull { it.layoutId == layoutId }
 }
 
 private fun List<Measurable>.createPlaceable(layoutId: LessonComponentId): Measurable {
-    return requireNotNull(this.fastFirstOrNull { it.layoutId == layoutId }) {
+    return requireNotNull(this.firstOrNull { it.layoutId == layoutId }) {
         "Element with layoutId = $layoutId not found in compose tree"
     }
 }

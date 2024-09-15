@@ -12,7 +12,9 @@ data class UserSettings(
     val newFeaturesVersion: Int,
     val isAuthorized: Boolean,
     val userProfile: UserProfile?,
-    val isAnonymous: Boolean
+    val isAnonymous: Boolean,
+    val shouldShowOnboarding: Boolean,
+    val shouldShowDataResetAlert: Boolean
 ) {
     val primaryGroup: Group?
         get() = if (groupId != null && groupName != null) {

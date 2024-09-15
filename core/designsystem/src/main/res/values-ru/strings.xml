@@ -4,5 +4,5 @@
     <string name="status_regular">Студент</string>
     <string name="status_admin">Разраб</string>
     <string name="status_special">Награжденный</string>
-    <string name="status_popular">Популярный</string>
+    <string name="status_expert">Эксперт</string>
 </resources>

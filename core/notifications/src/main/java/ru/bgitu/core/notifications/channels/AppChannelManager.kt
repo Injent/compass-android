@@ -21,8 +21,9 @@ class AppChannelManager(private val context: Context) {
         if (!allChannelsCreated) {
             createGeneralChannel()
             createBackgroundWorkChannel()
-            createPinnedScheduleChannel()
         }
+
+        createPinnedScheduleChannel()
     }
 
     private fun createGeneralChannel(): NotificationChannelCompat {
@@ -59,12 +60,13 @@ class AppChannelManager(private val context: Context) {
     private fun createPinnedScheduleChannel(): NotificationChannelCompat {
         val channel = NotificationChannelCompat.Builder(
             PINNED_SCHEDULE_CHANNEL_ID,
-            NotificationManager.IMPORTANCE_LOW
+            NotificationManager.IMPORTANCE_DEFAULT
         )
             .setName(context.getString(R.string.pinned_schedule_channel_name))
             .setShowBadge(false)
             .setLightsEnabled(false)
             .setVibrationEnabled(false)
+            .setSound(null, null)
             .build()
 
         notificationManager.deleteNotificationChannel(PINNED_SCHEDULE_CHANNEL_ID)

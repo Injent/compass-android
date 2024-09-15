@@ -5,6 +5,8 @@ import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -30,7 +32,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -51,6 +55,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -84,15 +89,20 @@ import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.data.model.ScheduleLoadState
 import ru.bgitu.core.designsystem.components.AppBottomBarTokens
+import ru.bgitu.core.designsystem.components.AppConfirmButton
+import ru.bgitu.core.designsystem.components.AppDialog
 import ru.bgitu.core.designsystem.components.AppIconButton
+import ru.bgitu.core.designsystem.components.AppSnackbarHost
 import ru.bgitu.core.designsystem.components.AppTab
 import ru.bgitu.core.designsystem.components.AppTextButton
+import ru.bgitu.core.designsystem.components.CompassLoading
 import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.icon.AppIllustrations
 import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
 import ru.bgitu.core.designsystem.theme.NoRippleTheme
+import ru.bgitu.core.designsystem.util.MeasureComposable
 import ru.bgitu.core.designsystem.util.asString
 import ru.bgitu.core.designsystem.util.thenIf
 import ru.bgitu.core.model.Group
@@ -108,7 +118,6 @@ import ru.bgitu.core.ui.schedule.CalendarTheme
 import ru.bgitu.core.ui.schedule.DayOfWeekSelector
 import ru.bgitu.core.ui.schedule.DayOfWeekSelectorUiState
 import ru.bgitu.core.ui.schedule.LessonItem
-import ru.bgitu.core.ui.schedule.LoadingLessonItems
 import ru.bgitu.feature.home.R
 import ru.bgitu.feature.home.impl.presentation.components.NewFeaturesButton
 import ru.bgitu.feature.home.impl.presentation.components.SelectGroupView
@@ -138,6 +147,9 @@ fun HomeScreen(
     val scheduleState by viewModel.scheduleState.collectAsStateWithLifecycle()
     val classLabelMessage by viewModel.classLabelMessage.collectAsStateWithLifecycle()
     val hasNewFeatures by viewModel.hasNewFeatures.collectAsStateWithLifecycle()
+    val shouldShowDataResetAlert = remember(uiState) {
+        (uiState as? HomeUiState.GroupNotSelected)?.shouldShowDataResetAlert ?: false
+    }
 
     HomeScreenContent(
         uiState = uiState,
@@ -146,6 +158,7 @@ fun HomeScreen(
         scheduleState = scheduleState,
         classLabelMessage = classLabelMessage,
         hasNewFeatures = hasNewFeatures,
+        shouldShowDataResetAlert = shouldShowDataResetAlert
     )
 }
 
@@ -157,12 +170,27 @@ private fun HomeScreenContent(
     scheduleState: ScheduleLoadState,
     classLabelMessage: TextResource?,
     hasNewFeatures: Boolean,
+    shouldShowDataResetAlert: Boolean
 ) {
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(
         initialPage = selectorUiState.initialPage,
         pageCount = { selectorUiState.pageCount }
     )
+    val animatedScaleOfScheduleTransition = remember {
+        Animatable(1f)
+    }
+
+    if (shouldShowDataResetAlert) {
+        DataResetAlertDialog(
+            onDismiss = {
+                onIntent(HomeIntent.DismissPickGroupQuery)
+            },
+            onConfirm = {
+                onIntent(HomeIntent.PickGroup)
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -170,11 +198,16 @@ private fun HomeScreenContent(
                 selectorState = selectorUiState,
                 onDateSelect = { date ->
                     scope.launch {
-                        val page = selectorUiState.getPageForDate(date)
-                        pagerState.scrollToPage(page)
+                        pagerState.animateScaleAndScroll(
+                            animatedScaleOfScheduleTransition,
+                            selectorUiState.getPageForDate(date)
+                        )
                     }
                 }
             )
+        },
+        snackbarHost = {
+            AppSnackbarHost(Modifier.padding(bottom = AppTheme.spacing.l))
         },
         bottomBar = {
             Column(
@@ -199,12 +232,23 @@ private fun HomeScreenContent(
 
                 when (uiState) {
                     is HomeUiState.Success -> {
-                        if (uiState.savedGroups.size > 1 && uiState.showGroups
-                            && uiState.selectedGroup != null) {
+                        if (uiState.showGroups && uiState.selectedGroup != null) {
                             GroupTabs(
                                 groups = uiState.savedGroups,
                                 selectedGroup = uiState.selectedGroup,
-                                onGroupSelected = { group -> onIntent(HomeIntent.ChangeGroupView(group)) },
+                                onGroupSelected = { group ->
+                                    scope.launch {
+                                        animatedScaleOfScheduleTransition.animateTo(
+                                            targetValue = 0.95f,
+                                            animationSpec = tween()
+                                        )
+                                        onIntent(HomeIntent.ChangeGroupView(group))
+                                        animatedScaleOfScheduleTransition.animateTo(
+                                            targetValue = 1f,
+                                            animationSpec = tween()
+                                        )
+                                    }
+                                },
                                 onGroupSettingsClick = { onIntent(HomeIntent.NavigateToGroupSettings) },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -241,8 +285,10 @@ private fun HomeScreenContent(
                 state = selectorUiState,
                 onDateSelected = { date ->
                     scope.launch {
-                        val page = selectorUiState.getPageForDate(date)
-                        pagerState.animateScrollToPage(page)
+                        pagerState.animateScaleAndScroll(
+                            animatedScaleOfScheduleTransition,
+                            selectorUiState.getPageForDate(date)
+                        )
                     }
                 },
                 modifier = Modifier
@@ -252,7 +298,7 @@ private fun HomeScreenContent(
             Spacer(Modifier.height(AppTheme.spacing.l))
 
             when (uiState) {
-                HomeUiState.GroupNotSelected -> {
+                is HomeUiState.GroupNotSelected -> {
                     SelectGroupView(
                         onClick = { onIntent(HomeIntent.NavigateToGroupSettings) },
                         modifier = Modifier
@@ -260,12 +306,12 @@ private fun HomeScreenContent(
                             .padding(AppTheme.spacing.xxxl)
                     )
                 }
-                HomeUiState.Loading -> {}
+                HomeUiState.Loading -> Unit
                 is HomeUiState.Success -> {
                     HorizontalPager(
                         state = pagerState,
                         pageSpacing = AppTheme.spacing.l,
-                        contentPadding = PaddingValues(horizontal = AppTheme.spacing.l)
+                        contentPadding = PaddingValues(horizontal = AppTheme.spacing.l),
                     ) { page ->
                         val scrollState = rememberScrollState()
 
@@ -274,20 +320,30 @@ private fun HomeScreenContent(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .verticalScroll(scrollState)
+                                .scale(animatedScaleOfScheduleTransition.value)
                         ) {
                             val maxWidthModifier = Modifier.fillMaxWidth()
 
                             when (scheduleState) {
-                                is ScheduleLoadState.Error -> {
+                                is ScheduleLoadState.Error, is ScheduleLoadState.Conflict -> {
                                     AlertSchedule(
                                         modifier = maxWidthModifier,
-                                        illustation = AppIllustrations.Warning,
+                                        illustration = AppIllustrations.Warning,
                                         headline = stringResource(R.string.error_failed_to_load_data),
                                     )
                                 }
-                                ScheduleLoadState.Loading -> LoadingLessonItems(modifier = maxWidthModifier)
+                                ScheduleLoadState.Loading -> {
+                                    Box(
+                                        modifier = Modifier
+                                            .padding(top = AppTheme.spacing.xxxl)
+                                            .fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CompassLoading(loadingSize = 32.dp)
+                                    }
+                                }
                                 is ScheduleLoadState.Success -> {
-                                    val mapedLessons = remember(scheduleState, selectorUiState) {
+                                    val mappedLessons = remember(scheduleState, selectorUiState) {
                                         val dateForPage = selectorUiState.getDateForPage(page)
                                         scheduleState[dateForPage].let { lessons ->
                                             lessons.map {
@@ -298,19 +354,19 @@ private fun HomeScreenContent(
                                             }
                                         }
                                     }
-                                    if (mapedLessons.isEmpty()) {
+                                    if (mappedLessons.isEmpty()) {
                                         AlertSchedule(
                                             modifier = maxWidthModifier,
-                                            illustation = AppIllustrations.Calendar,
+                                            illustration = AppIllustrations.Calendar,
                                             headline = stringResource(R.string.weekend),
                                         )
                                     } else {
                                         DaySchedule(
-                                            lessons = mapedLessons,
+                                            lessons = mappedLessons,
                                             classLabelMessage = classLabelMessage.takeIf {
-                                                selectorUiState.currentDateTime.date == mapedLessons.first().date
+                                                selectorUiState.currentDateTime.date == mappedLessons.first().date
                                             },
-                                            currentDateTime = selectorUiState.currentDateTime
+                                            currentDateTime = selectorUiState.currentDateTime,
                                         )
                                     }
                                 }
@@ -325,18 +381,19 @@ private fun HomeScreenContent(
 
 @Composable
 private fun AlertSchedule(
-    @DrawableRes illustation: Int,
+    @DrawableRes illustration: Int,
     headline: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.l, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.padding(AppTheme.spacing.xl),
     ) {
         Image(
-            painter = painterResource(illustation),
-            contentDescription = null
+            painter = painterResource(illustration),
+            contentDescription = null,
+            modifier = Modifier.width(200.dp)
         )
         Text(
             text = headline,
@@ -382,15 +439,26 @@ private fun ColumnScope.DaySchedule(
         }
     }
 
-    lessons.forEach {
-        var expanded by remember { mutableStateOf(false) }
-        LessonItem(
-            lesson = it,
-            onClick = { expanded = !expanded },
-            expanded = expanded,
-            now = currentDateTime,
-            modifier = Modifier
-        )
+    MeasureComposable(
+        composable = {
+            Text(text = "0".repeat(5), style = AppTheme.typography.headline2)
+        }
+    ) { minTimeSize ->
+        Column(
+            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
+        ) {
+            lessons.forEach { uiLesson ->
+                var expanded by remember { mutableStateOf(false) }
+                LessonItem(
+                    lesson = uiLesson,
+                    onClick = { expanded = !expanded },
+                    expanded = expanded,
+                    now = currentDateTime,
+                    minTimeWidth = minTimeSize.width,
+                    modifier = Modifier
+                )
+            }
+        }
     }
 }
 
@@ -480,7 +548,7 @@ private fun HomeScreenTopBar(
                     maxLines = 1
                 )
                 val weekNumber = remember(selectorState) {
-                    "(" + DateTimeUtil.getFormatedStudyWeekNumber(selectorState.selectedDate)
+                    "(" + DateTimeUtil.getFormattedStudyWeekNumber(selectorState.selectedDate)
                         .asString(context) + ")"
                 }
                 Text(
@@ -549,7 +617,7 @@ private fun GroupTabs(
             modifier = modifier,
             indicator = { tabPositions ->
                 val tabIndex = remember(groups, selectedGroup, tabPositions) {
-                    tabPositions[groups.indexOf(selectedGroup).coerceAtLeast(0)]
+                    tabPositions[groups.indexOf(selectedGroup).coerceIn(0, groups.size - 1)]
                 }
                 Spacer(
                     modifier = Modifier
@@ -565,7 +633,7 @@ private fun GroupTabs(
             divider = {}
         ) {
             AppRippleTheme(NoRippleTheme) {
-                groups.forEachIndexed { index, group ->
+                groups.forEach { group ->
                     val selected = selectedGroup == group
 
                     AppTab(
@@ -577,7 +645,48 @@ private fun GroupTabs(
             }
         }
     }
+}
 
+@Composable
+private fun DataResetAlertDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AppDialog(
+        modifier = modifier,
+        title = stringResource(R.string.title_reset_group),
+        onDismissRequest = onDismiss,
+        buttons = {
+            AppConfirmButton(
+                text = stringResource(R.string.select),
+                onClick = onConfirm,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    ) {
+        Text(
+            text = stringResource(R.string.dialog_description_reset_group),
+            style = AppTheme.typography.body,
+            color = AppTheme.colorScheme.foreground1
+        )
+    }
+}
+
+private suspend fun PagerState.animateScaleAndScroll(
+    animatable: Animatable<Float, AnimationVector1D>,
+    page: Int,
+) {
+    if (page == this.currentPage) return
+    animatable.animateTo(
+        targetValue = 0.95f,
+        animationSpec = tween()
+    )
+    this.scrollToPage(page)
+    animatable.animateTo(
+        targetValue = 1f,
+        animationSpec = tween()
+    )
 }
 
 class ScheduleStateParameterProvider : PreviewParameterProvider<ScheduleLoadState> {
@@ -626,6 +735,7 @@ fun HomePreview(
             classLabelMessage = TextResource.Plain("Class text"),
             hasNewFeatures = true,
             uiState = HomeUiState.Loading,
+            shouldShowDataResetAlert = false
         )
     }
 }

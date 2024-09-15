@@ -24,6 +24,7 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toJavaLocalTime
+import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.toLocalDateTime
 import java.time.Month
 import java.time.format.DateTimeFormatter
@@ -310,16 +311,27 @@ object DateTimeUtil {
         return chronoUnit.between(start.toJavaLocalDateTime(), end.toJavaLocalDateTime()).toInt()
     }
 
-    fun getFormatedStudyWeekNumber(date: LocalDate): TextResource {
+    fun getFormattedStudyWeekNumber(date: LocalDate): TextResource {
         val startStudyYear = date.year.let {
             if (date.monthNumber in 1..8)
                 it - 1
             else it
         }
-        var startDate = LocalDate(startStudyYear, Month.SEPTEMBER, 2)
-        var weeksCount = 1
-        while (startDate < date) {
-            startDate = startDate.plus(1, DateTimeUnit.WEEK)
+
+        var startDate = LocalDate(startStudyYear, Month.SEPTEMBER, 1)
+        while (startDate.dayOfWeek in arrayOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)) {
+            startDate = startDate.plus(1, DateTimeUnit.DAY)
+        }
+        startDate = startDate.plus(1, DateTimeUnit.DAY)
+
+        val endOfCurrentWeek = date.toJavaLocalDate().with(DayOfWeek.SUNDAY).toKotlinLocalDate()
+
+        var weeksCount = 0
+        while (startDate < endOfCurrentWeek) {
+            if (startDate.dayOfWeek == DayOfWeek.SUNDAY) {
+                startDate = startDate.plus(1, DateTimeUnit.WEEK)
+            }
+            startDate = startDate.toJavaLocalDate().with(DayOfWeek.SUNDAY).toKotlinLocalDate()
             weeksCount++
         }
 

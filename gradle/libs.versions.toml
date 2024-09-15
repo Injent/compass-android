@@ -2,7 +2,7 @@
 accompanist = "0.34.0"
 activity-compose = "1.9.0"
 agcp = "1.9.1.300"
-agp = "8.5.0"
+agp = "8.4.2"
 androidxAnnotation = "1.8.0"
 androidxWork = "2.9.0"
 camerax = "1.3.4"
@@ -13,7 +13,7 @@ composeCompiler = "1.5.14"
 constraintLayout = "1.0.1"
 core-ktx = "1.13.1"
 datastore = "1.1.1"
-desugarJdkLibs = "2.0.4"
+desugarJdkLibs = "2.1.2"
 detekt = "1.23.3"
 firebase-bom = "33.1.2"
 firebasePlugin = "3.0.2"
@@ -28,15 +28,10 @@ ksp = "1.9.24-1.0.20"
 lifecycle = "2.8.4"
 markdown = "0.3.7"
 minSdk = "27"
-okhttp-bom = "4.11.0"
 protobuf = "4.26.0"
 protobufPlugin = "0.9.4"
-retrofit = "2.9.0"
-retrofit-kotlinxSserialization = "1.0.0"
 room = "2.6.1"
-rustore-analytics = "0.1.5"
-rustore-core = "0.1.10"
-rustore-update = "1.0.1"
+rustore-bom = "6.1.0"
 secrets = "2.0.1"
 sheetsComposeDialogs = "1.2.0"
 splashScreen = "1.0.1"
@@ -44,14 +39,12 @@ startup = "1.1.1"
 targetSdk = "34"
 ktor = "2.3.10"
 navigation = "2.8.0-beta06"
-reorderable = "0.9.6"
 truth = "1.4.2"
 turbine = "1.1.0"
 robolectric = "4.11.1"
 roborazzi = "1.7.0"
-jacoco = "0.8.7"
 junit = "4.13.2"
-androidxComposeAlpha = "1.7.0-beta06"
+androidxComposeAlpha = "1.7.1"
 androidxTestRules = "1.6.1"
 vkcompose = "0.5.4"
 androidxTracing = "1.3.0-alpha02"
@@ -63,9 +56,6 @@ huaweiAccount = "6.12.0.300"
 vkId = "2.0.1"
 
 [libraries]
-# Accompanist
-accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
-
 # Build logic plugins
 agcp = { group = "com.huawei.agconnect", name = "agcp", version.ref = "agcp" }
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
@@ -161,23 +151,14 @@ huawei-auth-huawei = { group = "com.huawei.agconnect", name = "agconnect-auth-hu
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
 protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
 
-# Retrofit and OkHttp
-okHttp = { group = "com.squareup.okhttp3", name = "okhttp" }
-okHttp-bom = { group = "com.squareup.okhttp3", name = "okhttp-bom", version.ref = "okhttp-bom" }
-okHttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor" }
-retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
-retrofit-kotlinxSerialization = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofit-kotlinxSserialization" }
-retrofit-scalars = { group = "com.squareup.retrofit2", name = "converter-scalars", version.ref = "retrofit" }
-
 # Room
 room = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-ksp = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 
 # Rustore
-rustore-analytics = { group = "ru.rustore.sdk", name = "analytics", version.ref = "rustore-analytics" }
-rustore-core = { group = "ru.rustore.sdk", name = "core", version.ref = "rustore-core" }
-rustore-update = { group = "ru.rustore.sdk", name = "appupdate", version.ref = "rustore-update" }
+rustore-bom = { group = "ru.rustore.sdk", name = "bom", version.ref = "rustore-bom" }
+rustore-update = { group = "ru.rustore.sdk", name = "appupdate" }
 vkcomposeGradlePlugin = { group = "com.vk.vkompose", name = "com.vk.vkompose.gradle.plugin", version.ref = "vkcompose" }
 
 # Work
@@ -188,7 +169,6 @@ coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 markdown = { group = "com.github.jeziellago", name = "compose-markdown", version.ref = "markdown" }
 sheetsComposeDialog-calendar = { group = "com.maxkeppeler.sheets-compose-dialogs", name = "calendar", version.ref = "sheetsComposeDialogs" }
 sheetsComposeDialog-core = { group = "com.maxkeppeler.sheets-compose-dialogs", name = "core", version.ref = "sheetsComposeDialogs" }
-reorderable = { group = "org.burnoutcrew.composereorderable", name = "reorderable", version.ref = "reorderable" }
 
 # Test
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
@@ -224,6 +204,5 @@ bgitu-library = { id = "bgitu.library", version = "unspecified" }
 bgitu-library-compose = { id = "bgitu.library.compose", version = "unspecified" }
 bgitu-serialization = { id = "bgitu.serialization", version = "unspecified" }
 bgitu-android-test = { id = "bgitu.android.test", version = "unspecified" }
-bgitu-app-jacoco = { id = "bgitu.app.jacoco", version = "unspecified" }
 bgitu-vkplaceholders = { id = "bgitu.vkplaceholders", version = "unspecified" }
 bgitu-library-jacoco = { id = "bgitu.library.jacoco", version = "unspecified" }

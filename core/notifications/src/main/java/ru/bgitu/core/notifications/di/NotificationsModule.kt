@@ -8,8 +8,6 @@ import ru.bgitu.core.notifications.SystemTrayNotifier
 import ru.bgitu.core.notifications.channels.AppChannelManager
 
 val NotificationsModule = module {
-    includes(flavoredNotificationsModule)
-
     factory {
         AppChannelManager(androidContext())
     }

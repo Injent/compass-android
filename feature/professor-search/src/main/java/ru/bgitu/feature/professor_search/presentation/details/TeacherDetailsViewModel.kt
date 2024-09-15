@@ -75,7 +75,10 @@ class TeacherDetailsViewModel(
             from = _uiState.value.fromDate,
             to = _uiState.value.toDate
         )
-            .getOrElse { emptyList() }
+            .getOrElse {
+                _events.trySend(ProfessorDetailsEvent.ShowError(it.details))
+                emptyList()
+            }
             .map {
                 id++
                 it.copy(id = id)

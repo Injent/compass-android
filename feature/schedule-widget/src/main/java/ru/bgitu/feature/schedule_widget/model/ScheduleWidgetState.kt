@@ -3,6 +3,7 @@ package ru.bgitu.feature.schedule_widget.model
 import android.content.Context
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDate

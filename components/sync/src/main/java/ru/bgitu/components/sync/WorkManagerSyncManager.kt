@@ -6,8 +6,6 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.google.firebase.Firebase
-import com.google.firebase.messaging.messaging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.map
@@ -42,17 +40,13 @@ class WorkManagerSyncManager(
 
     override fun fullSync() {
         requestSync()
-
-        Firebase.messaging.token.addOnSuccessListener { token ->
-            refreshServicesToken(token, CloudMessagingTokenType.GMS)
-        }
     }
 
-    override fun requestSync() {
+    override fun requestSync(isFirstSync: Boolean) {
         workManager.enqueueUniqueWork(
             SyncWorkName,
             ExistingWorkPolicy.REPLACE,
-            SyncWorker.start()
+            SyncWorker.start(isFirstSync)
         )
     }
 

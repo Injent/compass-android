@@ -58,6 +58,7 @@ class TeacherSearchViewModel(
 
             compassRepository.searchProfessor(query)
                 .getOrElse {
+                    _events.trySend(TeacherSearchEvent.ShowError(it.details))
                     return@mapLatest emptyList()
                 }
                 .distinct()

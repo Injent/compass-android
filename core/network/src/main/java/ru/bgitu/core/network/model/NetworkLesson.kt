@@ -10,6 +10,8 @@ data class NetworkLesson(
     @SerialName("id")
     val lessonId: Int,
     val subjectId: Int,
+    @SerialName("subjectName")
+    val subjectName: String,
     val building: String,
     @SerialName("lessonDate")
     val date: LocalDate,

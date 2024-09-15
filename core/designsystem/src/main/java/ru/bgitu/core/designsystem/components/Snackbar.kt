@@ -59,7 +59,7 @@ val LocalSnackbarController = staticCompositionLocalOf<SnackbarController> {
 @Composable
 fun rememberSnackbarController(): SnackbarController {
     val coroutineScope = rememberCoroutineScope()
-    return remember { SnackbarController(coroutineScope) }
+    return remember { ru.bgitu.core.designsystem.components.SnackbarController(coroutineScope) }
 }
 
 data class SnackbarState(
@@ -205,7 +205,7 @@ private fun AppSnackbarContainer(
             .widthIn(max = MaxWidth)
             .heightIn(min = MinHeight, max = MaxHeight)
             .padding(OuterPadding),
-        color = AppTheme.colors.graySnackbar,
+        color = AppTheme.colorScheme.backgroundToast,
         shape = AppTheme.shapes.default,
     ) {
         Box(Modifier.padding(contentPadding)) {
@@ -257,7 +257,7 @@ private fun DefaultSnackbar(
             Text(
                 text = it,
                 style = AppTheme.typography.subheadlineButton,
-                color = AppTheme.colors.yellow,
+                color = AppTheme.colorScheme.foregroundWarning,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .pointerInput(onAction) {

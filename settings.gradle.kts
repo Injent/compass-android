@@ -24,6 +24,7 @@ dependencyResolutionManagement {
         mavenCentral()
         maven("https://jitpack.io")
         maven(url = "https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/")
+        maven(url = "https://artifactory-external.vkpartner.ru/artifactory/maven")
     }
 }
 
@@ -67,3 +68,4 @@ include(
     ":feature:groups",
     ":feature:input"
 )
+include(":feature:onboarding")

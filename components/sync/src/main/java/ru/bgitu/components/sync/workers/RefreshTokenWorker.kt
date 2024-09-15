@@ -41,11 +41,6 @@ class RefreshTokenWorker(
         if (token == null || type == null)
             return@withContext Result.failure()
 
-
-//        val success = authenticator.refreshCmt(
-//            token = token,
-//            type = CloudMessagingTokenType.valueOf(type)
-//        ) is ru.bgitu.core.common.Result.Success
         Result.success()
     }
 

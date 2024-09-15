@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="today">Today</string>
-    <string name="tomorrow">Tomorrow</string>
+    <string name="today">For today</string>
+    <string name="tomorrow">For tomorrow</string>
     <string name="weekend">Weekend!</string>
     <string name="repeat">Repeat</string>
     <string name="tab_home">Home</string>
     <string name="error_failed_to_load_data">Failed to load data</string>
-    <string name="today_is_weekend">Today is weekend or you don\'t have any classes that day</string>
     <string name="the_first_class_will_start_in">The first class will start %1$s</string>
     <string name="this_class_will_end_in">This class will end %1$s</string>
     <string name="classes_are_over">Classes are over</string>
@@ -17,4 +16,8 @@
     <string name="your_group">Your group</string>
     <string name="synced">Synced</string>
     <string name="loaded_offline">Loaded offline</string>
+    <string name="title_reset_group">The group has been reset</string>
+    <string name="dialog_description_reset_group">The groups in the schedule have changed, you need to select a new one</string>
+    <string name="skip">Skip</string>
+    <string name="select">Select</string>
 </resources>

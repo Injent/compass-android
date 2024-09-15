@@ -44,9 +44,6 @@
 -if interface * { @retrofit2.http.* public *** *(...); }
 -keep,allowoptimization,allowshrinking,allowobfuscation class <3>
 
-# With R8 full mode generic signatures are stripped for classes that are not kept.
--keep,allowobfuscation,allowshrinking class retrofit2.Response
-
 # JSR 305 annotations are for embedding nullability information.
 -dontwarn javax.annotation.**
 

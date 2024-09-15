@@ -4,5 +4,5 @@
     <string name="status_regular">Student</string>
     <string name="status_admin">Dev</string>
     <string name="status_special">Awarded</string>
-    <string name="status_popular">Popular</string>
+    <string name="status_expert">Expert</string>
 </resources>

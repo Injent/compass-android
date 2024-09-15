@@ -12,8 +12,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -27,11 +25,11 @@ fun <T> Flow<T>.listenEvents(
 ) {
     LaunchedEffect(Unit) {
         lifecycleOwner.repeatOnLifecycle(minActiveState) {
-            this@listenEvents.onEach { event ->
+            collect { event ->
                 if (context == EmptyCoroutineContext)
                     block(event)
                 else withContext(context) { block(event) }
-            }.collect()
+            }
         }
     }
 }

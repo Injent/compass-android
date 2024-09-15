@@ -138,7 +138,7 @@ private fun ColumnScope.SearchResults(uiState: SearchMateUiState) {
         is SearchMateUiState.Error -> Unit
         SearchMateUiState.Idle -> {
             IllustrationWithText(
-                illustation = AppIllustrations.SearhMate,
+                illustation = AppIllustrations.SearchMate,
                 headline = stringResource(R.string.search_mate),
                 details = stringResource(R.string.help_each_other),
                 modifier = Modifier.weight(1f)

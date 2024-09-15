@@ -94,7 +94,5 @@ class DefaultCompassAuthenticator(
 
 private fun SignInParams.toRequest() = ExternalAuthRequest(
     authMethod = authMethod.name,
-    authCode = idToken,
-    fullName = fullName,
-    avatarUrl = avatarUrl
+    idToken = idToken,
 )

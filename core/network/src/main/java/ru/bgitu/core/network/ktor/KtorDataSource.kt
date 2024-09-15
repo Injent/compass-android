@@ -2,6 +2,7 @@ package ru.bgitu.core.network.ktor
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.onDownload
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
@@ -11,8 +12,11 @@ import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.readBytes
+import io.ktor.utils.io.ByteReadChannel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 import ru.bgitu.core.common.Result
+import ru.bgitu.core.common.map
 import ru.bgitu.core.common.runResulting
 import ru.bgitu.core.datastore.SettingsRepository
 import ru.bgitu.core.model.Group
@@ -21,7 +25,6 @@ import ru.bgitu.core.model.RemoteDataVersions
 import ru.bgitu.core.network.CompassService
 import ru.bgitu.core.network.model.NetworkLesson
 import ru.bgitu.core.network.model.NetworkSearchMateItem
-import ru.bgitu.core.network.model.NetworkSubject
 import ru.bgitu.core.network.model.NetworkUserProfile
 import ru.bgitu.core.network.model.request.ChooseGroupRequest
 import ru.bgitu.core.network.model.request.ExternalAuthRequest
@@ -29,6 +32,7 @@ import ru.bgitu.core.network.model.request.RegisterCmtRequest
 import ru.bgitu.core.network.model.response.CredentialsResponse
 import ru.bgitu.core.network.model.response.RefreshTokenResponse
 import ru.bgitu.core.network.model.response.UpdateAvailabilityResponse
+import ru.bgitu.core.network.model.response.UserDataVersionResponse
 
 internal object CompassRoutes {
     private const val BASE_URL = "http://api.bgitu-compass.ru"
@@ -40,12 +44,12 @@ internal object CompassRoutes {
     const val UPDATE_AVAILABILITY = "$BASE_URL/updateAvailability"
     const val GROUPS = "$BASE_URL/groups"
     const val SEARCH_TEACHER = "$BASE_URL/teacherSearch"
-    const val SUBJECTS = "$BASE_URL/subjects"
     const val USER_AGREEMENT = "$BASE_URL/userAgreement"
     const val REGISTER_CMT = "$BASE_URL/account/registerCMT"
     const val SCHEDULE_VERSION = "$BASE_URL/scheduleVersion"
     const val CHANGELOG = "$BASE_URL/changelog"
     const val EXTERNAL_AUTH = "$BASE_URL/auth"
+    const val SCHEDULE_UPDATE_DATE = "$BASE_URL/scheduleUpdateDate"
 }
 
 class KtorDataSource(
@@ -90,6 +94,12 @@ class KtorDataSource(
         }
     }
 
+    override suspend fun getUserDataVersion(): Result<Int> = runResulting {
+        client.get {
+            url(CompassRoutes.SCHEDULE_UPDATE_DATE)
+        }.body<UserDataVersionResponse>()
+    }.map { it.userDataVersion }
+
     override suspend fun getScheduleVersion(groupId: Int) = runResulting {
         client.get {
             url(CompassRoutes.SCHEDULE_VERSION)
@@ -98,23 +108,18 @@ class KtorDataSource(
         }.body<RemoteDataVersions>()
     }
 
-    override suspend fun getSubjects(groupId: Int) = runResulting {
-        client.get {
-            url(CompassRoutes.SUBJECTS)
-            parameter("groupId", groupId)
-        }.body<List<NetworkSubject>>()
-    }
-
     override suspend fun getSchedule(
         groupId: Int,
         fromDate: LocalDate,
-        toDate: LocalDate
-    ) = runResulting {
+        toDate: LocalDate,
+        userDataVersion: Int
+    ): Result<List<NetworkLesson>> = runResulting {
         client.get {
             url(CompassRoutes.LESSONS)
             parameter("groupId", groupId)
             parameter("startAt", fromDate)
             parameter("endAt", toDate)
+            header("UserData-Version", userDataVersion)
         }.body<List<NetworkLesson>>()
     }
 

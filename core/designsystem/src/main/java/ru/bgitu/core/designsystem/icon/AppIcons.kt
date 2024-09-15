@@ -3,6 +3,9 @@ package ru.bgitu.core.designsystem.icon
 import ru.bgitu.core.designsystem.R
 
 object AppIcons {
+    val Link = R.drawable.ic_link
+    val Support = R.drawable.ic_support
+    val Recent = R.drawable.ic_recent
     val ThumbUp = R.drawable.ic_thumb_up
     val Group = R.drawable.ic_group
     val Swap = R.drawable.ic_swap

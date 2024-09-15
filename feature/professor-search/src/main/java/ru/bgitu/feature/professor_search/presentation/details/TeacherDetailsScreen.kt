@@ -9,14 +9,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -57,6 +55,7 @@ import ru.bgitu.core.common.LessonDataUtils
 import ru.bgitu.core.common.iterator
 import ru.bgitu.core.designsystem.components.AppChip
 import ru.bgitu.core.designsystem.components.AppIconButton
+import ru.bgitu.core.designsystem.components.AppSnackbarHost
 import ru.bgitu.core.designsystem.components.AppTextButton
 import ru.bgitu.core.designsystem.components.CompassLoading
 import ru.bgitu.core.designsystem.components.LocalSnackbarController
@@ -70,7 +69,7 @@ import ru.bgitu.feature.professor_search.R
 import ru.bgitu.feature.professor_search.presentation.KEY_TEACHER_VIEWMODEL
 import java.time.format.TextStyle
 import java.util.Locale
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.INFINITE
 
 @Composable
 fun TeacherDetailsScreen(
@@ -89,13 +88,14 @@ fun TeacherDetailsScreen(
         when (event) {
             is ProfessorDetailsEvent.ShowError -> {
                 snackbarController.show(
-                    duration = 3.seconds,
+                    duration = INFINITE,
                     message = event.errorDetails.asString(context),
                     withDismissAction = false,
                     icon = AppIcons.WarningRed,
                 )
             }
             ProfessorDetailsEvent.Back -> {
+                snackbarController.dismiss()
                 onBack()
             }
         }
@@ -127,20 +127,20 @@ private fun ProfessorDetailsScreenContent(
                 onIntent = onIntent
             )
         },
+        snackbarHost = {
+            AppSnackbarHost(
+                modifier = Modifier.padding(bottom = AppTheme.spacing.l)
+            )
+        },
         modifier = Modifier
-            .statusBarsPadding()
+            .systemBarsPadding()
     ) { paddingValues ->
         LazyColumn(
             verticalArrangement = if (uiState.isLoading) {
                 Arrangement.Center
             } else Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(
-                start = AppTheme.spacing.s,
-                end = AppTheme.spacing.s,
-                bottom = AppTheme.spacing.s +
-                        WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-            ),
+            contentPadding = PaddingValues(AppTheme.spacing.l),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)

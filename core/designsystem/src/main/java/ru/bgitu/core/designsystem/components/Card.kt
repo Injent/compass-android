@@ -1,5 +1,6 @@
 package ru.bgitu.core.designsystem.components
 
+import android.os.Build.VERSION.SDK_INT
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
@@ -38,6 +40,7 @@ import ru.bgitu.core.designsystem.theme.CompassTheme
 import ru.bgitu.core.designsystem.theme.DefaultRippleTheme
 import ru.bgitu.core.designsystem.theme.SpotCard
 import ru.bgitu.core.designsystem.util.boxShadow
+import ru.bgitu.core.designsystem.util.shadow.roundRectShadow
 import ru.bgitu.core.designsystem.util.thenIf
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,8 +50,9 @@ fun AppCard(
     onClick: (() -> Unit)? = null,
     color: Color = AppTheme.colorScheme.background1,
     shape: Shape = AppTheme.shapes.default,
-    shadowEnabled: Boolean = true,
+    shadowEnabled: Boolean = !AppTheme.isDarkTheme,
     contentPadding: PaddingValues = AppCardTokens.ContentPadding,
+    contentColor: Color = Color.Unspecified,
     content: @Composable ColumnScope.() -> Unit
 ) {
     CompositionLocalProvider(
@@ -56,19 +60,28 @@ fun AppCard(
     ) {
         val colors = CardDefaults.cardColors(
             containerColor = color,
-            contentColor = AppTheme.colorScheme.foreground1
+            contentColor = contentColor
         )
         val shadowModifier = Modifier
             .thenIf(shadowEnabled) {
-                boxShadow(
-                    color = SpotCard,
-                    blurRadius = 8.dp,
-                    spreadRadius = 1.dp,
-                    offset = DpOffset(0.dp, 1.dp),
-                    shape = shape,
-                    clip = false,
-                    inset = false
-                )
+                if (SDK_INT < 28) {
+                    roundRectShadow(
+                        offset = DpOffset(0.dp, 2.dp),
+                        shape = shape,
+                        radius = 10.dp,
+                    )
+                } else {
+                    boxShadow(
+                        color = SpotCard,
+                        blurRadius = 6.dp,
+                        spreadRadius = 0.dp,
+                        offset = DpOffset(0.dp, 2.dp),
+                        shape = shape,
+                        clip = false,
+                        inset = false,
+                        alpha = .5f
+                    )
+                }
             }
 
         val contentInColumn = remember(content, contentPadding) {
@@ -113,31 +126,30 @@ fun AppCardWithContent(
         shape = shape,
         onClick = onClick
     ) {
-        Column {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Top
-            ) {
-                label?.let {
-                    Text(
-                        text = label,
-                        style = AppTheme.typography.headline1,
-                        color = AppTheme.colorScheme.foreground1,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                action?.let {
-                    Spacer(modifier = Modifier.width(AppTheme.spacing.l))
-                    Text(
-                        text = it,
-                        style = AppTheme.typography.subheadlineButton,
-                        color = AppTheme.colorScheme.foreground
-                    )
-                }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top
+        ) {
+            label?.let {
+                Text(
+                    text = label,
+                    style = AppTheme.typography.body,
+                    color = AppTheme.colorScheme.foreground1,
+                    modifier = Modifier.weight(1f)
+                )
             }
-            Spacer(Modifier.height(AppTheme.spacing.l))
-            content()
+            action?.let {
+                Spacer(modifier = Modifier.width(AppTheme.spacing.l))
+                Text(
+                    text = it,
+                    style = AppTheme.typography.subheadlineButton,
+                    color = AppTheme.colorScheme.foreground,
+                    modifier = Modifier.offset(y = AppTheme.spacing.xs)
+                )
+            }
         }
+        Spacer(Modifier.height(AppTheme.spacing.s))
+        content()
     }
 }
 

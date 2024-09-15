@@ -55,7 +55,7 @@ fun AppUpdateBottomSheet(
     onDismissRequest: () -> Unit,
 ) {
     val viewModel: AppUpdateViewModel = koinViewModel {
-        parametersOf()
+        parametersOf(sheetData.availableVersionCode)
     }
     val changelog by viewModel.changelog.collectAsStateWithLifecycle()
 
@@ -91,20 +91,20 @@ private fun AppUpdateBottomSheetDialogContent(
         ) {
             DialogHeader(
                 onDismiss = onUpdateDismiss,
-                dissmissable = !sheetData.forced,
+                dismissible = false,
                 modifier = Modifier.fillMaxWidth()
             )
             HorizontalDivider(Modifier.fillMaxWidth(), color = AppTheme.colorScheme.stroke2)
             DialogBody(
                 sizeBytes = sheetData.sizeBytes,
                 changelog = changelog,
-                forced = sheetData.forced,
+                forced = true,
                 uiState = uiState
             )
             DialogActions(
                 onUpdateDismiss = onUpdateDismiss,
                 onUpdateRequest = onUpdateRequest,
-                dissmissable = !sheetData.forced
+                dissmissable = false
             )
         }
     }
@@ -113,7 +113,7 @@ private fun AppUpdateBottomSheetDialogContent(
 @Composable
 private fun DialogHeader(
     onDismiss: () -> Unit,
-    dissmissable: Boolean,
+    dismissible: Boolean,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -126,7 +126,7 @@ private fun DialogHeader(
             style = AppTheme.typography.title3,
             color = AppTheme.colorScheme.foreground1
         )
-        if (dissmissable) {
+        if (dismissible) {
             Icon(
                 painter = painterResource(AppIcons.CloseSmall),
                 contentDescription = null,

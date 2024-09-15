@@ -5,7 +5,7 @@ import androidx.navigation.compose.composable
 import ru.bgitu.core.navigation.Screen
 import ru.bgitu.feature.help.presentation.HelpScreen
 
-fun NavGraphBuilder.help() {
+fun NavGraphBuilder.helpRoute() {
     composable<Screen.Help> {
         HelpScreen()
     }

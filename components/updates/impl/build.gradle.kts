@@ -23,5 +23,6 @@ dependencies {
     implementation(libs.koin.workManager)
     implementation(libs.kotlinx.coroutines.android)
 
+    rustoreImplementation(platform(libs.rustore.bom))
     rustoreImplementation(libs.rustore.update)
 }

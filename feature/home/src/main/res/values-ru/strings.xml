@@ -6,7 +6,6 @@
     <string name="repeat">Повторить</string>
     <string name="tab_home">Главная</string>
     <string name="error_failed_to_load_data">Не удалось загрузить данные</string>
-    <string name="today_is_weekend">Сегодня у вас выходной или нет пар на этот день</string>
     <string name="the_first_class_will_start_in">Первая пара начнется %s</string>
     <string name="this_class_will_end_in">Пара закончится %s</string>
     <string name="classes_are_over">Пары закончились</string>
@@ -17,4 +16,8 @@
     <string name="your_group">Твоя группа</string>
     <string name="synced">Обновлено</string>
     <string name="loaded_offline">Загружено офлайн</string>
+    <string name="title_reset_group">Группа сброшена</string>
+    <string name="dialog_description_reset_group">Группы в расписании поменялись, необходимо выбрать новую</string>
+    <string name="skip">Пропустить</string>
+    <string name="select">Выбрать</string>
 </resources>

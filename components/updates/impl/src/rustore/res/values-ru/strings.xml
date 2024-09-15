@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rustore_dialog_title">RuStore не найден</string>
+    <string name="rustore_dialog_message">Приложение было скачано из RuStore. Без него, оно не сможет обновлятся и работать</string>
+    <string name="rustore_dialog_action_download">Скачать RuStore</string>
+</resources>

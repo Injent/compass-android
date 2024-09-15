@@ -16,26 +16,18 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onPlaced
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.times
 import kotlinx.datetime.LocalDate
 import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.designsystem.components.AppCard
 import ru.bgitu.core.designsystem.theme.AppTheme
 
-private const val SIX_DATES = 6
-
 object DayItemTokens {
-    val Width = 54.dp
     val Height = 56.dp
     val Gap = 8.dp
 }
@@ -48,21 +40,11 @@ fun DayOfWeekSelector(
     modifier: Modifier = Modifier
 ) {
     val windowSize = currentWindowAdaptiveInfo().windowSizeClass
-    val density = LocalDensity.current
-    var shouldUseWeight by remember { mutableStateOf(false) }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
-            .fillMaxWidth()
-            .onPlaced { coordinates ->
-                with(density) {
-                    val itemsWidth = SIX_DATES * DayItemTokens.Width
-                    val gapWidth = (SIX_DATES - 1) * DayItemTokens.Gap
-                    shouldUseWeight = (itemsWidth + gapWidth).toPx() > coordinates.size.width ||
-                            windowSize.widthSizeClass > WindowWidthSizeClass.Compact
-                }
-            },
+            .fillMaxWidth(),
     ) {
         val days = remember(state.selectedDate) {
             DateTimeUtil.getWeekDates(state.selectedDate)
@@ -81,11 +63,7 @@ fun DayOfWeekSelector(
                 weekdayName = week,
                 onClick = { onDateSelected(date) },
                 compact = windowSize.widthSizeClass <= WindowWidthSizeClass.Compact,
-                modifier = Modifier.then(
-                    if (shouldUseWeight) {
-                        Modifier.weight(1f)
-                    } else Modifier.width(DayItemTokens.Width)
-                )
+                modifier = Modifier.weight(1f)
             )
             if (days.last() != date) {
                 Spacer(Modifier.width(DayItemTokens.Gap))
@@ -136,7 +114,6 @@ private fun DayOfWeekItem(
             PaddingValues(horizontal = AppTheme.spacing.s)
         },
         color = backgroundColor,
-        shadowEnabled = false,
         onClick = if (enabled) onClick else null,
         modifier = modifier.height(DayItemTokens.Height)
     ) {

@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="profile_settings">Profile Settings</string>
-    <string name="gradebook">Gradebook №%s</string>
     <string name="my_group">My group</string>
-    <string name="add_link">Add link</string>
     <string name="display_name">Display name</string>
-    <string name="bio">About me</string>
     <string name="public_profile">Visible in the search</string>
     <string name="enter_display_name">Enter display name</string>
     <string name="hint_bio">Add a description</string>
@@ -15,6 +12,25 @@
     <string name="avatar_filled">This picture is from the clipboard</string>
     <string name="current_clipboard">Clipped text</string>
     <string name="avatar_invalid">The copied text is not a direct link to the image</string>
-    <string name="public_profile_description">Your profile will be visible in the search for other students in with the same options as yours</string>
-
+    <string name="public_profile_description">Your profile will be visible in the search for other students with the same options as yours</string>
+    <string name="variants_description">The search results will be adjusted to your variants</string>
+    <string name="search">Search</string>
+    <string name="your_variants">Your variants</string>
+    <string name="action_add">Add</string>
+    <string name="expert_description">If you are able to help in any subjects, then you will receive the status of an</string>
+    <string name="expert_label">I am expert</string>
+    <string name="action_become_an_expert">Become an expert</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="expert_paragraph1_text" translatable="false">Эксперт помогает учащимся с решением заданий. Каким образом эксперт делает это — не касается политики сервиса</string>
+    <string name="expert_paragraph2_title" translatable="false">Как найти эксперта?</string>
+    <string name="expert_paragraph2_text" translatable="false">Экспертам будет присвоен статус «Эксперт», который будет их выделять в поиске. Они будут появляться выше по списку. Как и обычного пользователя, эксперта можно найти по ссылкам на соц. сети в его профиле в приложении Компас</string>
+    <string name="expert_paragraph3_title" translatable="false">Платные ли услуги эксперта?</string>
+    <string name="expert_paragraph3_text" translatable="false">Эксперт может сделать свои услуги платными или бесплатным. Так как оказание услуги не происходит в приложении и сервис Компас не может это контролировать, то он соответственно не несет ответственность за денежные средства обоих сторон (Покупателя и эксперта)</string>
+    <string name="expert_paragraph4_text" translatable="false">Нет, эксперт в праве отказать в помощи некоторым людям без указания причины</string>
+    <string name="expert_paragraph4_title" translatable="false">Обязан ли эксперт помогать всем?</string>
+    <string name="expert_paragraph1_title" translatable="false">Кто такой эксперт?</string>
+    <string name="title_iWantToBecomeAnExpert">I want to become and expert</string>
+    <string name="expert_agreement">I agree to the {user agreement}</string>
+    <string name="expert_paragraph5_title" translatable="false">Рекомендации</string>
+    <string name="expert_paragraph5_text" translatable="false">• Не используйте свое реальное имя в приложении Компас если вы эксперт\n• Оформите раздел «О себе» и укажите свои контакты в профиле</string>
 </resources>

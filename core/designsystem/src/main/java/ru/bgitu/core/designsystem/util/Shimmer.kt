@@ -35,7 +35,7 @@ import ru.bgitu.core.designsystem.theme.CompassTheme
 fun Modifier.shimmer(
     durationMillis: Int = 1200,
     delayMillis: Int = 0,
-    highlightColor: Color = AppTheme.colors.whiteOpacity,
+    highlightColor: Color = Color.White,
     baseColor: Color = Color(0x3397A4BA),
     shape: Shape = RectangleShape
 ): Modifier = composed {

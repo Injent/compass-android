@@ -16,4 +16,5 @@
     <string name="try_find_mates">Ищите помощников!</string>
     <string name="new_feature_dialog_text">Войдите со своим аккаунтом от {ВК}, {Telegram} или {Google}</string>
     <string name="new_feature_dialog_text_warning">Будет произведен выход из приложения</string>
+    <string name="support_devs">Поддержи разработчиков словами</string>
 </resources>

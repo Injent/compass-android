@@ -33,4 +33,10 @@ sealed interface Screen {
     @Serializable data object Groups : Screen
 
     @Serializable data class GroupSearch(val resultKey: String) : Screen
+
+    @Serializable data object ExpertApply : Screen
+
+    @Serializable data class VariantScreen(val subjectName: String) : Screen
+
+    @Serializable data object Onboarding : Screen
 }

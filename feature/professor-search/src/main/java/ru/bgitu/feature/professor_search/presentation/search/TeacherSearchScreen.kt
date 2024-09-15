@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -12,8 +13,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.input.TextFieldState
@@ -31,11 +38,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.androidx.compose.koinViewModel
 import ru.bgitu.core.common.CYRILLIC_REGEX
+import ru.bgitu.core.designsystem.components.AppBottomBarTokens
 import ru.bgitu.core.designsystem.components.AppSearchField
+import ru.bgitu.core.designsystem.components.AppSnackbarHost
 import ru.bgitu.core.designsystem.components.CompassLoading
 import ru.bgitu.core.designsystem.components.InputRegex
 import ru.bgitu.core.designsystem.components.LocalSnackbarController
@@ -51,6 +62,7 @@ import ru.bgitu.feature.professor_search.R
 import ru.bgitu.feature.professor_search.presentation.KEY_TEACHER_VIEWMODEL
 import ru.bgitu.feature.professor_search.presentation.components.RecentProfessorSearch
 import ru.bgitu.feature.professor_search.presentation.components.TeacherScheduleAlertDialog
+import kotlin.time.Duration.Companion.INFINITE
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -104,12 +116,25 @@ private fun TeacherSearchScreen(
         )
     }
 
+    val imeVisible = WindowInsets.isImeVisible
+
     Scaffold(
         contentWindowInsets = WindowInsets(0),
         topBar = {
             ProfessorSearchTopBar(searchFieldState = searchFieldState)
         },
-        modifier = Modifier.systemBarsPadding()
+        snackbarHost = {
+            AppSnackbarHost(
+                Modifier
+                    .thenIf(imeVisible) {
+                        offset(y = AppBottomBarTokens.Height)
+                    }
+                    .padding(bottom = AppTheme.spacing.l)
+                    .imePadding()
+            )
+        },
+        modifier = Modifier
+            .systemBarsPadding()
     ) { innerPadding ->
         Column(
             Modifier
@@ -143,7 +168,12 @@ private fun SearchResults(
             LazyColumn(
                 modifier = modifier,
                 verticalArrangement = Arrangement.spacedBy(1.2.dp),
-                contentPadding = WindowInsets.ime.asPaddingValues()
+                contentPadding = PaddingValues(
+                    bottom = (WindowInsets.ime.asPaddingValues().calculateBottomPadding()
+                            - AppBottomBarTokens.Height
+                            - WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                    ).coerceAtLeast(0.dp)
+                )
             ) {
                 items(
                     items = uiState.searchResults,
@@ -235,6 +265,7 @@ private fun ProfessorSearchTopBar(
         )
         AppSearchField(
             state = searchFieldState,
+            placeholder = stringResource(R.string.hint_enterTeacherLastName),
             inputTransformation = remember { InputRegex(CYRILLIC_REGEX) },
             modifier = Modifier.fillMaxWidth()
         )

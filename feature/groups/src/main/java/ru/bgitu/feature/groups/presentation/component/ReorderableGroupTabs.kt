@@ -38,7 +38,7 @@ import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.DefaultRippleTheme
 import ru.bgitu.core.designsystem.theme.NoRippleTheme
-import ru.bgitu.core.designsystem.util.AutoResizeText
+import ru.bgitu.core.designsystem.util.AutoSizeText
 import ru.bgitu.core.designsystem.util.thenIf
 import ru.bgitu.core.model.Group
 import ru.bgitu.feature.groups.R
@@ -175,6 +175,11 @@ private fun ReorderableGroupTab(
             AppTheme.colorScheme.backgroundBrand
         } else AppTheme.colorScheme.backgroundTouchable
     )
+    val textColor by animateColorAsState(
+        targetValue = if (isDragging) {
+            AppTheme.colorScheme.foregroundOnBrand
+        } else AppTheme.colorScheme.foreground1
+    )
     val iconColor by animateColorAsState(
         targetValue = if (isDragging) {
             AppTheme.colorScheme.foregroundOnBrand
@@ -199,10 +204,10 @@ private fun ReorderableGroupTab(
                     bottom = AppTheme.spacing.s
                 )
             ) {
-                AutoResizeText(
+                AutoSizeText(
                     text = group.name,
                     style = AppTheme.typography.calloutButton,
-                    color = AppTheme.colorScheme.foreground1,
+                    color = textColor,
                 )
                 Spacer(Modifier.weight(1f))
                 Icon(

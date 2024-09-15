@@ -17,6 +17,7 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.Visibility
+import androidx.glance.action.Action
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
@@ -24,6 +25,7 @@ import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.appWidgetBackground
+import androidx.glance.appwidget.components.Scaffold
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.itemsIndexed
 import androidx.glance.appwidget.provideContent
@@ -61,11 +63,9 @@ import ru.bgitu.feature.schedule_widget.model.ScheduleWidgetState
 import ru.bgitu.feature.schedule_widget.model.WidgetColors
 import ru.bgitu.feature.schedule_widget.model.provideWidgetColors
 import ru.bgitu.feature.schedule_widget.model.toWidgetState
-import ru.bgitu.feature.schedule_widget.ui.GlanceLesson
+import ru.bgitu.feature.schedule_widget.presentation.component.GlanceLesson
 import ru.bgitu.feature.schedule_widget.widget.ChangeDateAction.Companion.QueryDateParam
 import ru.bgitu.feature.schedule_widget.work.WidgetScheduleWorker
-
-const val EXTRA_OPENED_SCHEDULE_DATE = "opened_schedule_date"
 
 class ScheduleWidget : GlanceAppWidget() {
 
@@ -76,7 +76,161 @@ class ScheduleWidget : GlanceAppWidget() {
         provideContent {
             val uiState = currentState<WidgetDataPb>().toWidgetState()
             colors = provideWidgetColors(context, uiState.options)
-            Content()
+            NewContent()
+        }
+    }
+
+    @Composable
+    fun NewContent() {
+        val uiState: ScheduleWidgetState = currentState<WidgetDataPb>().toWidgetState()
+        val context = LocalContext.current
+
+        Scaffold(
+            titleBar = {
+                TitleBar(
+                    title = uiState.getTitle(context),
+                    hasNext = uiState.queryDate > DateTimeUtil.weeksDateBoundary.start,
+                    hasPrevious = uiState.queryDate < DateTimeUtil.weeksDateBoundary.endInclusive,
+                    onNext = actionRunCallback<ChangeDateAction>(
+                        actionParametersOf(
+                            QueryDateParam to uiState.queryDate.plus(1, DateTimeUnit.DAY).toString()
+                        )
+                    ),
+                    onPrevious = actionRunCallback<ChangeDateAction>(
+                        actionParametersOf(
+                            QueryDateParam to uiState.queryDate.minus(1, DateTimeUnit.DAY).toString()
+                        )
+                    ),
+                    contentColor = ColorProvider(colors.onBackground)
+                )
+            },
+            modifier = GlanceModifier
+                .fillMaxSize()
+                .padding(bottom = 12.dp)
+                .appWidgetBackground()
+        ) {
+            val onBackgroundColor = ColorProvider(colors.onBackground)
+            val backgroundColor = colors.container.copy(alpha = uiState.options.opacity)
+            val onContainerColor = ColorProvider(colors.onContainer)
+
+            when {
+                uiState.classesForQueryDate.isNotEmpty() -> {
+                    DaySchedule(
+                        lessons = uiState.classesForQueryDate,
+                        backgroundColor = backgroundColor,
+                        contentColor = onContainerColor
+                    )
+                }
+                uiState.isLoading -> {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = GlanceModifier
+                            .fillMaxSize()
+                            .compatBackground(color = backgroundColor, cornerRadius = 12.dp),
+                    ) {
+                        CircularProgressIndicator(
+                            color = onBackgroundColor,
+                            modifier = GlanceModifier
+                                .size(48.dp),
+                        )
+                    }
+                }
+                uiState.classesForQueryDate.isEmpty() -> {
+                    Column(
+                        modifier = GlanceModifier
+                            .fillMaxSize()
+                            .compatBackground(color = backgroundColor, cornerRadius = 12.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            provider = ImageProvider(AppIllustrations.Happy),
+                            contentDescription = null,
+                            colorFilter = ColorFilter.tint(onContainerColor),
+                            modifier = GlanceModifier.size(64.dp)
+                        )
+                        Spacer(GlanceModifier.height(8.dp))
+                        Text(
+                            text = LocalContext.current.getString(R.string.no_classes),
+                            style = TextStyle(
+                                color = onContainerColor,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 18.sp
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun TitleBar(
+        title: String,
+        hasNext: Boolean,
+        hasPrevious: Boolean,
+        onNext: Action,
+        onPrevious: Action,
+        contentColor: ColorProvider,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = GlanceModifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .padding(horizontal = 8.dp)
+        ) {
+            Image(
+                provider = ImageProvider(R.drawable.ic_back),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(contentColor),
+                modifier = GlanceModifier
+                    .then(
+                        if (hasPrevious) {
+                            GlanceModifier.clickable(onPrevious)
+                        } else {
+                            GlanceModifier.visibility(Visibility.Invisible)
+                        }
+                    )
+                    .padding(8.dp)
+            )
+            Spacer(GlanceModifier.width(AppTheme.spacing.s))
+            Button(
+                text = title,
+                style = TextStyle(
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                ),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = ColorProvider(Color.Transparent),
+                    contentColor = contentColor
+                ),
+                modifier = GlanceModifier
+                    .height(48.dp)
+                    .defaultWeight(),
+                onClick = actionRunCallback<ChangeDateAction>(
+                    actionParametersOf(
+                        QueryDateParam to DateTimeUtil.currentDate.toString()
+                    )
+                ),
+                maxLines = 1
+            )
+            Spacer(GlanceModifier.width(AppTheme.spacing.s))
+            Image(
+                provider = ImageProvider(R.drawable.ic_back_backwards),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(contentColor),
+                modifier = GlanceModifier
+                    .then(
+                        if (hasNext) {
+                            GlanceModifier.clickable(onNext)
+                        } else {
+                            GlanceModifier.visibility(Visibility.Invisible)
+                        }
+                    )
+                    .padding(8.dp)
+            )
         }
     }
 
@@ -101,76 +255,7 @@ class ScheduleWidget : GlanceAppWidget() {
 
             val reachStart = uiState.queryDate <= DateTimeUtil.weeksDateBoundary.start
             val reachEnd = uiState.queryDate >= DateTimeUtil.weeksDateBoundary.endInclusive
-            Row(
-                modifier = GlanceModifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .padding(horizontal = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    provider = ImageProvider(R.drawable.ic_back),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(onBackgroundColor),
-                    modifier = GlanceModifier
-                        .then(
-                            if (reachStart) {
-                                GlanceModifier.visibility(Visibility.Invisible)
-                            } else {
-                                val previousDate = uiState.queryDate.minus(1, DateTimeUnit.DAY)
-                                val action = actionRunCallback<ChangeDateAction>(
-                                    actionParametersOf(QueryDateParam to previousDate.toString())
-                                )
-                                GlanceModifier
-                                    .clickable(action)
-                            }
-                        )
-                        .padding(8.dp)
-                )
-                Spacer(GlanceModifier.width(AppTheme.spacing.s))
-                Button(
-                    text = uiState.getTitle(context),
-                    style = TextStyle(
-                        textAlign = TextAlign.Center,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = ColorProvider(Color.Transparent),
-                        contentColor = onBackgroundColor
-                    ),
-                    modifier = GlanceModifier
-                        .height(48.dp)
-                        .defaultWeight(),
-                    onClick = actionRunCallback<ChangeDateAction>(
-                        actionParametersOf(
-                            QueryDateParam to DateTimeUtil.currentDate.toString()
-                        )
-                    ),
-                    maxLines = 1
-                )
-                Spacer(GlanceModifier.width(AppTheme.spacing.s))
-                Image(
-                    provider = ImageProvider(R.drawable.ic_back_backwards),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(onBackgroundColor),
-                    modifier = GlanceModifier
-                        .then(
-                            if (reachEnd) {
-                                GlanceModifier
-                                    .visibility(Visibility.Invisible)
-                            } else {
-                                val nextDate = uiState.queryDate.plus(1, DateTimeUnit.DAY)
-                                val action = actionRunCallback<ChangeDateAction>(
-                                    actionParametersOf(QueryDateParam to nextDate.toString())
-                                )
-                                GlanceModifier
-                                    .clickable(action)
-                            }
-                        )
-                        .padding(8.dp)
-                )
-            }
+
             val backgroundColor = colors.container.copy(alpha = uiState.options.opacity)
             val onContainerColor = ColorProvider(colors.onContainer)
 
@@ -234,12 +319,10 @@ class ScheduleWidget : GlanceAppWidget() {
         val context = LocalContext.current
         val action = actionStartActivity(
             Intent().apply {
-                setComponent(ComponentName(context, MAIN_ACTIVITY_CLASS))
-                setFlags(
-                    Intent.FLAG_ACTIVITY_NEW_TASK
-                            or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            or Intent.FLAG_ACTIVITY_TASK_ON_HOME
-                )
+                component = ComponentName(context, MAIN_ACTIVITY_CLASS)
+                flags = (Intent.FLAG_ACTIVITY_NEW_TASK
+                        or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        or Intent.FLAG_ACTIVITY_TASK_ON_HOME)
                 val openScheduleDate = lessons.firstOrNull()?.date ?: DateTimeUtil.currentDate
                 data = "$HOME_DEEPLINK/$openScheduleDate".toUri()
             }
@@ -251,6 +334,7 @@ class ScheduleWidget : GlanceAppWidget() {
                 .compatBackground(color = backgroundColor, cornerRadius = 12.dp),
         ) {
             val lastItemIndex = lessons.size - 1
+        
             itemsIndexed(
                 items = lessons,
                 itemId = { index, _ -> index.toLong() }

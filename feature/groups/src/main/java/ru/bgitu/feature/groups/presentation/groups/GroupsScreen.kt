@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,6 +36,7 @@ import ru.bgitu.core.navigation.BackResultEffect
 import ru.bgitu.core.navigation.LocalNavController
 import ru.bgitu.core.navigation.Screen
 import ru.bgitu.core.navigation.back
+import ru.bgitu.core.navigation.push
 import ru.bgitu.core.ui.AppBackButton
 import ru.bgitu.core.ui.listenEvents
 import ru.bgitu.feature.groups.R
@@ -83,7 +85,7 @@ fun GroupsRoute() {
         (uiState as? GroupsUiState.Success)?.let { uiState ->
             if (uiState.primaryGroup == null && !autoSearchWasProposed) {
                 autoSearchWasProposed = true
-                navController.navigate(Screen.GroupSearch(resultKey = RESULT_PRIMARY_GROUP))
+                navController.push(Screen.GroupSearch(resultKey = RESULT_PRIMARY_GROUP))
             }
         }
     }
@@ -93,10 +95,10 @@ fun GroupsRoute() {
         onIntent = viewModel::onIntent,
         onBack = { navController.back() },
         onPrimaryGroupClick = {
-            navController.navigate(Screen.GroupSearch(resultKey = RESULT_PRIMARY_GROUP))
+            navController.push(Screen.GroupSearch(resultKey = RESULT_PRIMARY_GROUP))
         },
         onAddGroupRequest = {
-            navController.navigate(Screen.GroupSearch(resultKey = RESULT_SECONDARY_GROUP))
+            navController.push(Screen.GroupSearch(resultKey = RESULT_SECONDARY_GROUP))
         },
     )
 }

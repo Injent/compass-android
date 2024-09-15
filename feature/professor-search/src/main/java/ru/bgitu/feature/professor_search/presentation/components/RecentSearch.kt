@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import ru.bgitu.core.designsystem.components.AppTextButton
@@ -52,7 +54,7 @@ fun RecentProfessorSearch(
                 onClick = onClear
             )
         }
-        Spacer(Modifier.height(AppTheme.spacing.s))
+        Spacer(Modifier.height(AppTheme.spacing.xs))
         uiState.recentSearchResults.forEach { professorName ->
             RecentItem(
                 label = professorName,
@@ -70,23 +72,28 @@ private fun RecentItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    Surface(
+        color = Color.Transparent,
+        shape = AppTheme.shapes.default,
+        onClick = onClick,
         modifier = modifier
-            .onClick(indication = true, onClick = onClick)
-            .padding(vertical = AppTheme.spacing.l)
-            .clip(AppTheme.shapes.small),
-        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.l)
     ) {
-        Icon(
-            painter = painterResource(AppIcons.Search),
-            tint = AppTheme.colorScheme.foreground2,
-            contentDescription = null,
-            modifier = Modifier.size(AppTheme.spacing.xl)
-        )
-        Text(
-            text = label,
-            style = AppTheme.typography.callout,
-            color = AppTheme.colorScheme.foreground1
-        )
+        Row(
+            modifier = Modifier
+                .padding(AppTheme.spacing.s),
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.l)
+        ) {
+            Icon(
+                painter = painterResource(AppIcons.Recent),
+                tint = AppTheme.colorScheme.foreground2,
+                contentDescription = null,
+                modifier = Modifier.size(AppTheme.spacing.xl)
+            )
+            Text(
+                text = label,
+                style = AppTheme.typography.callout,
+                color = AppTheme.colorScheme.foreground1
+            )
+        }
     }
 }

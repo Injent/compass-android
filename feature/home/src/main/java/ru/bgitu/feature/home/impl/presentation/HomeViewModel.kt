@@ -17,10 +17,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.atDate
 import kotlinx.datetime.plus
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toKotlinLocalDate
 import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.common.eventChannel
@@ -37,7 +40,6 @@ import ru.bgitu.core.model.Lesson
 import ru.bgitu.core.ui.schedule.DayOfWeekSelectorUiState
 import ru.bgitu.feature.home.BuildConfig
 import ru.bgitu.feature.home.R
-import java.time.DayOfWeek
 import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -49,6 +51,8 @@ sealed interface HomeIntent {
     data class ChangeGroupView(val group: Group) : HomeIntent
     data object NavigateToGroupSettings : HomeIntent
     data object NavigateToNewFeatures : HomeIntent
+    data object DismissPickGroupQuery : HomeIntent
+    data object PickGroup : HomeIntent
 }
 
 sealed interface HomeEvent {
@@ -61,9 +65,9 @@ sealed interface HomeUiState {
         val selectedGroup: Group? = null,
         val savedGroups: List<Group> = emptyList(),
         val showGroups: Boolean,
-        val syncStatus: SyncStatus = SyncStatus.IDLE
+        val syncStatus: SyncStatus = SyncStatus.IDLE,
     ) : HomeUiState
-    data object GroupNotSelected : HomeUiState
+    data class GroupNotSelected(val shouldShowDataResetAlert: Boolean) : HomeUiState
     data object Loading : HomeUiState
 }
 
@@ -98,13 +102,13 @@ class HomeViewModel(
         networkMonitor.isOnline,
     ) { selectedGroup, userdata, syncStatus, isOnline ->
         if (userdata.primaryGroup == null) {
-            return@combine HomeUiState.GroupNotSelected
+            return@combine HomeUiState.GroupNotSelected(userdata.shouldShowDataResetAlert)
         }
         HomeUiState.Success(
             selectedGroup = selectedGroup,
             savedGroups = listOf(userdata.primaryGroup!!) + userdata.userPrefs.savedGroups,
             showGroups = userdata.userPrefs.showGroupsOnMainScreen,
-            syncStatus = if (!isOnline) SyncStatus.FAILED else syncStatus
+            syncStatus = if (!isOnline) SyncStatus.FAILED else syncStatus,
         )
     }
         .stateIn(
@@ -130,8 +134,8 @@ class HomeViewModel(
             selectedGroup != null -> {
                 scheduleRepository.getNetworkClasses(
                     groupId = selectedGroup.id,
-                    from = selectedDate,
-                    to = selectedDate
+                    from = selectedDate.toJavaLocalDate().with(DayOfWeek.MONDAY).toKotlinLocalDate(),
+                    to = selectedDate.toJavaLocalDate().with(DayOfWeek.SUNDAY).toKotlinLocalDate()
                 )
             }
             else -> ScheduleLoadState.Error(null)
@@ -205,6 +209,17 @@ class HomeViewModel(
             }
             HomeIntent.NavigateToGroupSettings -> {
                 _events.trySend(HomeEvent.NavigateToGroupSettings)
+            }
+            is HomeIntent.DismissPickGroupQuery -> viewModelScope.launch {
+                settings.updateMetadata {
+                    it.copy(shouldShowDataResetAlert = false)
+                }
+            }
+            is HomeIntent.PickGroup -> viewModelScope.launch {
+                settings.updateMetadata {
+                    it.copy(shouldShowDataResetAlert = false)
+                }
+                _events.send(HomeEvent.NavigateToGroupSettings)
             }
         }
     }

@@ -8,7 +8,7 @@
     </style>
     <style name="ThemePhoneUiDarkContrast">
         <item name="backgroundBrand">#0C86FF</item>
-        <item name="background1">#42424D</item>
+        <item name="background1">#393942</item>
         <item name="background2">#1E1E24</item>
         <item name="background3">#2A2A35</item>
     </style>

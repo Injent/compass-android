@@ -5,9 +5,10 @@
     <string name="search_professors_description">Ищите преподавателей по их расписанию</string>
     <string name="professor_search">Преподаватели</string>
     <string name="attention">Внимание!</string>
-    <string name="alert_text">Предоставляемое расписание {не является} графиком пересдач или отработок — такую информацию {уточняйте лично} у преподавателей или {на стендах кафедры}</string>
+    <string name="alert_text">Предоставляемое расписание {не является} графиком пересдач или отработок</string>
     <string name="clear_search">очистить</string>
     <string name="filter_by_weeks">по неделям</string>
     <string name="filter_by_days">по дням</string>
     <string name="search_professors_title">Расписание преподавателей</string>
+    <string name="hint_enterTeacherLastName">Фамилия преподавателя...</string>
 </resources>

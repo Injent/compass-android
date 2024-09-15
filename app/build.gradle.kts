@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.secrets)
     alias(libs.plugins.bgitu.detekt)
     alias(libs.plugins.bgitu.serialization)
-    alias(libs.plugins.bgitu.app.jacoco)
 }
 
 android {
@@ -18,8 +17,8 @@ android {
     defaultConfig {
         applicationId = "ru.bgitu.app"
         targetSdk = 34
-        versionCode = 9
-        versionName = "0.9-rc"
+        versionCode = 12
+        versionName = "1.0-release"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -133,6 +132,7 @@ dependencies {
     implementation(projects.feature.professorSearch)
     implementation(projects.feature.groups)
     implementation(projects.feature.input)
+    implementation(projects.feature.onboarding)
 
     implementation(projects.core.designsystem)
     implementation(projects.core.network)
@@ -174,8 +174,4 @@ dependencies {
 
     implementation(libs.startup)
     implementation(libs.kotlinx.datetime)
-
-    // Rustore
-    rustoreImplementation(libs.rustore.core)
-    rustoreImplementation(libs.rustore.analytics)
 }

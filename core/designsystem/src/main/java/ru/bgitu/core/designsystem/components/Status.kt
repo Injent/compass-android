@@ -63,17 +63,11 @@ fun Tag(
 }
 
 enum class StatusDecor {
-    ADMIN,
-    SPECIAL,
+    DEV,
+    AWARDED,
     REGULAR,
-    POPULAR
+    EXPERT
 }
-
-private const val DARK_ADMIN_COLOR = 0xFFc9e9ff
-private const val LIGHT_ADMIN_COLOR = 0xFF253e4f
-private const val SPECIAL_COLOR = 0xFFa227db
-private const val REGULAR_COLOR = 0xFFb5bac1
-
 
 @Composable
 fun Status(
@@ -81,21 +75,17 @@ fun Status(
     modifier: Modifier = Modifier
 ) {
     val contentColor = when (statusDecor) {
-        StatusDecor.ADMIN -> Color(
-            if (AppTheme.isDarkTheme) {
-                DARK_ADMIN_COLOR
-            } else LIGHT_ADMIN_COLOR
-        )
-        StatusDecor.SPECIAL -> Color(SPECIAL_COLOR)
-        StatusDecor.REGULAR -> Color(REGULAR_COLOR)
-        StatusDecor.POPULAR -> AppTheme.colorScheme.backgroundBrand
+        StatusDecor.DEV -> AppTheme.colorScheme.statusDev
+        StatusDecor.AWARDED -> AppTheme.colorScheme.statusAwarded
+        StatusDecor.REGULAR -> AppTheme.colorScheme.statusRegular
+        StatusDecor.EXPERT -> AppTheme.colorScheme.statusExpert
     }
     Row(
         horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .background(
-                color = AppTheme.colorScheme.backgroundTouchable,
+                color = contentColor.copy(.15f),
                 shape = CircleShape
             )
             .padding(
@@ -106,10 +96,10 @@ fun Status(
         Icon(
             painter = painterResource(
                 when (statusDecor) {
-                    StatusDecor.ADMIN -> AppIcons.Wrench
-                    StatusDecor.SPECIAL -> AppIcons.Badge
+                    StatusDecor.DEV -> AppIcons.Wrench
+                    StatusDecor.AWARDED -> AppIcons.Badge
                     StatusDecor.REGULAR -> AppIcons.Student
-                    StatusDecor.POPULAR -> AppIcons.ThumbUp
+                    StatusDecor.EXPERT -> AppIcons.ThumbUp
                 }
             ),
             contentDescription = null,
@@ -119,10 +109,10 @@ fun Status(
         Text(
             text = stringResource(
                 when (statusDecor) {
-                    StatusDecor.ADMIN -> R.string.status_admin
-                    StatusDecor.SPECIAL -> R.string.status_special
+                    StatusDecor.DEV -> R.string.status_admin
+                    StatusDecor.AWARDED -> R.string.status_special
                     StatusDecor.REGULAR -> R.string.status_regular
-                    StatusDecor.POPULAR -> R.string.status_popular
+                    StatusDecor.EXPERT -> R.string.status_expert
                 }
             ),
             style = AppTheme.typography.callout,
@@ -169,17 +159,5 @@ fun StatusCard(
 private fun StatusOkPreview() {
     CompassTheme {
         Tag(text = "Status", hasContainer = true, icon = AppIcons.Approved)
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 1)
-@Composable
-private fun StatusCardPreview() {
-    CompassTheme {
-        StatusCard(
-            title = "Status",
-            text = "Line",
-            lineColor = AppTheme.colors.yellow
-        )
     }
 }

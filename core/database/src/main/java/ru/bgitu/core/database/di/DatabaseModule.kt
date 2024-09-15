@@ -5,7 +5,6 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import ru.bgitu.core.database.CompassDatabase
 import ru.bgitu.core.database.dao.ScheduleDao
-import ru.bgitu.core.database.dao.SubjectDao
 
 val DatabaseModule = module {
     single<CompassDatabase> {
@@ -13,14 +12,12 @@ val DatabaseModule = module {
             androidContext(),
             CompassDatabase::class.java,
             "bgitu-database"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     factory<ScheduleDao> {
         get<CompassDatabase>().scheduleDao()
-    }
-
-    factory<SubjectDao> {
-        get<CompassDatabase>().subjectDao()
     }
 }
