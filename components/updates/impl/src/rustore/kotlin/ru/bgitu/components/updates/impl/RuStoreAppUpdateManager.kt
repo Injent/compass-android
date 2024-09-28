@@ -11,12 +11,14 @@ import ru.bgitu.components.updates.api.model.InstallState
 import ru.bgitu.components.updates.api.model.UnknownUpdateInfo
 import ru.bgitu.components.updates.api.model.UpdateInfo
 import ru.bgitu.components.updates.impl.model.RuStoreUpdateInfo
+import ru.bgitu.core.common.Result
 import ru.bgitu.core.common.TextResource
 import ru.rustore.sdk.appupdate.listener.InstallStateUpdateListener
 import ru.rustore.sdk.appupdate.manager.factory.RuStoreAppUpdateManagerFactory
 import ru.rustore.sdk.appupdate.model.AppUpdateOptions
 import ru.rustore.sdk.appupdate.model.AppUpdateType
 import ru.rustore.sdk.appupdate.model.InstallStatus
+import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 private typealias InsState = ru.rustore.sdk.appupdate.model.InstallState
@@ -31,7 +33,9 @@ class RuStoreAppUpdateManager(
 
         updateInfoTask
             .addOnSuccessListener {
-                trySend(RuStoreUpdateInfo(it))
+                val updateInfo = RuStoreUpdateInfo(it)
+                startUpdateFlow(updateInfo)
+                trySend(updateInfo)
             }
             .addOnFailureListener {
                 trySend(UnknownUpdateInfo)
@@ -67,22 +71,19 @@ class RuStoreAppUpdateManager(
 
         updateManager.startUpdateFlow(
             appUpdateInfo = appUpdateInfo,
-            appUpdateOptions = AppUpdateOptions.Builder().appUpdateType(AppUpdateType.IMMEDIATE).build()
+            appUpdateOptions = AppUpdateOptions.Builder().build()
         )
     }
 
-    override suspend fun completeUpdate(): ru.bgitu.core.common.Result<Unit> =
+    override suspend fun completeUpdate(): Result<Unit> =
         suspendCoroutine { continuation ->
             updateManager.completeUpdate(
-                appUpdateOptions = AppUpdateOptions.Builder().appUpdateType(AppUpdateType.FLEXIBLE)
+                appUpdateOptions = AppUpdateOptions.Builder()
+                    .appUpdateType(AppUpdateType.FLEXIBLE)
                     .build()
             )
-                .addOnCompletionListener { e ->
-                    Result.success(
-                        if (e == null) {
-                            ru.bgitu.core.common.Result.Success(Unit)
-                        } else ru.bgitu.core.common.Result.Failure(e)
-                    ).also { continuation.resumeWith(it) }
+                .addOnCompletionListener {
+                    continuation.resume(Result.Success(Unit))
                 }
         }
 

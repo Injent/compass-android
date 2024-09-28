@@ -28,7 +28,6 @@ import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
-import ru.bgitu.core.designsystem.theme.DefaultRippleTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,7 +72,7 @@ fun AppIconButton(
     tint: Color = LocalContentColor.current,
     iconSize: Dp = 20.dp
 ) {
-    AppRippleTheme(DefaultRippleTheme) {
+    AppRippleTheme {
         Surface(
             color = Color.Transparent,
             shape = AppTheme.shapes.default,

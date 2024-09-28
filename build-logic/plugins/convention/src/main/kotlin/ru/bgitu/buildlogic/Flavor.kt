@@ -12,8 +12,9 @@ enum class FlavorDimension {
 
 @Suppress("EnumEntryName")
 enum class Flavor(val dimension: FlavorDimension, val applicationIdSuffix: String? = null) {
+    rustore(FlavorDimension.contentType),
+    huawei(FlavorDimension.contentType),
     prod(FlavorDimension.contentType),
-    rustore(FlavorDimension.contentType)
 }
 
 fun configureFlavors(

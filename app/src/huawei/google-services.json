@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1021229551794",
+    "project_id": "compass-2a556",
+    "storage_bucket": "compass-2a556.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021229551794:android:924331edf837a6cae9f9ab",
+        "android_client_info": {
+          "package_name": "ru.bgitu.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1021229551794-sujs4ic7ousr3tdot1aegll0vgmcvs2o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ru.bgitu.app",
+            "certificate_hash": "700615314fc2a51fad08be7f3b5fe6e9ae73be96"
+          }
+        },
+        {
+          "client_id": "1021229551794-t1h3jc3vnqn2dsc8oeca7cufv4pgnt0g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHYCmarMV_IwYTSazcTEbJdWCSskGs768"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1021229551794-ektkb6fg0bftt3mar58gnsejh9a6q1ge.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

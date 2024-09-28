@@ -1,0 +1,11 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+
+        <service android:name=".SiteTrafficService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="shortService"
+            />
+    </application>
+</manifest>

@@ -46,7 +46,7 @@ fun DownloadProgressSnackbarEffect(
             }
             is InstallState.Downloading -> {
                 val percentage = if (installState.totalBytesDownloaded > 0L) {
-                    (installState.bytesDownloaded.toFloat() / installState.totalBytesDownloaded) * 100
+                    (installState.totalBytesDownloaded.toFloat() / installState.bytesToDownload) * 100
                 } else 0f
                 progressMessage.value = context.getString(R.string.downloading, percentage.toInt())
                 icon.intValue = AppIcons.Download

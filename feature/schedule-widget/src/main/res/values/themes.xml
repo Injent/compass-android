@@ -1,44 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="ThemeWidgetSystem">
-        <item name="colorBackground">@color/white</item>
-        <item name="colorOnBackground">@color/light_text</item>
-        <item name="colorContainer">@color/light_container</item>
-        <item name="colorOnContainer">@color/light_text</item>
-    </style>
-    <style name="ThemeWidgetLight">
-        <item name="colorBackground">@color/white</item>
-        <item name="colorOnBackground">@color/light_text</item>
-        <item name="colorContainer">@color/light_container</item>
-        <item name="colorOnContainer">@color/light_text</item>
-    </style>
-    <style name="ThemeWidgetDark">
-        <item name="colorBackground">@color/dark_background</item>
-        <item name="colorOnBackground">@color/dark_text</item>
-        <item name="colorContainer">@color/dark_container</item>
-        <item name="colorOnContainer">@color/dark_text</item>
-    </style>
-
-    <style name="ThemeWidgetTextContainer" parent="android:Widget.TextView">
-        <!-- Set the default global color for TextViews to Holo Blue Dark -->
-        <item name="android:textColorTertiary">?colorOnContainer</item>
-    </style>
-    <style name="ThemeWidgetProgress" parent="android:Widget.ProgressBar">
-        <!-- Set the default global color for TextViews to Holo Blue Dark -->
-        <item name="android:indeterminateTint">?colorOnContainer</item>
-        <item name="android:indeterminate">true</item>
-        <item name="android:indeterminateTintMode">src_atop</item>
-    </style>
-
-    <style name="ThemeWidgetTextBackground" parent="android:Widget.TextView">
-        <!-- Set the default global color for TextViews to Holo Blue Dark -->
-        <item name="android:textColorTertiary">?colorOnBackground</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:gravity">center</item>
-        <item name="android:tint">?colorOnBackground</item>
-    </style>
-
     <style name="Theme.Compass.WidgetSettings" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>

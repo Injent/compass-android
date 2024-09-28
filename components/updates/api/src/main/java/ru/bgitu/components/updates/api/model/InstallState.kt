@@ -5,7 +5,7 @@ import ru.bgitu.core.common.TextResource
 sealed class InstallState private constructor() {
 
     data class Downloading(
-        val bytesDownloaded: Long,
+        val bytesToDownload: Long,
         val totalBytesDownloaded: Long,
     ) : InstallState()
 

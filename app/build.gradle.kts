@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.bgitu.koin)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.huaweiAgConnect)
     alias(libs.plugins.secrets)
     alias(libs.plugins.bgitu.detekt)
     alias(libs.plugins.bgitu.serialization)
@@ -17,8 +18,8 @@ android {
     defaultConfig {
         applicationId = "ru.bgitu.app"
         targetSdk = 34
-        versionCode = 12
-        versionName = "1.0-release"
+        versionCode = 14
+        versionName = "1.2-release"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -150,6 +151,7 @@ dependencies {
     implementation(projects.components.updates.impl)
     implementation(projects.components.sync)
     implementation(projects.components.signin)
+    implementation(projects.components.siteTraffic)
 
     implementation(libs.vk.id)
 
@@ -174,4 +176,6 @@ dependencies {
 
     implementation(libs.startup)
     implementation(libs.kotlinx.datetime)
+
+    huaweiImplementation(libs.agconnect.core)
 }

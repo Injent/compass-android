@@ -1,7 +1,6 @@
 package ru.bgitu.feature.schedule_widget.presentation
 
 import android.annotation.SuppressLint
-import android.os.Build.VERSION.SDK_INT
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
@@ -33,11 +32,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.bgitu.core.designsystem.components.AppCardWithContent
@@ -46,11 +47,9 @@ import ru.bgitu.core.designsystem.components.AppTextButton
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.util.boxShadow
 import ru.bgitu.feature.schedule_widget.R
-import ru.bgitu.feature.schedule_widget.model.WidgetColors
+import ru.bgitu.feature.schedule_widget.model.WidgetColorScheme
 import ru.bgitu.feature.schedule_widget.model.WidgetOptions
-import ru.bgitu.feature.schedule_widget.model.WidgetTextColor
-import ru.bgitu.feature.schedule_widget.model.WidgetTheme
-import ru.bgitu.feature.schedule_widget.model.provideWidgetColors
+import ru.bgitu.feature.schedule_widget.model.WidgetThemeMode
 import ru.bgitu.feature.schedule_widget.rememberWidgetOptions
 import ru.bgitu.feature.schedule_widget.presentation.component.WidgetPreview
 import kotlin.math.round
@@ -65,8 +64,8 @@ fun WidgetSettingsScreen(
 ) {
     var options by rememberWidgetOptions(widgetOptions = initialState)
     val context = LocalContext.current
-    val colors = remember(options.widgetTheme) {
-        provideWidgetColors(context, options)
+    val colors = remember(options.themeMode, options.opacity) {
+        WidgetColorScheme.createFrom(context, options.themeMode, opacity = options.opacity)
     }
 
     Scaffold(
@@ -174,50 +173,17 @@ fun WidgetSettingsScreen(
                     horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
                     verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s)
                 ) {
-                    val themes = remember {
-                        WidgetTheme.entries.let {
-                            if (SDK_INT < 31) {
-                                it.subtract(setOf(WidgetTheme.DYNAMIC))
-                            } else it
-                        }
-                    }
-                    themes.forEach { widgetTheme ->
+                    WidgetThemeMode.entries.forEach { widgetThemeMode ->
                         AppChip(
-                            selected = widgetTheme == options.widgetTheme,
-                            onClick = { options = options.copy(widgetTheme = widgetTheme) },
-                            label = stringResource(widgetTheme.nameResId)
-                        )
-                    }
-                }
-            }
-            AppCardWithContent(
-                label = stringResource(R.string.widget_elements_color)
-            ) {
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
-                    verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s)
-                ) {
-                    WidgetTextColor.entries.forEach { textColor ->
-                        AppChip(
-                            selected = textColor == options.elementsColor,
-                            onClick = { options = options.copy(elementsColor = textColor) },
-                            label = stringResource(textColor.nameResId)
-                        )
-                    }
-                }
-            }
-            AppCardWithContent(
-                label = stringResource(R.string.widget_text_color)
-            ) {
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
-                    verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s)
-                ) {
-                    WidgetTextColor.entries.forEach { textColor ->
-                        AppChip(
-                            selected = textColor == options.textColor,
-                            onClick = { options = options.copy(textColor = textColor) },
-                            label = stringResource(textColor.nameResId)
+                            selected = widgetThemeMode == options.themeMode,
+                            onClick = { options = options.copy(themeMode = widgetThemeMode) },
+                            label = stringResource(
+                                when (widgetThemeMode) {
+                                    WidgetThemeMode.AUTO -> R.string.theme_auto
+                                    WidgetThemeMode.LIGHT -> R.string.theme_light
+                                    WidgetThemeMode.DARK -> R.string.theme_dark
+                                }
+                            )
                         )
                     }
                 }
@@ -231,7 +197,7 @@ fun WidgetSettingsScreen(
 @Composable
 private fun WidgetSettingsTopBar(
     widgetOptions: WidgetOptions,
-    colors: WidgetColors,
+    colors: WidgetColorScheme,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -246,16 +212,20 @@ private fun WidgetSettingsTopBar(
                 )
             }
         )
+        val cornerRadiusPx = LocalDensity.current.run {
+            AppTheme.spacing.l.toPx()
+        }
         WidgetPreview(
             options = widgetOptions,
-            colors = colors,
+            colorScheme = colors,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(300.dp)
                 .drawWithContent {
-                    drawRect(
+                    drawRoundRect(
                         color = Color.Transparent,
-                        blendMode = BlendMode.Clear
+                        blendMode = BlendMode.Clear,
+                        cornerRadius = CornerRadius(cornerRadiusPx, cornerRadiusPx)
                     )
                     drawContent()
                 }

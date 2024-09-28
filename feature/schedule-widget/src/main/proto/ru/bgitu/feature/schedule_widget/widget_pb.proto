@@ -5,9 +5,11 @@ option java_multiple_files = false;
 
 message WidgetOptionsPb {
     float opacity = 1;
+    int32 mode = 5;
+
     string theme = 2;
-    string text_color = 3;
-    string elements_color = 4;
+    string deprecated_text_color = 3;
+    string deprecated_elements_color = 4;
 }
 
 message WidgetLessonPb {

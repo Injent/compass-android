@@ -27,6 +27,7 @@ sealed interface SettingsUiState {
 sealed interface SettingsIntent {
     data class ChangeUiTheme(val uiTheme: UiTheme) : SettingsIntent
     data class SwitchScheduleNotifier(val enabled: Boolean) : SettingsIntent
+    data class SwitchHelpSiteTraffic(val enabled: Boolean) : SettingsIntent
     data object NavigateBack : SettingsIntent
     data object NavigateToAbout : SettingsIntent
     data object NavigateToHelp : SettingsIntent
@@ -82,6 +83,9 @@ class SettingsViewModel(
                 SettingsIntent.NavigateToAbout -> _events.trySend(SettingsEvent.NavigateToAbout)
                 SettingsIntent.NavigateToHelp -> _events.trySend(SettingsEvent.NavigateToHelp)
                 SettingsIntent.NavigateToGroups -> _events.trySend(SettingsEvent.NavigateToGroups)
+                is SettingsIntent.SwitchHelpSiteTraffic -> settings.updateUserPrefs {
+                    it.copy(helpSiteTraffic = intent.enabled)
+                }
             }
         }
     }

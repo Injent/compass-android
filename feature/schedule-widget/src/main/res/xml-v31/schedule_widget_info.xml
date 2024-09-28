@@ -7,10 +7,8 @@
     android:minHeight="100dp"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
-    android:previewImage="@layout/schedule_widget_preview"
-    android:previewLayout="@layout/schedule_widget_preview"
-    android:initialLayout="@layout/schedule_initial_widget"
     android:targetCellWidth="3"
     android:targetCellHeight="2"
     android:updatePeriodMillis="3600000"
+    android:previewImage="@drawable/widget_preview"
     />

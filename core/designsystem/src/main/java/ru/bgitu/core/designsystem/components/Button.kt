@@ -2,15 +2,12 @@ package ru.bgitu.core.designsystem.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,11 +20,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ripple.RippleTheme
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -40,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -59,9 +56,8 @@ import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
-import ru.bgitu.core.designsystem.theme.DefaultRippleTheme
-import ru.bgitu.core.designsystem.theme.LocalAppRipple
-import ru.bgitu.core.designsystem.theme.NoRippleTheme
+import ru.bgitu.core.designsystem.theme.DefaultRippleConfig
+import ru.bgitu.core.designsystem.theme.NoRippleConfig
 import ru.bgitu.core.designsystem.util.thenIf
 
 @Composable
@@ -150,7 +146,7 @@ fun AppSecondaryButton(
         containerColor = containerColor,
         contentColor = contentColor,
         shape = shape,
-        rippleTheme = DefaultRippleTheme,
+        rippleConfig = DefaultRippleConfig,
         modifier = modifier
             .height(ButtonTokens.LargeButtonHeight)
     ) {
@@ -243,7 +239,7 @@ private fun BaseButton(
     shape: Shape = AppTheme.shapes.default,
     isLoading: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(horizontal = 20.dp),
-    rippleTheme: RippleTheme = NoRippleTheme,
+    rippleConfig: RippleConfiguration = NoRippleConfig,
     content: @Composable RowScope.() -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -253,7 +249,7 @@ private fun BaseButton(
         animationSpec = tween(durationMillis = 0)
     )
 
-    AppRippleTheme(rippleTheme) {
+    AppRippleTheme(rippleConfig) {
         Surface(
             color = containerColor,
             contentColor = contentColor,
@@ -403,29 +399,26 @@ fun AppRippleButton(
     shape: Shape = RectangleShape,
     contentPadding: PaddingValues = PaddingValues(horizontal = AppTheme.spacing.s)
 ) {
-    Box(
-        modifier = modifier
-            .height(ButtonTokens.LargeButtonHeight)
-            .background(
-                color = containerColor,
-                shape = shape
-            )
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(
-                    color = AppTheme.colorScheme.foreground1.copy(.05f)
-                ),
-                onClick = onClick
-            )
-    ) {
-        Text(
-            text = text,
-            style = AppTheme.typography.calloutButton,
-            color = textColor,
+    AppRippleTheme {
+        Box(
             modifier = modifier
-                .align(Alignment.Center)
-                .padding(contentPadding),
-        )
+                .height(ButtonTokens.LargeButtonHeight)
+                .background(
+                    color = containerColor,
+                    shape = shape
+                )
+                .clip(shape)
+                .clickable { onClick() }
+        ) {
+            Text(
+                text = text,
+                style = AppTheme.typography.calloutButton,
+                color = textColor,
+                modifier = modifier
+                    .align(Alignment.Center)
+                    .padding(contentPadding),
+            )
+        }
     }
 }
 

@@ -15,9 +15,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.plus
 import kotlinx.datetime.toJavaLocalDateTime
 import ru.bgitu.core.common.DateTimeUtil
+import ru.bgitu.core.common.atStartOfStudyDay
 import ru.bgitu.core.datastore.SettingsRepository
 import ru.bgitu.core.notifications.Notifier
 import ru.bgitu.feature.schedule_notifier.api.ScheduleNotifier
@@ -61,8 +64,14 @@ class ScheduleNotifierAlarm(
     override fun disable(forToday: Boolean) {
         alarmManager.cancel(context.getAlarmPendingIntent())
         notificationManager.cancel(Notifier.PINNED_SCHEDULE_NOTIFICATION_ID)
-        if (!forToday) {
-            runBlocking {
+        runBlocking {
+            if (forToday) {
+                val nextDayMorning = DateTimeUtil.currentDate
+                    .plus(1, DateTimeUnit.DAY)
+                    .atStartOfStudyDay()
+
+                scheduleAlarmAt(triggerAt = nextDayMorning, moved = true)
+            } else {
                 settingsRepository.updateUserPrefs {
                     it.copy(showPinnedSchedule = false)
                 }

@@ -32,6 +32,7 @@ import ru.bgitu.core.ui.AppBackButton
 import ru.bgitu.core.ui.listenEvents
 import ru.bgitu.feature.settings.R
 import ru.bgitu.feature.settings.presentation.components.AppThemeView
+import ru.bgitu.feature.settings.presentation.components.OtherSettingsGroup
 import ru.bgitu.feature.settings.presentation.components.ScheduleNotificationView
 
 @Composable
@@ -111,6 +112,12 @@ private fun SettingsScreenContent(
                     onIntent(SettingsIntent.SwitchScheduleNotifier(enabled))
                 }
             )
+            OtherSettingsGroup(
+                helpTraffic = uiState.prefs.helpSiteTraffic,
+                onSwitchTraffic = { enabled ->
+                    onIntent(SettingsIntent.SwitchHelpSiteTraffic(enabled))
+                }
+            )
         }
     }
 }
@@ -126,7 +133,8 @@ private fun SettingsScreenPreview() {
                     showPinnedSchedule = false,
                     teacherSortByWeeks = false,
                     savedGroups = emptyList(),
-                    showGroupsOnMainScreen = true
+                    showGroupsOnMainScreen = true,
+                    helpSiteTraffic = true
                 ),
                 isGroupSelected = true,
                 nextScheduleNotification = null

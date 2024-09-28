@@ -93,7 +93,7 @@ fun OneTaps(
                     authClient = AuthClient.createClient<GoogleAuthClient>(
                         activity = context as ComponentActivity,
                         coroutineScope = coroutineScope,
-                        onResult = { println(it.getOrThrow().idToken) }
+                        onResult = {  }
                     )
                     authClient?.signIn()
                 },

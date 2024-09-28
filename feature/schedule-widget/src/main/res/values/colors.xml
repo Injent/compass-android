@@ -1,17 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background">#FFFFFF</color>
-    <color name="onBackground">#000000</color>
-    <color name="container">#261CC6FA</color>
-    <color name="onContainer">#000000</color>
+    <color name="static_light_colorBrand">#0086ff</color>
+    <color name="static_light_colorOnBrand">#ffffff</color>
+    <color name="static_light_colorBackground1">#ffffff</color>
+    <color name="static_light_colorBackground2">#eaeff3</color>
+    <color name="static_light_colorForeground1">#313131</color>
+    <color name="static_light_colorForeground2">#556378</color>
+    <color name="static_light_colorWidgetBackground">#f3f7fc</color>
 
-    <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>
+    <color name="static_dark_colorBrand">#0086ff</color>
+    <color name="static_dark_colorOnBrand">#15151c</color>
+    <color name="static_dark_colorBackground1">#27272b</color>
+    <color name="static_dark_colorBackground2">#151515</color>
+    <color name="static_dark_colorForeground1">#ffffff</color>
+    <color name="static_dark_colorForeground2">#97a4ba</color>
+    <color name="static_dark_colorWidgetBackground">#15151c</color>
 
-    <color name="light_text">#1f1f1f</color>
-    <color name="light_container">#f8fafd</color>
-
-    <color name="dark_text">#e3e3e3</color>
-    <color name="dark_container">#28292a</color>
-    <color name="dark_background">#1f1f1f</color>
+    <color name="colorBrand">@color/static_light_colorBrand</color>
+    <color name="colorOnBrand">@color/static_light_colorOnBrand</color>
+    <color name="colorBackground1">@color/static_light_colorBackground1</color>
+    <color name="colorBackground2">@color/static_light_colorBackground2</color>
+    <color name="colorForeground1">@color/static_light_colorForeground1</color>
+    <color name="colorForeground2">@color/static_light_colorForeground2</color>
+    <color name="colorWidgetBackground">@color/static_light_colorWidgetBackground</color>
 </resources>

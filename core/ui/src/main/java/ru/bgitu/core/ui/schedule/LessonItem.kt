@@ -77,6 +77,8 @@ import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.common.LessonDataUtils
 import ru.bgitu.core.designsystem.components.AppCard
 import ru.bgitu.core.designsystem.icon.AppIcons
+import ru.bgitu.core.designsystem.theme.AppRipple
+import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.LocalAppRipple
 import ru.bgitu.core.designsystem.util.SoftwareLayer
@@ -190,29 +192,24 @@ fun LessonItem(
             )
         }
 
-        AnimatedContent(
-            targetState = expanded,
-            label = "expand_state",
-            transitionSpec = {
-                expandVertically { it } togetherWith shrinkVertically { it }
-            },
-            modifier = Modifier
-                .layoutId(LessonComponentId.LESSON_CARD)
-                .clip(AppTheme.shapes.default)
-                .clickable(
-                    onClick = onClick,
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(
-                        bounded = true,
-                        color = LocalAppRipple.current.background1
-                    ),
-                )
-        ) { isExpanded ->
-            LessonCard(
-                lesson = lesson,
-                expanded = isExpanded,
+        AppRippleTheme {
+            AnimatedContent(
+                targetState = expanded,
+                label = "expand_state",
+                transitionSpec = {
+                    expandVertically { it } togetherWith shrinkVertically { it }
+                },
                 modifier = Modifier
-            )
+                    .layoutId(LessonComponentId.LESSON_CARD)
+                    .clip(AppTheme.shapes.default)
+                    .clickable { onClick() }
+            ) { isExpanded ->
+                LessonCard(
+                    lesson = lesson,
+                    expanded = isExpanded,
+                    modifier = Modifier
+                )
+            }
         }
 
         if (lesson.isLast) {

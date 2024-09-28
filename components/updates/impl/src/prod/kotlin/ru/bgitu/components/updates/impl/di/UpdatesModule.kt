@@ -12,6 +12,10 @@ import ru.bgitu.components.updates.impl.work.AppUpdateWorker
 import ru.bgitu.core.common.di.CommonQualifiers
 
 val UpdatesModule = module {
+    factory {
+        NoStoreSync()
+    } bind StoreSync::class
+
     single {
         BuiltInAppUpdateManager(
             compassService = get(),
@@ -20,10 +24,6 @@ val UpdatesModule = module {
             ioDispatcher = get(CommonQualifiers.DispatcherIO)
         )
     } bind AppUpdateManager::class
-
-    single {
-        NoStoreSync()
-    } bind StoreSync::class
 
     worker {
         AppUpdateWorker(

@@ -7,5 +7,6 @@ data class UserPrefs(
     val showPinnedSchedule: Boolean,
     val teacherSortByWeeks: Boolean,
     val savedGroups: List<Group>,
-    val showGroupsOnMainScreen: Boolean
+    val showGroupsOnMainScreen: Boolean,
+    val helpSiteTraffic: Boolean
 )

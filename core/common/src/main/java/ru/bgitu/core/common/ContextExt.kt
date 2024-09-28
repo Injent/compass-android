@@ -3,10 +3,11 @@ package ru.bgitu.core.common
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import androidx.core.net.toUri
-import java.util.Locale
+import java.lang.ref.WeakReference
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
 val Context.versionName: String
     get() {
@@ -34,12 +35,17 @@ val Context.versionCode: Long
         }
     }
 
-fun isHuaweiDevice(): Boolean {
-    val manufacturer = Build.MANUFACTURER
-    val brand = Build.BRAND
-    return manufacturer.lowercase(Locale.getDefault()).contains("huawei") || brand.lowercase(
-        Locale.ENGLISH
-    ).contains("huawei")
+fun <T> weakReference(tIn: T? = null): ReadWriteProperty<Any?, T?> {
+    return object : ReadWriteProperty<Any?, T?> {
+        var t = WeakReference<T?>(tIn)
+        override fun getValue(thisRef: Any?, property: KProperty<*>): T? {
+            return t.get()
+        }
+
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
+            t = WeakReference(value)
+        }
+    }
 }
 
 fun Context.openUrl(url: String) {

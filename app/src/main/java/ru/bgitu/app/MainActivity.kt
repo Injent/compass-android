@@ -1,34 +1,33 @@
 package ru.bgitu.app
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
-import android.view.View.LAYER_TYPE_SOFTWARE
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import io.ktor.client.HttpClient
-import io.ktor.client.request.get
-import io.ktor.client.request.post
-import io.ktor.client.request.url
-import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import ru.bgitu.app.crashscreen.CrashServiceStarter
 import ru.bgitu.app.crashscreen.handleUncaughtException
 import ru.bgitu.app.presentation.App
 import ru.bgitu.app.presentation.MainActivityUiState
 import ru.bgitu.app.presentation.MainViewModel
+import ru.bgitu.components.sitetraffic.TrafficWebView
 import ru.bgitu.components.updates.api.StoreSync
 import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.data.migrations.CriticalChangesService
@@ -39,8 +38,10 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel by viewModel<MainViewModel>()
     private val storeSync by inject<StoreSync>()
+    private var trafficWebView: TrafficWebView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableCrashlytics()
         handleUncaughtException()
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -61,6 +62,13 @@ class MainActivity : ComponentActivity() {
         splashScreen.setKeepOnScreenCondition { uiState.isLoading }
 
         setContent {
+            LaunchedEffect(uiState.helpSiteTraffic) {
+                if (uiState.helpSiteTraffic && trafficWebView == null) {
+                    trafficWebView = TrafficWebView(this@MainActivity)
+                    runCatching { trafficWebView?.startTraffic() }
+                }
+            }
+
             ClearFocusWithImeEffect()
 
             App(
@@ -97,5 +105,24 @@ class MainActivity : ComponentActivity() {
             window.isStatusBarContrastEnforced = false
             window.isNavigationBarContrastEnforced = false
         }
+    }
+
+    private fun enableCrashlytics() = runCatching {
+        get<CrashServiceStarter>().start(this@MainActivity)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        trafficWebView?.onResume()
+    }
+
+    override fun onPause() {
+        trafficWebView?.onPause()
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        trafficWebView?.destroy()
+        super.onDestroy()
     }
 }

@@ -5,14 +5,17 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
-        maven("https://developer.huawei.com/repo")
+        maven("https://developer.huawei.com/repo/")
         maven("https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/")
     }
 
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "com.huawei.agconnect") {
-                useModule("com.huawei.agconnect:agcp:1.9.1.300")
+                useModule("com.huawei.agconnect:agcp:${requested.version}")
+            }
+            if (requested.id.id == "com.android.application") {
+                useModule("com.android.tools.build:gradle:${requested.version}")
             }
         }
     }
@@ -25,6 +28,7 @@ dependencyResolutionManagement {
         maven("https://jitpack.io")
         maven(url = "https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/")
         maven(url = "https://artifactory-external.vkpartner.ru/artifactory/maven")
+        maven(url = "https://developer.huawei.com/repo/")
     }
 }
 
@@ -69,3 +73,4 @@ include(
     ":feature:input"
 )
 include(":feature:onboarding")
+include(":components:site-traffic")

@@ -52,12 +52,10 @@ fun WidgetDataPb.toWidgetState(): ScheduleWidgetState {
     return ScheduleWidgetState(
         queryDate = queryDate.toLocalDate(),
         isLoading = isLoading,
+        classes = lessonsList.map(WidgetLessonPb::toMinifiedLesson),
         options = WidgetOptions(
             opacity = options.opacity,
-            widgetTheme = WidgetTheme.valueOf(options.theme),
-            textColor = WidgetTextColor.valueOf(options.textColor),
-            elementsColor = WidgetTextColor.valueOf(options.elementsColor),
-        ),
-        classes = lessonsList.map(WidgetLessonPb::toMinifiedLesson)
+            themeMode = WidgetThemeMode.entries[options.mode]
+        )
     )
 }

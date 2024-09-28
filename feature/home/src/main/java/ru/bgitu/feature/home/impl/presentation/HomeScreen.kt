@@ -101,7 +101,7 @@ import ru.bgitu.core.designsystem.icon.AppIllustrations
 import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
-import ru.bgitu.core.designsystem.theme.NoRippleTheme
+import ru.bgitu.core.designsystem.theme.NoRippleConfig
 import ru.bgitu.core.designsystem.util.MeasureComposable
 import ru.bgitu.core.designsystem.util.asString
 import ru.bgitu.core.designsystem.util.thenIf
@@ -133,6 +133,13 @@ fun HomeScreen(
         viewModelStoreOwner = context as ComponentActivity // should create only once per app launch
     ) {
         parametersOf(initialScheduleDate)
+    }
+
+    // Remove loading route from back stack
+    LaunchedEffect(initialScheduleDate) {
+        if (initialScheduleDate != null) {
+            navController.popBackStack<Screen.MainGraph>(inclusive = true)
+        }
     }
 
     viewModel.events.listenEvents { event ->
@@ -612,12 +619,14 @@ private fun GroupTabs(
         )
         ScrollableTabRow(
             containerColor = Color.Transparent,
-            selectedTabIndex = groups.indexOf(selectedGroup),
+            selectedTabIndex = remember(groups, selectedGroup) { groups.indexOf(selectedGroup) },
             edgePadding = 0.dp,
             modifier = modifier,
             indicator = { tabPositions ->
                 val tabIndex = remember(groups, selectedGroup, tabPositions) {
-                    tabPositions[groups.indexOf(selectedGroup).coerceIn(0, groups.size - 1)]
+                    runCatching {
+                        tabPositions[groups.indexOf(selectedGroup).coerceIn(0, groups.size - 1)]
+                    }.getOrDefault(tabPositions.first())
                 }
                 Spacer(
                     modifier = Modifier
@@ -632,13 +641,11 @@ private fun GroupTabs(
             },
             divider = {}
         ) {
-            AppRippleTheme(NoRippleTheme) {
+            AppRippleTheme(NoRippleConfig) {
                 groups.forEach { group ->
-                    val selected = selectedGroup == group
-
                     AppTab(
                         text = group.name,
-                        selected = selected,
+                        selected = selectedGroup == group,
                         onClick = { onGroupSelected(group) }
                     )
                 }

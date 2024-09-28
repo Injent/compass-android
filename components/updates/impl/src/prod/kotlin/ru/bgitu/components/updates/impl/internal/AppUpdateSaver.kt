@@ -30,8 +30,8 @@ internal class AppUpdateSaver(
                     val downloadState = it.first().getDownloadProgress()
                     if (downloadState is DownloadState.Downloading) {
                         InstallState.Downloading(
-                            bytesDownloaded = downloadState.bytesDownloaded,
-                            totalBytesDownloaded = downloadState.totalBytesToDownload
+                            bytesToDownload = downloadState.totalBytesToDownload,
+                            totalBytesDownloaded = downloadState.bytesDownloaded
                         )
                     } else InstallState.NothingToInstall
                 }

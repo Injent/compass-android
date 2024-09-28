@@ -1,6 +1,7 @@
 [versions]
 accompanist = "0.34.0"
 activity-compose = "1.9.0"
+agconnectCore = "1.9.1.301"
 agcp = "1.9.1.300"
 agp = "8.4.2"
 androidxAnnotation = "1.8.0"
@@ -8,14 +9,14 @@ androidxWork = "2.9.0"
 camerax = "1.3.4"
 coil = "2.6.0"
 compileSdk = "34"
-compose-bom = "2024.06.00"
+compose-bom = "2024.09.02"
 composeCompiler = "1.5.14"
 constraintLayout = "1.0.1"
 core-ktx = "1.13.1"
 datastore = "1.1.1"
 desugarJdkLibs = "2.1.2"
 detekt = "1.23.3"
-firebase-bom = "33.1.2"
+firebase-bom = "33.3.0"
 firebasePlugin = "3.0.2"
 glance = "1.1.0"
 googleServicesPlugin = "4.4.2"
@@ -25,7 +26,7 @@ kotlinx-serialization = "1.6.3"
 kotlinxCoroutines = "1.8.1"
 kotlinxDatetime = "0.5.0"
 ksp = "1.9.24-1.0.20"
-lifecycle = "2.8.4"
+lifecycle = "2.8.6"
 markdown = "0.3.7"
 minSdk = "27"
 protobuf = "4.26.0"
@@ -35,24 +36,27 @@ rustore-bom = "6.1.0"
 secrets = "2.0.1"
 sheetsComposeDialogs = "1.2.0"
 splashScreen = "1.0.1"
-startup = "1.1.1"
+startup = "1.2.0"
 targetSdk = "34"
-ktor = "2.3.10"
-navigation = "2.8.0-beta06"
+ktor = "2.3.12"
+navigation = "2.8.1"
 truth = "1.4.2"
 turbine = "1.1.0"
 robolectric = "4.11.1"
 roborazzi = "1.7.0"
 junit = "4.13.2"
-androidxComposeAlpha = "1.7.1"
+androidxComposeAlpha = "1.7.2"
 androidxTestRules = "1.6.1"
 vkcompose = "0.5.4"
 androidxTracing = "1.3.0-alpha02"
 androidxTest = "1.6.1"
 androidxCredentialManager = "1.2.2"
 googleIdentify = "1.1.1"
-huaweiAgConnect = "1.9.1.300"
-huaweiAccount = "6.12.0.300"
+huaweiAppService = "6.10.0.300"
+huaweiAnalytics = "6.12.0.301"
+huaweiCrash = "1.9.1.301"
+huaweiAgConnect = "1.9.1.302"
+huaweiApms = "1.6.2.300"
 vkId = "2.0.1"
 
 [libraries]
@@ -142,10 +146,11 @@ lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-v
 lifecycle-viewModelKtx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 
 # Huawei
-huawei-account = { group = "com.huawei.hms", name = "hwid", version.ref = "huaweiAccount" }
-huawei-core = { group = "com.huawei.agconnect", name = "agconnect-core", version.ref = "huaweiAgConnect" }
-huawei-auth = { group = "com.huawei.agconnect", name = "agconnect-auth", version.ref = "huaweiAgConnect" }
-huawei-auth-huawei = { group = "com.huawei.agconnect", name = "agconnect-auth-huawei", version.ref = "huaweiAgConnect" }
+agconnect-core = { module = "com.huawei.agconnect:agconnect-core", version.ref = "agconnectCore" }
+huawei-appservice = { group = "com.huawei.hms", name = "appservice", version.ref = "huaweiAppService" }
+huawei-hianalytics = { group = "com.huawei.hms", name = "hianalytics", version.ref = "huaweiAnalytics" }
+huawei-crash = { group = "com.huawei.agconnect", name = "agconnect-crash", version.ref = "huaweiCrash" }
+huawei-apms = { group = "com.huawei.agconnect", name = "agconnect-apms", version.ref = "huaweiApms" }
 
 # Protobuf
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }

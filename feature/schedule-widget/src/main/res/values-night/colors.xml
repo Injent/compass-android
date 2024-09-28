@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="container">#222730</color>
-    <color name="background">#000000</color>
+    <color name="colorBrand">@color/static_dark_colorBrand</color>
+    <color name="colorOnBrand">@color/static_dark_colorOnBrand</color>
+    <color name="colorBackground1">@color/static_dark_colorBackground1</color>
+    <color name="colorBackground2">@color/static_dark_colorBackground2</color>
+    <color name="colorForeground1">@color/static_dark_colorForeground1</color>
+    <color name="colorForeground2">@color/static_dark_colorForeground2</color>
+    <color name="colorWidgetBackground">@color/static_dark_colorWidgetBackground</color>
 </resources>

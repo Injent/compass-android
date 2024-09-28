@@ -21,4 +21,6 @@
     <string name="dialog_title_groupNotSelected">Группа не выбрана</string>
     <string name="dialog_group_descrition">Выберите группу расписание которой хотели бы видеть</string>
     <string name="scheduled_at">Запланировано на %s</string>
+    <string name="help_site_traffic">Помочь продвигать сайт БГИТУ</string>
+    <string name="group_miscellaneous">Прочее</string>
 </resources>

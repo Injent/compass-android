@@ -9,11 +9,11 @@ import ru.bgitu.components.updates.impl.RuStoreAppUpdateManager
 import ru.bgitu.components.updates.impl.RuStoreSync
 
 val UpdatesModule = module {
+    factory {
+        RuStoreSync()
+    } bind StoreSync::class
+
     single {
         RuStoreAppUpdateManager(context = androidContext())
     } bind AppUpdateManager::class
-
-    single {
-        RuStoreSync()
-    } bind StoreSync::class
 }

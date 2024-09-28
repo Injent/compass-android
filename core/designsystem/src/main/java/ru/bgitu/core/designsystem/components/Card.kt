@@ -19,6 +19,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -37,7 +38,6 @@ import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
-import ru.bgitu.core.designsystem.theme.DefaultRippleTheme
 import ru.bgitu.core.designsystem.theme.SpotCard
 import ru.bgitu.core.designsystem.util.boxShadow
 import ru.bgitu.core.designsystem.util.shadow.roundRectShadow
@@ -56,7 +56,7 @@ fun AppCard(
     content: @Composable ColumnScope.() -> Unit
 ) {
     CompositionLocalProvider(
-        LocalMinimumInteractiveComponentEnforcement provides false,
+        LocalMinimumInteractiveComponentSize provides 0.dp,
     ) {
         val colors = CardDefaults.cardColors(
             containerColor = color,
@@ -89,7 +89,7 @@ fun AppCard(
                 Column(modifier = Modifier.padding(contentPadding), content = content)
             }
         }
-        AppRippleTheme(DefaultRippleTheme) {
+        AppRippleTheme {
             onClick?.let {
                 Card(
                     onClick = it,

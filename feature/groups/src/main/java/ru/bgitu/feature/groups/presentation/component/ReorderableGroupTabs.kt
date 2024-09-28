@@ -36,8 +36,8 @@ import ru.bgitu.core.designsystem.layout.dragContainer
 import ru.bgitu.core.designsystem.layout.rememberDragDropState
 import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
-import ru.bgitu.core.designsystem.theme.DefaultRippleTheme
-import ru.bgitu.core.designsystem.theme.NoRippleTheme
+import ru.bgitu.core.designsystem.theme.DefaultRippleConfig
+import ru.bgitu.core.designsystem.theme.NoRippleConfig
 import ru.bgitu.core.designsystem.util.AutoSizeText
 import ru.bgitu.core.designsystem.util.thenIf
 import ru.bgitu.core.model.Group
@@ -186,7 +186,7 @@ private fun ReorderableGroupTab(
         } else AppTheme.colorScheme.foreground3
     )
 
-    AppRippleTheme(if (enabled) DefaultRippleTheme else NoRippleTheme) {
+    AppRippleTheme(if (enabled) DefaultRippleConfig else NoRippleConfig) {
         Surface(
             color = backgroundColor,
             shape = AppTheme.shapes.default,

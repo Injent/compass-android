@@ -1,8 +1,8 @@
 package ru.bgitu.core.designsystem.theme
 
-import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material.ripple.RippleAlpha
-import androidx.compose.material.ripple.RippleTheme
+import androidx.compose.material3.LocalRippleConfiguration
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
@@ -22,36 +22,26 @@ val AppDarkRipple = AppRipple(
     foreground1 = Color.White
 )
 
-object DefaultRippleTheme : RippleTheme {
-    @Composable
-    override fun defaultColor(): Color {
-        return LocalAppRipple.current.background1
-    }
-
-    @Composable
-    override fun rippleAlpha(): RippleAlpha {
-        val alpha = defaultColor().alpha
-        return RippleAlpha(
-            draggedAlpha = alpha,
-            focusedAlpha = alpha,
-            hoveredAlpha = alpha,
-            pressedAlpha = alpha
+val DefaultRippleConfig: RippleConfiguration
+    @Composable get() {
+        val color = LocalAppRipple.current.background1
+        return RippleConfiguration(
+            color,
+            RippleAlpha(
+                draggedAlpha = color.alpha,
+                focusedAlpha = color.alpha,
+                hoveredAlpha = color.alpha,
+                pressedAlpha = color.alpha
+            )
         )
     }
-}
 
-object NoRippleTheme : RippleTheme {
-    @Composable
-    override fun defaultColor() = Color.Unspecified
-
-    @Composable
-    override fun rippleAlpha(): RippleAlpha = RippleAlpha(0.0f,0.0f,0.0f,0.0f)
-}
+val NoRippleConfig = RippleConfiguration(Color.Unspecified, null)
 
 @Composable
 fun AppRippleTheme(
-    rippleTheme: RippleTheme = DefaultRippleTheme,
+    rippleConfig: RippleConfiguration = DefaultRippleConfig,
     content: @Composable () -> Unit
 ) {
-    CompositionLocalProvider(LocalRippleTheme provides rippleTheme, content = content)
+    CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig, content = content)
 }

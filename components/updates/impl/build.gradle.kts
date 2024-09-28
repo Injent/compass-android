@@ -25,4 +25,7 @@ dependencies {
 
     rustoreImplementation(platform(libs.rustore.bom))
     rustoreImplementation(libs.rustore.update)
+
+    huaweiImplementation(libs.huawei.hianalytics)
+    huaweiImplementation(libs.huawei.appservice)
 }

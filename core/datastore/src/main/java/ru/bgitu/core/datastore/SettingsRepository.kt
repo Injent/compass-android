@@ -219,7 +219,8 @@ class SettingsRepository(
                             name = groupSlotPb.name.toKotlinType()
                         )
                     },
-                showGroupsOnMainScreen = showGroupsOnMainScreen
+                showGroupsOnMainScreen = showGroupsOnMainScreen,
+                helpSiteTraffic = helpSiteTraffic
             )
         }
     }
@@ -246,6 +247,7 @@ class SettingsRepository(
                         )
                     }
                     showGroupsOnMainScreen = new.showGroupsOnMainScreen
+                    helpSiteTraffic = new.helpSiteTraffic
                 }
             }
         }

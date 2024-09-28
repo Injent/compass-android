@@ -4,9 +4,9 @@
         <activity android:name=".presentation.WidgetSettingsActivity"
             android:noHistory="true"
             android:exported="true"
+            android:theme="@style/Theme.Compass.WidgetSettings"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Compass.WidgetSettings"
             tools:ignore="DiscouragedApi">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>

@@ -32,16 +32,18 @@ class SyncWorker(
         return applicationContext.syncNotification().toForegroundInfo()
     }
 
-    override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
-        if (settings.data.first().primaryGroup == null) return@withContext Result.failure()
+    override suspend fun doWork(): Result {
+        return withContext(Dispatchers.IO) {
+            if (settings.data.first().primaryGroup == null) return@withContext Result.failure()
 
-        val isManualSync = this@SyncWorker.inputData.getBoolean(PARAM_MANUAL_SYNC, false)
+            val isManualSync = this@SyncWorker.inputData.getBoolean(PARAM_MANUAL_SYNC, false)
 
-        val syncedSuccessfully = awaitAll(
-            async { scheduleRepository.sync(isManualSync) }
-        ).all { it }
+            val syncedSuccessfully = awaitAll(
+                async { scheduleRepository.sync(isManualSync) }
+            ).all { it }
 
-        successOrRetryUntil(syncedSuccessfully)
+            successOrRetryUntil(syncedSuccessfully)
+        }
     }
 
     override suspend fun dataVersions(): DataVersions {

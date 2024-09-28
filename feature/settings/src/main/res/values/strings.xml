@@ -21,4 +21,6 @@
     <string name="dialog_title_groupNotSelected">Group not selected</string>
     <string name="dialog_group_descrition">Select the group whose schedule you would like to see</string>
     <string name="scheduled_at">Scheduled at %s</string>
+    <string name="help_site_traffic">Help promote the BGITU website</string>
+    <string name="group_miscellaneous">Miscellaneous</string>
 </resources>

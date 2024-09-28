@@ -40,7 +40,6 @@ class MigrationV2 : DataMigration<SettingsPb> {
         }
     }
 
-    override suspend fun shouldMigrate(currentData: SettingsPb): Boolean {
-        return currentData.dataVersions.schemaVersion < 2
-    }
+    override suspend fun shouldMigrate(currentData: SettingsPb): Boolean =
+        currentData.dataVersions.schemaVersion < 2
 }

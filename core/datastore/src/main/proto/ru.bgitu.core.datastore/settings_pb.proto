@@ -17,6 +17,7 @@ message UserPrefsPb {
     bool teacher_sort_by_weeks = 4;
     repeated GroupSlotPb saved_groups = 5;
     bool show_groups_on_main_screen = 6;
+    bool help_site_traffic = 7;
 
     bool deprecated_ignore_minor_updates = 1;
 }

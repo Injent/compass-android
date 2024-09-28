@@ -36,12 +36,6 @@ internal fun NewFeaturesButton(
                 horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .shimmer(
-                        durationMillis = 3000,
-                        delayMillis = 5000,
-                        shape = AppTheme.shapes.default,
-                        baseColor = Color.Transparent
-                    )
                     .padding(
                         horizontal = AppTheme.spacing.l,
                         vertical = AppTheme.spacing.s

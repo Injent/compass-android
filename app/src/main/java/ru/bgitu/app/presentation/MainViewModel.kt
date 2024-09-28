@@ -31,7 +31,8 @@ data class MainActivityUiState(
     val installState: InstallState = InstallState.Unknown,
     val showUpdateSheet: Boolean = false,
     val avatarUrl: String? = null,
-    val shouldShowOnboarding: Boolean = false
+    val shouldShowOnboarding: Boolean = false,
+    val helpSiteTraffic: Boolean = false
 )
 
 sealed interface MainActivityIntent {
@@ -80,7 +81,8 @@ class MainViewModel(
             installState = installState,
             avatarUrl = data.userProfile?.avatarUrl,
             showUpdateSheet = showUpdateSheet,
-            shouldShowOnboarding = data.shouldShowOnboarding
+            shouldShowOnboarding = data.shouldShowOnboarding,
+            helpSiteTraffic = data.userPrefs.helpSiteTraffic
         )
     }
         .stateIn(

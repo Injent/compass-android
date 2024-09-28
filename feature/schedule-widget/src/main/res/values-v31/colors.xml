@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorBrand">@android:color/system_accent1_600</color>
+    <color name="colorOnBrand">@android:color/system_accent2_50</color>
+    <color name="colorBackground1">@android:color/system_accent1_100</color>
+    <color name="colorBackground2">@android:color/system_accent2_100</color>
+    <color name="colorForeground1">@android:color/system_neutral2_800</color>
+    <color name="colorForeground2">@android:color/system_accent2_500</color>
+    <color name="colorWidgetBackground">@android:color/system_accent2_50</color>
+</resources>

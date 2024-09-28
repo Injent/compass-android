@@ -7,6 +7,7 @@ import coil.request.CachePolicy
 import coil.util.DebugLogger
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.androidx.workmanager.dsl.worker
 import org.koin.dsl.module
 import ru.bgitu.app.presentation.MainViewModel
 import ru.bgitu.components.signin.di.SignInModule
