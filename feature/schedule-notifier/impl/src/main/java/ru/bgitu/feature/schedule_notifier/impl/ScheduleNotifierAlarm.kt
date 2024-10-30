@@ -63,7 +63,6 @@ class ScheduleNotifierAlarm(
 
     override fun disable(forToday: Boolean) {
         alarmManager.cancel(context.getAlarmPendingIntent())
-        notificationManager.cancel(Notifier.PINNED_SCHEDULE_NOTIFICATION_ID)
         runBlocking {
             if (forToday) {
                 val nextDayMorning = DateTimeUtil.currentDate
@@ -80,6 +79,7 @@ class ScheduleNotifierAlarm(
                 }
             }
         }
+        notificationManager.cancel(Notifier.PINNED_SCHEDULE_NOTIFICATION_ID)
     }
 
     override fun restart() {

@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.input.then
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -43,6 +44,8 @@ fun AppSearchField(
     onKeyboardAction: KeyboardActionHandler? = null,
     interactionSource: MutableInteractionSource? = null,
 ) {
+    val keyboard = LocalSoftwareKeyboardController.current
+
     AppTextField(
         state = state,
         modifier = modifier.height(40.dp),
@@ -71,7 +74,7 @@ fun AppSearchField(
                 )
             }
         },
-        onKeyboardAction = onKeyboardAction,
+        onKeyboardAction = onKeyboardAction ?: KeyboardActionHandler { keyboard?.hide() },
         inputTransformation = InputTransformation {}.then(inputTransformation),
         interactionSource = interactionSource
     )

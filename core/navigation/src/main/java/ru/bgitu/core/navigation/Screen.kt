@@ -39,4 +39,8 @@ sealed interface Screen {
     @Serializable data class VariantScreen(val subjectName: String) : Screen
 
     @Serializable data object Onboarding : Screen
+
+    @Serializable data class Notes(val noteId: Int?) : Screen
+
+    @Serializable data class NoteDetails(val noteId: Int? = null, val subjectName: String? = null) : Screen
 }

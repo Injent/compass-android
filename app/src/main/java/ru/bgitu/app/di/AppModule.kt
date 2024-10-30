@@ -7,7 +7,6 @@ import coil.request.CachePolicy
 import coil.util.DebugLogger
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.androidx.workmanager.dsl.worker
 import org.koin.dsl.module
 import ru.bgitu.app.presentation.MainViewModel
 import ru.bgitu.components.signin.di.SignInModule
@@ -25,6 +24,7 @@ import ru.bgitu.feature.findmate.di.FindMateModule
 import ru.bgitu.feature.groups.di.GroupsModule
 import ru.bgitu.feature.home.impl.di.HomeModule
 import ru.bgitu.feature.login.di.LoginModule
+import ru.bgitu.feature.notes.di.NotesModule
 import ru.bgitu.feature.onboarding.di.OnboardingModule
 import ru.bgitu.feature.professor_search.di.ProfessorSearchModule
 import ru.bgitu.feature.profile.di.ProfileModule
@@ -62,7 +62,8 @@ val AppModule = module {
         ScheduleWidgetModule,
         FindMateModule,
         GroupsModule,
-        OnboardingModule
+        OnboardingModule,
+        NotesModule,
     )
 
     viewModel {

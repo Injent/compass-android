@@ -276,48 +276,14 @@ private fun ScheduleNotificationContent(
             }
         }
         var showDetails by remember { mutableStateOf(false) }
-        val detailsArrowRotation by animateFloatAsState(
-            targetValue = if (showDetails) 90f else -90f
+        ExpandableDetails(
+            expanded = showDetails,
+            onExpand = { showDetails = !showDetails },
+            description = buildAnnotatedString {
+                append(stringResource(R.string.show_schedule_details))
+            }
         )
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = AppTheme.spacing.s)
-                .padding(vertical = AppTheme.spacing.xxs)
-                .clickable { showDetails = !showDetails }
-        ) {
-            Text(
-                text = stringResource(R.string.more_detailed),
-                style = AppTheme.typography.calloutButton,
-                color = AppTheme.colorScheme.foreground3
-            )
-            Icon(
-                painter = painterResource(AppIcons.SmallArrowNext),
-                contentDescription = null,
-                tint = AppTheme.colorScheme.foreground3,
-                modifier = Modifier
-                    .size(12.dp)
-                    .rotate(detailsArrowRotation)
-            )
-        }
-
-        AnimatedVisibility(
-            visible = showDetails,
-            modifier = Modifier.clickable { showDetails = !showDetails }
-        ) {
-            Text(
-                text = buildAnnotatedString {
-                    append(stringResource(R.string.show_schedule_details))
-                },
-                style = AppTheme.typography.footnote,
-                color = AppTheme.colorScheme.foreground2
-            )
-        }
     }
-
 }
 
 @RequiresApi(Build.VERSION_CODES.S)

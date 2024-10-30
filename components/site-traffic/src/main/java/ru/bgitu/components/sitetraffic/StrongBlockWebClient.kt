@@ -15,6 +15,8 @@ class StrongBlockWebClient : WebViewClient() {
         return super.shouldInterceptRequest(webView, request)
     }
 
+
+
     private fun shouldBlockUrl(url: String): Boolean {
         val blockedExt = arrayOf(
             ".css",

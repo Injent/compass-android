@@ -12,7 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
-import ru.bgitu.core.designsystem.components.AppBottomBarTokens
+import ru.bgitu.core.designsystem.theme.LocalExternalPadding
+import ru.bgitu.core.designsystem.theme.bottom
 import ru.bgitu.core.navigation.back
 import ru.bgitu.core.navigation.push
 import ru.bgitu.feature.professor_search.presentation.details.TeacherDetailsScreen
@@ -42,7 +43,7 @@ fun TeacherRoute() {
     NavHost(
         navController = nestedNavController,
         startDestination = startDestination,
-        modifier = Modifier.padding(bottom = AppBottomBarTokens.Height)
+        modifier = Modifier.padding(bottom = LocalExternalPadding.current.bottom)
     ) {
         composable<TeacherSearchScreen> {
             TeacherSearchRoute(

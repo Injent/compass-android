@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
@@ -18,6 +17,7 @@ import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.common.eventChannel
 import ru.bgitu.core.common.getOrElse
 import ru.bgitu.core.data.repository.CompassRepository
+import ru.bgitu.core.data.util.NetworkMonitor
 import ru.bgitu.core.datastore.SettingsRepository
 import ru.bgitu.core.designsystem.util.textAsFlow
 
@@ -41,6 +41,7 @@ data class TeacherSearchUiState internal constructor(
 
 class TeacherSearchViewModel(
     compassRepository: CompassRepository,
+    networkMonitor: NetworkMonitor,
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
     private val _events = eventChannel<TeacherSearchEvent>()
@@ -48,21 +49,21 @@ class TeacherSearchViewModel(
 
     val searchFieldState = TextFieldState()
     @OptIn(FlowPreview::class)
-    private val searchResults: Flow<List<String>> = searchFieldState
-        .textAsFlow()
-        .debounce(300)
-        .mapLatest { query ->
-            if (query.isEmpty() || currentCoroutineContext().isActive.not()) {
-                return@mapLatest emptyList()
-            }
-
-            compassRepository.searchProfessor(query)
-                .getOrElse {
-                    _events.trySend(TeacherSearchEvent.ShowError(it.details))
-                    return@mapLatest emptyList()
-                }
-                .distinct()
+    private val searchResults: Flow<List<String>> = combine(
+        networkMonitor.isOnline,
+        searchFieldState.textAsFlow().debounce(300)
+    ) { _, query ->
+        if (query.isEmpty() || currentCoroutineContext().isActive.not()) {
+            return@combine emptyList()
         }
+
+        compassRepository.searchProfessor(query)
+            .getOrElse {
+                _events.trySend(TeacherSearchEvent.ShowError(it.details))
+                return@combine emptyList()
+            }
+            .distinct()
+    }
 
     val uiState = combine(
         searchResults,

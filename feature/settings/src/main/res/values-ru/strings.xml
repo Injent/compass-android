@@ -23,4 +23,5 @@
     <string name="scheduled_at">Запланировано на %s</string>
     <string name="help_site_traffic">Помочь продвигать сайт БГИТУ</string>
     <string name="group_miscellaneous">Прочее</string>
+    <string name="site_traffic_details">Приложение от имени вашего устройства будет посещать сайт БГИТУ, повышая его рейтинг.\n\nПожалуйста, не отключайте эту опцию, если ваше устройство не замедляет работу</string>
 </resources>

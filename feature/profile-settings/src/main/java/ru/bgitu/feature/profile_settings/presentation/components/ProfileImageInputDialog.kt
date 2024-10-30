@@ -31,7 +31,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import ru.bgitu.core.designsystem.components.AppConfirmButton
 import ru.bgitu.core.designsystem.components.AppDialog
-import ru.bgitu.core.designsystem.components.AppDialogBase
 import ru.bgitu.core.designsystem.components.DynamicAsyncImage
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.util.ScrollBarConfig

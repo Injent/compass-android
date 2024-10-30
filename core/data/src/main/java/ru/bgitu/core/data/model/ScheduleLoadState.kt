@@ -1,6 +1,7 @@
 package ru.bgitu.core.data.model
 
 import kotlinx.datetime.LocalDate
+import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.model.Lesson
 
 sealed class ScheduleLoadState {
@@ -13,5 +14,5 @@ sealed class ScheduleLoadState {
     }
     data object Loading : ScheduleLoadState()
     data object Conflict : ScheduleLoadState()
-    data class Error(val throwable: Throwable?) : ScheduleLoadState()
+    data class Error(val details: TextResource) : ScheduleLoadState()
 }

@@ -2,7 +2,6 @@ package ru.bgitu.components.sitetraffic
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.View
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -49,7 +48,6 @@ class TrafficWebView(context: Context) : WebView(context) {
 
     fun startTraffic() {
         siteLinks.selectLink()?.let {
-            Log.d("TrafficWebView", "Loading URL: $it")
             loadUrl(it)
         }
     }

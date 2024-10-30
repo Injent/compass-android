@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.stateIn
 import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.common.eventChannel
 import ru.bgitu.core.common.getOrElse
+import ru.bgitu.core.data.util.NetworkMonitor
 import ru.bgitu.core.designsystem.util.textAsFlow
 import ru.bgitu.core.model.Group
-import ru.bgitu.feature.groups.R
 import ru.bgitu.feature.groups.data.GroupManagementRepository
 
 data class GroupSearchUiState(
@@ -27,7 +27,8 @@ sealed interface GroupSearchEvent {
 }
 
 class GroupSearchViewModel(
-    private val groupRepository: GroupManagementRepository
+    private val groupRepository: GroupManagementRepository,
+    networkMonitor: NetworkMonitor
 ) : ViewModel() {
     private val _events = eventChannel<GroupSearchEvent.ShowSnackbarError>()
     val events = _events.receiveAsFlow()
@@ -37,8 +38,9 @@ class GroupSearchViewModel(
     @OptIn(FlowPreview::class)
     val uiState = combine(
         searchFieldState.textAsFlow().debounce(400),
-        groupRepository.getGroupsData().mapLatest { it.savedGroups + it.primaryGroup }
-    ) { query, existingGroups ->
+        groupRepository.getGroupsData().mapLatest { it.savedGroups + it.primaryGroup },
+        networkMonitor.isOnline
+    ) { query, existingGroups, _ ->
         if (query.isEmpty()) {
             return@combine GroupSearchUiState()
         }

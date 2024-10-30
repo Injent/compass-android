@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ThemePhoneUiDynamicLight">
+        <item name="backgroundBrand">@android:color/system_accent1_600</item>
+        <item name="background1">#ffffff</item>
+        <item name="background2">#E0E0E0</item>
+        <item name="background3">#f2f3f5</item>
+    </style>
+
+    <style name="ThemePhoneUiDynamicDark">
+        <item name="backgroundBrand">@android:color/system_accent1_200</item>
+        <item name="background1">#26262C</item>
+        <item name="background2">#16161A</item>
+        <item name="background3">#1E1E24</item>
+    </style>
+
+    <style name="ThemePhoneUiDynamicDark.Contrast">
+        <item name="backgroundBrand">@android:color/system_accent1_200</item>
+        <item name="background1">#393942</item>
+        <item name="background2">#1E1E24</item>
+        <item name="background3">#2A2A35</item>
+    </style>
+</resources>

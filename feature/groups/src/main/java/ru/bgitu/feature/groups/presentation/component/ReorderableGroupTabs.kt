@@ -1,5 +1,8 @@
 package ru.bgitu.feature.groups.presentation.component
 
+import android.content.Context
+import android.os.Build.VERSION.SDK_INT
+import android.view.HapticFeedbackConstants
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -26,8 +29,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.bgitu.core.designsystem.components.AppSecondaryButton
@@ -52,6 +58,7 @@ internal fun ReorderableGroupTabs(
     enabled: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val view = LocalView.current
     val density = LocalDensity.current
     var singleTabWidth by remember { mutableStateOf(0.dp) }
     // Duplicate is required for correct composition and animations
@@ -124,6 +131,16 @@ internal fun ReorderableGroupTabs(
                             padding(start = AppTheme.spacing.s)
                         }
                 ) { isDragging ->
+                    LaunchedEffect(isDragging) {
+                        val hapticConstant = when {
+                            SDK_INT >= 34 -> {
+                                if (isDragging) HapticFeedbackConstants.DRAG_START else HapticFeedbackConstants.CONFIRM
+                            }
+                            isDragging -> HapticFeedbackConstants.LONG_PRESS
+                            else -> HapticFeedbackConstants.CONTEXT_CLICK
+                        }
+                        view.performHapticFeedback(hapticConstant)
+                    }
                     ReorderableGroupTab(
                         group = group,
                         onClick = { onGroupClick(group) },

@@ -8,10 +8,10 @@
     <color name="static_light_colorForeground2">#556378</color>
     <color name="static_light_colorWidgetBackground">#f3f7fc</color>
 
-    <color name="static_dark_colorBrand">#0086ff</color>
+    <color name="static_dark_colorBrand">#5696fd</color>
     <color name="static_dark_colorOnBrand">#15151c</color>
     <color name="static_dark_colorBackground1">#27272b</color>
-    <color name="static_dark_colorBackground2">#151515</color>
+    <color name="static_dark_colorBackground2">#101014</color>
     <color name="static_dark_colorForeground1">#ffffff</color>
     <color name="static_dark_colorForeground2">#97a4ba</color>
     <color name="static_dark_colorWidgetBackground">#15151c</color>

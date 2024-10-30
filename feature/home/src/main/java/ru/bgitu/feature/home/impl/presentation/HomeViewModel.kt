@@ -24,6 +24,7 @@ import kotlinx.datetime.atDate
 import kotlinx.datetime.plus
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toKotlinLocalDate
+import ru.bgitu.core.common.CommonStrings
 import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.common.eventChannel
@@ -37,9 +38,9 @@ import ru.bgitu.core.data.util.SyncStatus
 import ru.bgitu.core.datastore.SettingsRepository
 import ru.bgitu.core.model.Group
 import ru.bgitu.core.model.Lesson
-import ru.bgitu.core.ui.schedule.DayOfWeekSelectorUiState
 import ru.bgitu.feature.home.BuildConfig
 import ru.bgitu.feature.home.R
+import ru.bgitu.feature.home.impl.presentation.component.DayOfWeekSelectorUiState
 import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -51,6 +52,7 @@ sealed interface HomeIntent {
     data class ChangeGroupView(val group: Group) : HomeIntent
     data object NavigateToGroupSettings : HomeIntent
     data object NavigateToNewFeatures : HomeIntent
+    data class NavigateToCreateNote(val subjectName: String) : HomeIntent
     data object DismissPickGroupQuery : HomeIntent
     data object PickGroup : HomeIntent
 }
@@ -58,6 +60,7 @@ sealed interface HomeIntent {
 sealed interface HomeEvent {
     data object NavigateToGroupSettings : HomeEvent
     data object NavigateToNewFeatures : HomeEvent
+    data class NavigateToCreateNote(val subjectName: String) : HomeEvent
 }
 
 sealed interface HomeUiState {
@@ -125,8 +128,9 @@ class HomeViewModel(
     val scheduleState: StateFlow<ScheduleLoadState> = combine(
         _selectedDate,
         _selectedGroup,
-        settings.data
-    ) { selectedDate, selectedGroup, userdata ->
+        settings.data,
+        networkMonitor.isOnline,
+    ) { selectedDate, selectedGroup, userdata, _ ->
         when {
             selectedGroup == userdata.primaryGroup -> {
                 scheduleRepository.getClassesStream(getActualDate(), 2).first()
@@ -138,7 +142,7 @@ class HomeViewModel(
                     to = selectedDate.toJavaLocalDate().with(DayOfWeek.SUNDAY).toKotlinLocalDate()
                 )
             }
-            else -> ScheduleLoadState.Error(null)
+            else -> ScheduleLoadState.Error(TextResource.Id(CommonStrings.error_unknown))
         }
     }
         .stateIn(
@@ -174,7 +178,7 @@ class HomeViewModel(
     }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
+            started = SharingStarted.WhileSubscribed(5_000),
             initialValue = DayOfWeekSelectorUiState(
                 currentDateTime = DateTimeUtil.currentDateTime,
                 selectedDate = openScheduleDate ?: getActualDate()
@@ -221,6 +225,9 @@ class HomeViewModel(
                 }
                 _events.send(HomeEvent.NavigateToGroupSettings)
             }
+            is HomeIntent.NavigateToCreateNote -> _events.trySend(
+                HomeEvent.NavigateToCreateNote(intent.subjectName)
+            )
         }
     }
 
@@ -290,7 +297,6 @@ class HomeViewModel(
             currentDateTime in lesson.startDateTime..lesson.endDateTime
         }.not()
         if (currentDateTime in firstClassStart..lastClassEnd && currDateTimeInBreak) {
-
             return TextResource.DynamicString(
                 R.string.study_break,
                 DateTimeUtil.formatRelativeAdaptiveTime(

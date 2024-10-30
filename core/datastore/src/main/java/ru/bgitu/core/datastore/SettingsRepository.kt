@@ -208,7 +208,7 @@ class SettingsRepository(
             UserPrefs(
                 theme = UiTheme.valueOf(theme.ifEmpty { "SYSTEM" }),
                 showPinnedSchedule = showPinnedSchedule,
-                teacherSortByWeeks = teacherSortByWeeks,
+                teacherFilterByDays = teacherSortByWeeks,
                 savedGroups = savedGroupsList
                     .sortedBy { it.slotIndex }
                     .mapNotNull { groupSlotPb ->
@@ -233,7 +233,7 @@ class SettingsRepository(
                 prefs = it.prefs.copy {
                     theme = new.theme.toString()
                     showPinnedSchedule = new.showPinnedSchedule
-                    teacherSortByWeeks = new.teacherSortByWeeks
+                    teacherSortByWeeks = new.teacherFilterByDays
                     savedGroups.apply {
                         clear()
                         addAll(

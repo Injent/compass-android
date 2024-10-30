@@ -1,5 +1,6 @@
 package ru.bgitu.core.designsystem.components
 
+import android.view.SoundEffectConstants
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -42,7 +43,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.bgitu.core.designsystem.icon.AppIcons
+import ru.bgitu.core.designsystem.icon.Close
 import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
@@ -168,23 +172,25 @@ fun AppTextButton(
     color: Color = AppTheme.colorScheme.foreground,
     enabled: Boolean = true
 ) {
-    TextButton(
-        onClick = { if (enabled) onClick() },
-        modifier = modifier
-            .thenIf(!enabled) {
-                alpha(.5f)
-            },
-        contentPadding = contentPadding,
-        shape = shape,
-        colors = ButtonDefaults.textButtonColors(
-            contentColor = color,
-            disabledContentColor = AppTheme.colorScheme.foregroundDisabled
-        ),
-    ) {
-        Text(
-            text = text,
-            style = AppTheme.typography.subheadlineButton
-        )
+    AppRippleTheme {
+        TextButton(
+            onClick = { if (enabled) onClick() },
+            modifier = modifier
+                .thenIf(!enabled) {
+                    alpha(.5f)
+                },
+            contentPadding = contentPadding,
+            shape = shape,
+            colors = ButtonDefaults.textButtonColors(
+                contentColor = color,
+                disabledContentColor = AppTheme.colorScheme.foregroundDisabled
+            ),
+        ) {
+            Text(
+                text = text,
+                style = AppTheme.typography.subheadlineButton
+            )
+        }
     }
 }
 
@@ -239,9 +245,10 @@ private fun BaseButton(
     shape: Shape = AppTheme.shapes.default,
     isLoading: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(horizontal = 20.dp),
-    rippleConfig: RippleConfiguration = NoRippleConfig,
+    rippleConfig: RippleConfiguration? = NoRippleConfig,
     content: @Composable RowScope.() -> Unit
 ) {
+    val view = LocalView.current
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val buttonScale by animateFloatAsState(
@@ -253,7 +260,12 @@ private fun BaseButton(
         Surface(
             color = containerColor,
             contentColor = contentColor,
-            onClick = { if (!isLoading) { onClick() } },
+            onClick = {
+                if (!isLoading) {
+                    onClick()
+                }
+                view.playSoundEffect(SoundEffectConstants.CLICK)
+            },
             interactionSource = interactionSource,
             shape = shape,
             enabled = enabled,
@@ -278,7 +290,7 @@ fun AppSmallButton(
     enabled: Boolean = true,
     shape: Shape = CircleShape,
     isLoading: Boolean = false,
-    icon: Int? = null
+    icon: ImageVector? = null
 ) {
     BaseButton(
         onClick = onClick,
@@ -291,9 +303,9 @@ fun AppSmallButton(
         modifier = modifier.height(ButtonTokens.SmallButtonHeight),
     ) {
         val textStyle = AppTheme.typography.calloutButton.copy(fontWeight = FontWeight.Medium)
-        icon?.let { iconResId ->
+        icon?.let { icon ->
             Icon(
-                painter = painterResource(iconResId),
+                imageVector = icon,
                 contentDescription = null,
                 tint = LocalContentColor.current,
                 modifier = Modifier.size(
@@ -376,7 +388,7 @@ fun AppDismissButton(
         contentPadding = PaddingValues(horizontal = AppTheme.spacing.s, vertical = AppTheme.spacing.s)
     ) {
         Icon(
-            painter = painterResource(AppIcons.Close),
+            imageVector = AppIcons.Close,
             contentDescription = null,
             modifier = Modifier.size(20.dp)
         )

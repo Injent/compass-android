@@ -1,6 +1,5 @@
 package ru.bgitu.feature.findmate.presentation.components
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import ru.bgitu.core.designsystem.components.AppSearchField
 import ru.bgitu.core.designsystem.components.DynamicAsyncImage
 import ru.bgitu.core.designsystem.icon.AppIcons
+import ru.bgitu.core.designsystem.icon.Telegram
+import ru.bgitu.core.designsystem.icon.Vk
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
 import ru.bgitu.core.designsystem.util.nonScaledSp
@@ -89,7 +91,7 @@ fun MateView(
                     }
                     contacts.vk?.let {
                         LinkTag(
-                            icon = AppIcons.VK,
+                            icon = AppIcons.Vk,
                             url = it,
                             text = it.substringAfterLast('/')
                         )
@@ -107,7 +109,7 @@ fun MateView(
 
 @Composable
 private fun LinkTag(
-    @DrawableRes icon: Int,
+    icon: ImageVector,
     text: String,
     url: String,
     modifier: Modifier = Modifier,
@@ -125,7 +127,7 @@ private fun LinkTag(
             )
     ) {
         Icon(
-            painter = painterResource(icon),
+            imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(
                 LocalDensity.current.run {

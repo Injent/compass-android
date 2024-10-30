@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -30,17 +29,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import org.koin.android.ext.android.get
 import ru.bgitu.app.R
-import ru.bgitu.core.datastore.SettingsRepository
 import ru.bgitu.core.designsystem.components.AppSmallButton
-import ru.bgitu.core.designsystem.icon.AppIllustrations
+import ru.bgitu.core.designsystem.illustration.AppIllustrations
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
-import kotlin.concurrent.thread
-import kotlin.system.exitProcess
 
 class CrashActivity : ComponentActivity() {
 

@@ -89,13 +89,13 @@ object DateTimeUtil {
         return localDate
     }
 
-    fun getWeekDates(fromDate: LocalDate, includeWeekDays: Boolean = false): List<LocalDate> {
+    fun getWeekDates(fromDate: LocalDate, includeWeekendDays: Boolean = false): List<LocalDate> {
         val startOfWeek = getStartOfWeek(fromDate)
         val days = (0..6).map { weekDayOffset ->
             startOfWeek.plus(weekDayOffset, DateTimeUnit.DAY)
         }.sortedBy { it.dayOfWeek.value }
 
-        return if (includeWeekDays)
+        return if (includeWeekendDays)
             days
         else days.filter { it.dayOfWeek != DayOfWeek.SUNDAY }
     }
@@ -311,7 +311,7 @@ object DateTimeUtil {
         return chronoUnit.between(start.toJavaLocalDateTime(), end.toJavaLocalDateTime()).toInt()
     }
 
-    fun getFormattedStudyWeekNumber(date: LocalDate): TextResource {
+    fun getStudyWeekNumber(date: LocalDate): Int {
         val startStudyYear = date.year.let {
             if (date.monthNumber in 1..8)
                 it - 1
@@ -335,9 +335,13 @@ object DateTimeUtil {
             weeksCount++
         }
 
+        return weeksCount
+    }
+
+    fun getFormattedStudyWeekNumber(date: LocalDate): TextResource {
         return TextResource.DynamicString(
             R.string.week,
-            weeksCount.toString()
+            getStudyWeekNumber(date).toString()
         )
     }
 }

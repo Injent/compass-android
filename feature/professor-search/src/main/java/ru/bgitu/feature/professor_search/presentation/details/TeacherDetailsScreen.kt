@@ -1,72 +1,101 @@
 package ru.bgitu.feature.professor_search.presentation.details
 
+import android.content.res.Configuration
+import android.os.Build.VERSION.SDK_INT
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import kotlinx.datetime.DateTimeUnit
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
-import ru.bgitu.core.common.CommonStrings
 import ru.bgitu.core.common.DateTimeUtil
-import ru.bgitu.core.common.LessonDataUtils
-import ru.bgitu.core.common.iterator
-import ru.bgitu.core.designsystem.components.AppChip
-import ru.bgitu.core.designsystem.components.AppIconButton
+import ru.bgitu.core.common.ScreenRotation
+import ru.bgitu.core.common.screenRotation
 import ru.bgitu.core.designsystem.components.AppSnackbarHost
 import ru.bgitu.core.designsystem.components.AppTextButton
 import ru.bgitu.core.designsystem.components.CompassLoading
 import ru.bgitu.core.designsystem.components.LocalSnackbarController
 import ru.bgitu.core.designsystem.icon.AppIcons
-import ru.bgitu.core.designsystem.icon.AppIllustrations
+import ru.bgitu.core.designsystem.illustration.AppIllustrations
+import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
+import ru.bgitu.core.designsystem.theme.LocalExternalPadding
+import ru.bgitu.core.designsystem.theme.SpotCard
+import ru.bgitu.core.designsystem.theme.end
+import ru.bgitu.core.designsystem.util.MeasureComposable
 import ru.bgitu.core.designsystem.util.asString
+import ru.bgitu.core.designsystem.util.boxShadow
+import ru.bgitu.core.designsystem.util.shadow.roundRectShadow
+import ru.bgitu.core.designsystem.util.thenIf
 import ru.bgitu.core.model.ProfessorClass
+import ru.bgitu.core.ui.AppBackButton
+import ru.bgitu.core.ui.Headline
 import ru.bgitu.core.ui.listenEvents
 import ru.bgitu.feature.professor_search.R
 import ru.bgitu.feature.professor_search.presentation.KEY_TEACHER_VIEWMODEL
+import ru.bgitu.feature.professor_search.presentation.components.maxWidthOfDayAndWeek
+import ru.bgitu.feature.professor_search.presentation.components.teacherClassesGroup
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.time.Duration.Companion.INFINITE
@@ -119,11 +148,30 @@ private fun ProfessorDetailsScreenContent(
     onIntent: (ProfessorDetailsIntent) -> Unit
 ) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(
+        initialPage = uiState.selectedPage,
+        pageCount = { 6 }
+    )
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { pagerState.currentPage }.distinctUntilChanged().collect {
+            onIntent(ProfessorDetailsIntent.ChangePage(pagerState.currentPage))
+        }
+    }
+
     Scaffold(
         contentWindowInsets = WindowInsets(0),
         topBar = {
             ProfessorDetailsTopBar(
                 uiState = uiState,
+                onPageSelect = { page ->
+                    coroutineScope.launch {
+                        withContext(NonCancellable) {
+                            pagerState.animateScrollToPage(page)
+                        }
+                    }
+                },
                 onIntent = onIntent
             )
         },
@@ -133,77 +181,99 @@ private fun ProfessorDetailsScreenContent(
             )
         },
         modifier = Modifier
-            .systemBarsPadding()
+            .padding(LocalExternalPadding.current)
     ) { paddingValues ->
-        LazyColumn(
-            verticalArrangement = if (uiState.isLoading) {
-                Arrangement.Center
-            } else Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(AppTheme.spacing.l),
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            when (val schedule = uiState.filteredSchedule) {
-                is FilteredSchedule.ByDays -> {
-                    if (schedule.selectedDate != null) {
-                        daySchedule(
-                            classes = schedule.classes,
-                            date = schedule.selectedDate
+        val maxWidthOfDayAndWeek by maxWidthOfDayAndWeek()
+
+        var timeColumnWidth by remember { mutableStateOf(0.dp) }
+
+        MeasureComposable(
+            composable = {
+                Text(
+                    text = "00:00",
+                    style = AppTheme.typography.callout
+                )
+            }
+        ) { size ->
+            timeColumnWidth = size.width
+        }
+
+        val isLandScape = LocalConfiguration.current
+            .orientation == Configuration.ORIENTATION_LANDSCAPE
+
+        val classesListContent = @Composable { modifier: Modifier, page: Int? ->
+            LazyColumn(
+                verticalArrangement = if (uiState.loading) {
+                    Arrangement.Center
+                } else Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = PaddingValues(horizontal = AppTheme.spacing.l),
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                if (uiState.loading) {
+                    loading()
+                } else {
+                    if (page == null) {
+                        unfilteredClassesList(
+                            classes = uiState.schedules,
+                            maxWidthOfDayAndWeek = maxWidthOfDayAndWeek,
+                            timeColumnWidth = timeColumnWidth
+                        )
+                        endDateAlert(
+                            endDate = uiState.dateBoundary.endInclusive,
                         )
                     } else {
-                        unfilteredClassesList(
-                            dateBoundary = uiState.dateBoundary,
-                            classes = schedule.classes
-                        )
-                    }
-                }
-                is FilteredSchedule.ByWeek -> {
-                    for ((date, lessons) in schedule.schedules) {
-                        daySchedule(lessons, date)
-                    }
-                    if (schedule.schedules.isEmpty()) {
-                        item {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
-                                modifier = Modifier.fillMaxWidth(),
-                            ) {
-                                Text(
-                                    text = remember {
-                                        context.getString(
-                                            R.string.from_date_to_date,
-                                            DateTimeUtil.formatDate(uiState.fromDate),
-                                            DateTimeUtil.formatDate(uiState.toDate)
-                                        )
-                                    },
-                                    style = AppTheme.typography.callout,
-                                    color = AppTheme.colorScheme.foreground2,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier
-                                        .padding(vertical = 12.dp)
-                                )
-                                Spacer(Modifier.height(AppTheme.spacing.xl))
-                                Icon(
-                                    painter = painterResource(AppIllustrations.CalendarClock),
-                                    contentDescription = null,
-                                    tint = AppTheme.colorScheme.foreground3,
-                                    modifier = Modifier
-                                        .size(64.dp)
-                                )
-                                Text(
-                                    text = stringResource(R.string.not_holding_classes),
-                                    style = AppTheme.typography.subheadline,
-                                    fontWeight = FontWeight.Normal,
-                                    color = AppTheme.colorScheme.foreground3
-                                )
-                            }
+                        if (uiState.schedules.none { it.date.dayOfWeek.ordinal == page }) {
+                            emptySchedule()
+                            endDateAlert(
+                                endDate = uiState.dateBoundary.endInclusive,
+                            )
+                        } else {
+                            unfilteredClassesList(
+                                classes = uiState.schedules.filter {
+                                    it.date.dayOfWeek.ordinal == page
+                                },
+                                maxWidthOfDayAndWeek = maxWidthOfDayAndWeek,
+                                timeColumnWidth = timeColumnWidth
+                            )
+                            endDateAlert(
+                                endDate = uiState.dateBoundary.endInclusive,
+                            )
                         }
                     }
                 }
-                else -> loading()
             }
+        }
+
+        val extraPadding = if (context.screenRotation == ScreenRotation.LEFT) {
+            WindowInsets.navigationBars.asPaddingValues().end
+        } else 0.dp
+
+        if (uiState.filterByDays) {
+            HorizontalPager(
+                state = pagerState,
+                beyondViewportPageCount = 0,
+                pageSpacing = AppTheme.spacing.l,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .thenIf(isLandScape) {
+                       displayCutoutPadding()
+                    }
+            ) { page ->
+                classesListContent(Modifier.padding(end = extraPadding), page)
+            }
+        } else {
+            classesListContent(
+                Modifier
+                    .fillMaxSize()
+                    .thenIf(isLandScape) {
+                        displayCutoutPadding()
+                    }
+                    .padding(end = extraPadding),
+                null
+            )
         }
     }
 }
@@ -220,134 +290,84 @@ private fun LazyListScope.loading() {
 }
 
 private fun LazyListScope.unfilteredClassesList(
-    dateBoundary: ClosedRange<LocalDate>,
-    classes: List<ProfessorClass>
-) {
-    dateBoundary.iterator(unit = DateTimeUnit.DAY).forEach { date ->
-        daySchedule(
-            classes = classes.filter { it.date == date },
-            date = date
-        )
-    }
-}
-
-private fun LazyListScope.daySchedule(
     classes: List<ProfessorClass>,
-    date: LocalDate
+    maxWidthOfDayAndWeek: Dp,
+    timeColumnWidth: Dp
 ) {
-    item {
-        Text(
-            text = remember(date) { DateTimeUtil.formatDate(date) },
-            style = AppTheme.typography.callout,
-            color = AppTheme.colorScheme.foreground2,
-            modifier = Modifier.padding(vertical = 12.dp)
-        )
-    }
-    if (classes.isEmpty()) {
-        item {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = AppTheme.spacing.xl),
-            ) {
-                Icon(
-                    painter = painterResource(AppIllustrations.CalendarClock),
-                    contentDescription = null,
-                    tint = AppTheme.colorScheme.foreground3,
+    var currentMonth = 0
+
+    classes.groupBy { it.date }.forEach { (date, lessons) ->
+        if (currentMonth < date.monthNumber) {
+            item {
+                Headline(
+                    text = remember(date) {
+                        date.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault())
+                            .uppercase()
+                    },
                     modifier = Modifier
-                        .size(64.dp)
-                )
-                Text(
-                    text = stringResource(R.string.not_holding_classes),
-                    style = AppTheme.typography.subheadline,
-                    fontWeight = FontWeight.Normal,
-                    color = AppTheme.colorScheme.foreground3
+                        .fillMaxWidth()
+                        .padding(start = maxWidthOfDayAndWeek + AppTheme.spacing.l)
+                        .padding(
+                            top = AppTheme.spacing.xl,
+                            bottom = AppTheme.spacing.l
+                        )
                 )
             }
+            currentMonth = date.monthNumber
+        } else {
+            item {
+                Spacer(Modifier.height(24.dp))
+            }
         }
-    } else {
-        items(
-            items = classes,
-            key = { item -> item.id }
-        ) { lesson ->
-            ProfessorClassItem(
-                lesson = lesson,
-                isFirst = classes.first() == lesson,
-                isLast = classes.last() == lesson,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    }
-}
 
-@Composable
-private fun ProfessorClassItem(
-    lesson: ProfessorClass,
-    isFirst: Boolean,
-    isLast: Boolean,
-    modifier: Modifier = Modifier
-) {
-    val context = LocalContext.current
-    val timeInterval = remember(lesson) {
-        DateTimeUtil.formatTime(lesson.startAt) + "-" + DateTimeUtil.formatTime(lesson.endAt)
-    }
-    val classLocation = remember(lesson) {
-        LessonDataUtils.provideLocation(
-            context = context,
-            building = lesson.building,
-            classroom = lesson.classroom,
-            style = LessonDataUtils.DisplayStyle.DEFAULT
+        teacherClassesGroup(
+            classes = lessons,
+            date = date,
+            maxWidthOfDayAndWeek = maxWidthOfDayAndWeek,
+            timeColumnWidth = timeColumnWidth,
         )
     }
-
-    Surface(
-        shape = when {
-            isFirst && isLast -> AppTheme.shapes.default
-            isFirst -> AppTheme.shapes.defaultTopCarved
-            isLast -> AppTheme.shapes.defaultBottomCarved
-            else -> RectangleShape
-        },
-        color = AppTheme.colorScheme.backgroundTouchable,
-        modifier = modifier,
-    ) {
-        Column(Modifier.padding(AppTheme.spacing.l)) {
-            Text(
-                text = timeInterval,
-                style = AppTheme.typography.callout,
-                color = AppTheme.colorScheme.foreground2,
-                fontFamily = FontFamily.SansSerif
-            )
-            Text(
-                text = classLocation,
-                style = AppTheme.typography.headline2,
-                color = AppTheme.colorScheme.foreground1
-            )
-            Text(
-                text = stringResource(
-                    if (lesson.isLecture) {
-                        CommonStrings.lecture
-                    } else CommonStrings.practice
-                ),
-                style = AppTheme.typography.footnote,
-                color = AppTheme.colorScheme.foreground2.copy(alpha = .85f)
-            )
-        }
-    }
-    if (!isLast)
-        Spacer(Modifier.height(1.5.dp))
 }
 
 @Composable
 private fun ProfessorDetailsTopBar(
     uiState: ProfessorDetailsUiState,
     onIntent: (ProfessorDetailsIntent) -> Unit,
+    onPageSelect: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    Column(modifier.padding(bottom = AppTheme.spacing.s)) {
+    val context = LocalContext.current
+
+    Column(
+        modifier = modifier
+            .then(
+                with(Modifier) {
+                    if (SDK_INT < 28) {
+                        roundRectShadow(
+                            offset = DpOffset(0.dp, 2.dp),
+                            radius = 10.dp,
+                        )
+                    } else {
+                        boxShadow(
+                            color = SpotCard,
+                            blurRadius = 6.dp,
+                            offset = DpOffset(0.dp, 2.dp),
+                            clip = false,
+                            alpha = .5f
+                        )
+                    }
+                }
+            )
+            .background(AppTheme.colorScheme.background3)
+            .statusBarsPadding()
+            .displayCutoutPadding()
+            .thenIf(context.screenRotation == ScreenRotation.LEFT) {
+                navigationBarsPadding()
+            }
+            .padding(bottom = AppTheme.spacing.s)
+    ) {
         TopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
             title = {
                 Text(
                     text = uiState.professorName,
@@ -358,75 +378,165 @@ private fun ProfessorDetailsTopBar(
                 )
             },
             navigationIcon = {
-                AppIconButton(
+                AppBackButton(
                     onClick = { onIntent(ProfessorDetailsIntent.Back) },
-                    icon = AppIcons.Back,
-                    tint = AppTheme.colorScheme.foreground3
                 )
             },
             actions = {
                 AppTextButton(
                     text = stringResource(
-                        if (uiState.filteredByWeek) {
+                        if (uiState.filterByDays) {
                             R.string.filter_by_days
-                        } else R.string.filter_by_weeks
+                        } else R.string.not_filter
                     ),
                     onClick = {
-                        onIntent(ProfessorDetailsIntent.ChangeFilter(!uiState.filteredByWeek))
+                        onIntent(ProfessorDetailsIntent.ChangeFilter(!uiState.filterByDays))
                     }
                 )
             }
         )
 
-        when (uiState.filteredSchedule) {
-            is FilteredSchedule.ByDays -> {
-                val scrollState = rememberLazyListState()
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
-                    contentPadding = PaddingValues(horizontal = AppTheme.spacing.l),
-                    state = scrollState
-                ) {
-                    val dates = uiState.dateBoundary.iterator(unit = DateTimeUnit.DAY).asSequence().toList()
-                    itemsIndexed(
-                        items = dates,
-                        key = { index, _ -> index }
-                    ) { index, date ->
-                        AppChip(
-                            selected = date == uiState.filteredSchedule.selectedDate,
-                            onClick = {
-                                onIntent(ProfessorDetailsIntent.ChangeDate(date))
-                                coroutineScope.launch {
-                                    scrollState.animateScrollToItem((index - 1).coerceAtLeast(0))
-                                }
-                            },
-                            label = remember(date) {
-                                DateTimeUtil.formatDay(date)
-                            }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = AppTheme.spacing.l)
+                .background(AppTheme.colorScheme.background2, AppTheme.shapes.default)
+                .padding(vertical = AppTheme.spacing.xs, horizontal = AppTheme.spacing.xs)
+        ) {
+            TabRow(
+                selectedTabIndex = uiState.selectedPage,
+                containerColor = Color.Transparent,
+                indicator = { tabPositions ->
+                    androidx.compose.animation.AnimatedVisibility(
+                        visible = uiState.filterByDays,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                        modifier = Modifier
+                            .tabIndicatorOffset(tabPositions[uiState.selectedPage])
+                            .zIndex(-1f)
+
+                    ) {
+                        val indicatorShape = AppTheme.shapes.default
+
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .then(
+                                    with(Modifier) {
+                                        if (SDK_INT < 28) {
+                                            roundRectShadow(
+                                                offset = DpOffset(0.dp, 2.dp),
+                                                shape = indicatorShape,
+                                                radius = 10.dp,
+                                            )
+                                        } else {
+                                            boxShadow(
+                                                color = SpotCard,
+                                                blurRadius = 6.dp,
+                                                spreadRadius = 0.dp,
+                                                offset = DpOffset(0.dp, 2.dp),
+                                                shape = indicatorShape,
+                                                clip = false,
+                                                inset = false,
+                                                alpha = .5f
+                                            )
+                                        }
+                                    }
+                                )
+                                .background(AppTheme.colorScheme.background1, indicatorShape)
                         )
                     }
-                }
-            }
-            is FilteredSchedule.ByWeek -> {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Spacer(Modifier.width(AppTheme.spacing.s))
-                    DayOfWeek.entries.filterNot { it == DayOfWeek.SUNDAY }.map { dayOfWeek ->
-                        AppChip(
-                            label = dayOfWeek.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault()),
-                            onClick = {
-                                onIntent(ProfessorDetailsIntent.ChangeWeek(dayOfWeek))
-                            },
+                },
+                divider = {},
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                DayOfWeek.entries.filter { it != DayOfWeek.SUNDAY }.forEach { dayOfWeek ->
+                    val selected = dayOfWeek.ordinal == uiState.selectedPage
+
+                    AppRippleTheme(null) {
+                        Surface(
+                            color = Color.Transparent,
                             shape = AppTheme.shapes.default,
-                            selected = dayOfWeek == uiState.filteredSchedule.selectedWeek,
-                            modifier = Modifier.weight(1f)
-                        )
+                            contentColor = if (selected) {
+                                AppTheme.colorScheme.foregroundOnBrand
+                            } else AppTheme.colorScheme.foreground,
+                            onClick = {
+                                if (selected) {
+                                    ProfessorDetailsIntent.ChangeFilter(!uiState.filterByDays)
+                                } else {
+                                    onPageSelect(dayOfWeek.ordinal)
+                                    ProfessorDetailsIntent.ChangePage(dayOfWeek.ordinal)
+                                }.also(onIntent)
+                            },
+                            modifier = Modifier.height(36.dp)
+                        ) {
+                            Text(
+                                text = remember {
+                                    dayOfWeek.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault())
+                                        .uppercase()
+                                },
+                                color = AppTheme.colorScheme.foreground,
+                                style = AppTheme.typography.calloutButton,
+                                textAlign = TextAlign.Center,
+                                maxLines = 1,
+                                modifier = Modifier
+                                    .width(IntrinsicSize.Max)
+                                    .padding(
+                                        vertical = 8.dp,
+                                        horizontal = 12.dp
+                                    )
+                            )
+                        }
                     }
-                    Spacer(Modifier.width(AppTheme.spacing.s))
+
                 }
             }
-            else -> Unit
         }
+    }
+}
+
+private fun LazyListScope.emptySchedule() {
+    item {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = AppTheme.spacing.xxxl),
+        ) {
+            Icon(
+                painter = painterResource(AppIllustrations.CalendarClock),
+                contentDescription = null,
+                tint = AppTheme.colorScheme.foreground3,
+                modifier = Modifier
+                    .size(64.dp)
+            )
+            Text(
+                text = stringResource(R.string.not_holding_classes),
+                style = AppTheme.typography.subheadline,
+                fontWeight = FontWeight.Normal,
+                textAlign = TextAlign.Center,
+                color = AppTheme.colorScheme.foreground3
+            )
+        }
+    }
+}
+
+private fun LazyListScope.endDateAlert(
+    endDate: LocalDate,
+) {
+    item {
+        val formatedEndDate = remember(endDate) {
+            DateTimeUtil.formatDate(endDate)
+        }
+
+        Text(
+            text = stringResource(R.string.no_classes_until, formatedEndDate),
+            style = AppTheme.typography.callout,
+            color = AppTheme.colorScheme.foreground2,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(vertical = 12.dp)
+        )
     }
 }

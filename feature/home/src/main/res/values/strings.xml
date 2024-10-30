@@ -20,4 +20,16 @@
     <string name="dialog_description_reset_group">The groups in the schedule have changed, you need to select a new one</string>
     <string name="skip">Skip</string>
     <string name="select">Select</string>
+    <string name="action_add_homework">Add homework</string>
+    <string name="break_in">Break</string>
+    <string name="middle_of_lesson">The middle of class</string>
+    <string name="class_is_over">Class is over</string>
+    <string name="break_was">The break was %s</string>
+    <string name="break_for">Break for %s</string>
+    <string name="class_started_last">Class started</string>
+    <string name="classes_ended_last">Class ended</string>
+    <string name="break_at">Break at</string>
+    <string name="classes_end_in">Classes wil end %s</string>
+    <string name="try_clear_cache">Try clearing the cache</string>
+    <string name="no_classes_today">There are no classes today</string>
 </resources>

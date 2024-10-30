@@ -18,12 +18,11 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.Compass.Starting"
         tools:targetApi="34"
-        android:enableOnBackInvokedCallback="false"
+        android:enableOnBackInvokedCallback="true"
         android:localeConfig="@xml/locale_config">
         <activity
             android:name="ru.bgitu.app.MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

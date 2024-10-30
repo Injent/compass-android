@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import ru.bgitu.core.designsystem.components.Status
 import ru.bgitu.core.designsystem.components.StatusDecor
 import ru.bgitu.core.designsystem.icon.AppIcons
-import ru.bgitu.core.designsystem.icon.AppIllustrations
+import ru.bgitu.core.designsystem.illustration.AppIllustrations
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.util.boxShadow
 
@@ -51,7 +51,7 @@ fun MatesBannerContent(
                 .rotate(-25f)
         )
         Icon(
-            painter = painterResource(AppIcons.BookCover),
+            painter = painterResource(AppIcons.BookCover2),
             contentDescription = null,
             tint = iconTint,
             modifier = Modifier

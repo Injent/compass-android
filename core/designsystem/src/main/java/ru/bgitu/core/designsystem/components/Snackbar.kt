@@ -247,7 +247,7 @@ private fun DefaultSnackbar(
         Text(
             text = text,
             style = AppTheme.typography.footnote,
-            color = AppTheme.colorScheme.foregroundOnBrand,
+            color = Color.White,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .weight(1f)

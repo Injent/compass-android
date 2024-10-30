@@ -13,6 +13,7 @@ import ru.bgitu.app.presentation.MainActivityUiState
 import ru.bgitu.components.updates.api.model.InstallState
 import ru.bgitu.components.updates.api.model.NativeUpdateInfo
 import ru.bgitu.components.updates.api.model.UpdateAvailability
+import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.feature.update.model.AppUpdateSheetData
 import ru.bgitu.feature.update.presentation.AppUpdateBottomSheet
 
@@ -65,7 +66,8 @@ fun AppUpdateBottomSheetSetup(uiState: MainActivityUiState) {
 
     sheetData?.let { data ->
         ModalBottomSheet(
-            onDismissRequest = { sheetData = null }
+            onDismissRequest = { sheetData = null },
+            containerColor = AppTheme.colorScheme.background1
         ) {
             AppUpdateBottomSheet(
                 sheetData = data,

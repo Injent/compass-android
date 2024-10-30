@@ -74,3 +74,4 @@ include(
 )
 include(":feature:onboarding")
 include(":components:site-traffic")
+include(":feature:notes")

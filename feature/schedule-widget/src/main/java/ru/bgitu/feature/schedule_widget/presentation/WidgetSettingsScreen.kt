@@ -135,38 +135,6 @@ fun WidgetSettingsScreen(
                 .padding(AppTheme.spacing.l),
         ) {
             AppCardWithContent(
-                label = stringResource(R.string.widget_opacity)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "${((options.opacity * 100).toInt())}%",
-                        style = AppTheme.typography.callout,
-                        color = AppTheme.colorScheme.foreground1,
-                        modifier = Modifier.width(50.dp)
-                    )
-                    Slider(
-                        value = options.opacity,
-                        onValueChange = {
-                            val alpha = round(it * 10) / 10
-                            options = options.copy(opacity = alpha)
-                        },
-                        colors = SliderDefaults.colors(
-                            thumbColor = AppTheme.colorScheme.foreground,
-                            activeTrackColor = AppTheme.colorScheme.foreground,
-                            inactiveTrackColor = AppTheme.colorScheme.foreground4,
-                            inactiveTickColor = AppTheme.colorScheme.stroke2,
-                            activeTickColor = AppTheme.colorScheme.foregroundOnBrand
-                        ),
-                        steps = 9,
-                        valueRange = 0f..1f,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-            }
-            AppCardWithContent(
                 label = stringResource(R.string.widget_theme)
             ) {
                 FlowRow(
@@ -188,7 +156,6 @@ fun WidgetSettingsScreen(
                     }
                 }
             }
-            Spacer(Modifier.height(paddingValues.calculateBottomPadding()))
         }
     }
 }

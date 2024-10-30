@@ -9,7 +9,9 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
+import ru.bgitu.core.common.CommonStrings
 import ru.bgitu.core.common.DateTimeUtil
+import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.common.getOrElse
 import ru.bgitu.core.data.model.ScheduleLoadState
 import ru.bgitu.core.data.model.toEntity
@@ -44,7 +46,7 @@ class FirstOfflineScheduleRepository(
                 emit(ScheduleLoadState.Success(emptyMap()))
             }
             .catch {
-                emit(ScheduleLoadState.Error(it))
+                emit(ScheduleLoadState.Error(TextResource.Id(CommonStrings.error_unknown)))
             }
     }
 
@@ -59,7 +61,7 @@ class FirstOfflineScheduleRepository(
             toDate = to,
             userDataVersion = settingsRepository.getDataVersions().userDataVersion
         )
-            .getOrElse { return ScheduleLoadState.Error(it.throwable) }
+            .getOrElse { return ScheduleLoadState.Error(it.details) }
 
         return ScheduleLoadState.Success(
             data = lessons

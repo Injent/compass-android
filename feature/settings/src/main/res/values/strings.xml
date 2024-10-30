@@ -23,4 +23,5 @@
     <string name="scheduled_at">Scheduled at %s</string>
     <string name="help_site_traffic">Help promote the BGITU website</string>
     <string name="group_miscellaneous">Miscellaneous</string>
+    <string name="site_traffic_details">The application will visit the BGITU website on behalf of your device, increasing its rating.\n\nPlease do not turn off this option if your device is not slowing down</string>
 </resources>

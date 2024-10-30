@@ -4,4 +4,11 @@
     <string name="relaunch_app">Relaunch app</string>
     <string name="retry">Retry</string>
     <string name="label_auth">Auth</string>
+    <string name="label_profile">profile</string>
+    <string name="label_teacher_search">teachers</string>
+    <string name="label_schedule">schedule</string>
+    <string name="label_files">files</string>
+    <string name="label_mates">mates</string>
+    <string name="label_notes">homework</string>
+    <string name="label_settings">settings</string>
 </resources>

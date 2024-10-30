@@ -36,6 +36,7 @@ protobuf {
 
 dependencies {
     implementation(projects.core.data)
+    implementation(projects.core.datastore)
     implementation(projects.core.common)
     implementation(projects.core.model)
     implementation(projects.core.designsystem)

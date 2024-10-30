@@ -1,10 +1,10 @@
 package ru.bgitu.app
 
 import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.webkit.CookieManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,11 +12,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
@@ -62,13 +62,6 @@ class MainActivity : ComponentActivity() {
         splashScreen.setKeepOnScreenCondition { uiState.isLoading }
 
         setContent {
-            LaunchedEffect(uiState.helpSiteTraffic) {
-                if (uiState.helpSiteTraffic && trafficWebView == null) {
-                    trafficWebView = TrafficWebView(this@MainActivity)
-                    runCatching { trafficWebView?.startTraffic() }
-                }
-            }
-
             ClearFocusWithImeEffect()
 
             App(
@@ -76,6 +69,15 @@ class MainActivity : ComponentActivity() {
                 viewModel = viewModel,
                 dynamicColorAvailable = SDK_INT >= 31,
             )
+
+            LaunchedEffect(uiState.helpSiteTraffic) {
+                // Delay time for loading home screen
+                delay(3000)
+                if (isWebViewSupported() && uiState.helpSiteTraffic && trafficWebView == null) {
+                    trafficWebView = TrafficWebView(this@MainActivity)
+                    runCatching { trafficWebView?.startTraffic() }
+                }
+            }
         }
     }
 
@@ -126,3 +128,5 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
     }
 }
+
+private fun isWebViewSupported() = runCatching { CookieManager.getInstance() }.isSuccess

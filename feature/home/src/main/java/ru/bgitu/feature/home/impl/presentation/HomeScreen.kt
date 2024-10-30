@@ -1,7 +1,7 @@
 package ru.bgitu.feature.home.impl.presentation
 
+import android.view.SoundEffectConstants
 import androidx.activity.ComponentActivity
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
@@ -25,14 +25,18 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -44,6 +48,9 @@ import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,9 +64,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -86,9 +96,10 @@ import kotlinx.datetime.toKotlinLocalDate
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import ru.bgitu.core.common.DateTimeUtil
+import ru.bgitu.core.common.ScreenRotation
 import ru.bgitu.core.common.TextResource
+import ru.bgitu.core.common.screenRotation
 import ru.bgitu.core.data.model.ScheduleLoadState
-import ru.bgitu.core.designsystem.components.AppBottomBarTokens
 import ru.bgitu.core.designsystem.components.AppConfirmButton
 import ru.bgitu.core.designsystem.components.AppDialog
 import ru.bgitu.core.designsystem.components.AppIconButton
@@ -97,11 +108,18 @@ import ru.bgitu.core.designsystem.components.AppTab
 import ru.bgitu.core.designsystem.components.AppTextButton
 import ru.bgitu.core.designsystem.components.CompassLoading
 import ru.bgitu.core.designsystem.icon.AppIcons
-import ru.bgitu.core.designsystem.icon.AppIllustrations
+import ru.bgitu.core.designsystem.icon.CalendarOutlined
+import ru.bgitu.core.designsystem.icon.Swap
+import ru.bgitu.core.designsystem.illustration.AppIllustrations
+import ru.bgitu.core.designsystem.illustration.BrokenBulb
+import ru.bgitu.core.designsystem.illustration.Calendar
 import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
+import ru.bgitu.core.designsystem.theme.LocalExternalPadding
 import ru.bgitu.core.designsystem.theme.NoRippleConfig
+import ru.bgitu.core.designsystem.theme.bottom
+import ru.bgitu.core.designsystem.theme.end
 import ru.bgitu.core.designsystem.util.MeasureComposable
 import ru.bgitu.core.designsystem.util.asString
 import ru.bgitu.core.designsystem.util.thenIf
@@ -115,12 +133,12 @@ import ru.bgitu.core.ui.listenEvents
 import ru.bgitu.core.ui.model.UiLesson
 import ru.bgitu.core.ui.model.toUiModel
 import ru.bgitu.core.ui.schedule.CalendarTheme
-import ru.bgitu.core.ui.schedule.DayOfWeekSelector
-import ru.bgitu.core.ui.schedule.DayOfWeekSelectorUiState
-import ru.bgitu.core.ui.schedule.LessonItem
 import ru.bgitu.feature.home.R
-import ru.bgitu.feature.home.impl.presentation.components.NewFeaturesButton
-import ru.bgitu.feature.home.impl.presentation.components.SelectGroupView
+import ru.bgitu.feature.home.impl.presentation.component.DayOfWeekSelector
+import ru.bgitu.feature.home.impl.presentation.component.DayOfWeekSelectorUiState
+import ru.bgitu.feature.home.impl.presentation.component.LessonItem
+import ru.bgitu.feature.home.impl.presentation.component.NewFeaturesButton
+import ru.bgitu.feature.home.impl.presentation.component.SelectGroupView
 import kotlin.random.Random
 
 @Composable
@@ -146,6 +164,9 @@ fun HomeScreen(
         when (event) {
             HomeEvent.NavigateToGroupSettings -> navController.push(Screen.Groups)
             HomeEvent.NavigateToNewFeatures -> navController.push(Screen.About)
+            is HomeEvent.NavigateToCreateNote -> navController.push(
+                Screen.NoteDetails(subjectName = event.subjectName)
+            )
         }
     }
 
@@ -169,6 +190,7 @@ fun HomeScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 private fun HomeScreenContent(
     uiState: HomeUiState,
@@ -179,7 +201,10 @@ private fun HomeScreenContent(
     hasNewFeatures: Boolean,
     shouldShowDataResetAlert: Boolean
 ) {
+    val context = LocalContext.current
+    val windowAdaptiveInfo = currentWindowAdaptiveInfo()
     val scope = rememberCoroutineScope()
+    val datePagerState = rememberPagerState(initialPage = 2) { 5 }
     val pagerState = rememberPagerState(
         initialPage = selectorUiState.initialPage,
         pageCount = { selectorUiState.pageCount }
@@ -209,6 +234,7 @@ private fun HomeScreenContent(
                             animatedScaleOfScheduleTransition,
                             selectorUiState.getPageForDate(date)
                         )
+                        datePagerState.animateScrollToPage(2)
                     }
                 }
             )
@@ -220,7 +246,6 @@ private fun HomeScreenContent(
             Column(
                 verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
                 modifier = Modifier
-                    .fillMaxWidth()
                     .thenIf(uiState is HomeUiState.Success || hasNewFeatures) {
                         padding(
                             start = AppTheme.spacing.m,
@@ -239,7 +264,9 @@ private fun HomeScreenContent(
 
                 when (uiState) {
                     is HomeUiState.Success -> {
-                        if (uiState.showGroups && uiState.selectedGroup != null) {
+                        if (uiState.showGroups && uiState.selectedGroup != null &&
+                            windowAdaptiveInfo.windowSizeClass
+                                .widthSizeClass <= WindowWidthSizeClass.Compact) {
                             GroupTabs(
                                 groups = uiState.savedGroups,
                                 selectedGroup = uiState.selectedGroup,
@@ -257,8 +284,7 @@ private fun HomeScreenContent(
                                     }
                                 },
                                 onGroupSettingsClick = { onIntent(HomeIntent.NavigateToGroupSettings) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth()
                             )
                         }
                     }
@@ -268,13 +294,13 @@ private fun HomeScreenContent(
         },
         modifier = Modifier
             .systemBarsPadding()
-            .padding(bottom = AppBottomBarTokens.Height)
-    ) { paddingValues ->
+            .padding(LocalExternalPadding.current)
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
         ) {
+            Spacer(Modifier.height(innerPadding.calculateTopPadding()))
             var ignorePageChangeOnInit by rememberSaveable { mutableStateOf(true) }
 
             LaunchedEffect(pagerState) {
@@ -288,6 +314,20 @@ private fun HomeScreenContent(
                 }
             }
 
+//            DateSelectorPager(
+//                selectedDate = selectorUiState.selectedDate,
+//                currentDate = selectorUiState.currentDateTime.date,
+//                pagerState = datePagerState,
+//                onDateSelect = { date ->
+//                    scope.launch {
+//                        pagerState.animateScaleAndScroll(
+//                            animatedScaleOfScheduleTransition,
+//                            selectorUiState.getPageForDateA(date)
+//                        )
+//                    }
+//                },
+//                modifier = Modifier.fillMaxWidth()
+//            )
             DayOfWeekSelector(
                 state = selectorUiState,
                 onDateSelected = { date ->
@@ -300,8 +340,12 @@ private fun HomeScreenContent(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .thenIf(context.screenRotation == ScreenRotation.RIGHT) {
+                        displayCutoutPadding()
+                    }
                     .padding(horizontal = AppTheme.spacing.l)
             )
+
             Spacer(Modifier.height(AppTheme.spacing.l))
 
             when (uiState) {
@@ -315,66 +359,88 @@ private fun HomeScreenContent(
                 }
                 HomeUiState.Loading -> Unit
                 is HomeUiState.Success -> {
+                    val endPadding = if (context.screenRotation == ScreenRotation.RIGHT) {
+                        WindowInsets.displayCutout.asPaddingValues().end + AppTheme.spacing.l
+                    } else AppTheme.spacing.l
                     HorizontalPager(
                         state = pagerState,
-                        pageSpacing = AppTheme.spacing.l,
-                        contentPadding = PaddingValues(horizontal = AppTheme.spacing.l),
+                        pageSpacing = endPadding, beyondViewportPageCount = 0,
+                        contentPadding = PaddingValues(
+                            start = AppTheme.spacing.l,
+                            end = endPadding
+                        ),
                     ) { page ->
-                        val scrollState = rememberScrollState()
+                        val generalModifier = Modifier
+                            .fillMaxSize()
+                            .scale(animatedScaleOfScheduleTransition.value)
 
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .verticalScroll(scrollState)
-                                .scale(animatedScaleOfScheduleTransition.value)
-                        ) {
-                            val maxWidthModifier = Modifier.fillMaxWidth()
+                        val alertScheduleModifier = Modifier
+                            .padding(bottom = innerPadding.bottom)
 
-                            when (scheduleState) {
-                                is ScheduleLoadState.Error, is ScheduleLoadState.Conflict -> {
-                                    AlertSchedule(
-                                        modifier = maxWidthModifier,
-                                        illustration = AppIllustrations.Warning,
-                                        headline = stringResource(R.string.error_failed_to_load_data),
-                                    )
+                        when (scheduleState) {
+                            is ScheduleLoadState.Error -> {
+                                AlertSchedule(
+                                    modifier = generalModifier.then(alertScheduleModifier),
+                                    illustration = AppIllustrations.BrokenBulb,
+                                    headline = scheduleState.details.asString(),
+                                    description = ""
+                                )
+                            }
+                            is ScheduleLoadState.Conflict -> {
+                                AlertSchedule(
+                                    modifier = generalModifier.then(alertScheduleModifier),
+                                    illustration = AppIllustrations.BrokenBulb,
+                                    headline = stringResource(R.string.error_failed_to_load_data),
+                                    description = stringResource(R.string.try_clear_cache)
+                                )
+                            }
+                            is ScheduleLoadState.Loading -> {
+                                Box(
+                                    modifier = generalModifier
+                                        .then(alertScheduleModifier)
+                                        .padding(top = AppTheme.spacing.xxxl)
+                                        .fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CompassLoading(loadingSize = 32.dp)
                                 }
-                                ScheduleLoadState.Loading -> {
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(top = AppTheme.spacing.xxxl)
-                                            .fillMaxSize(),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        CompassLoading(loadingSize = 32.dp)
-                                    }
-                                }
-                                is ScheduleLoadState.Success -> {
-                                    val mappedLessons = remember(scheduleState, selectorUiState) {
-                                        val dateForPage = selectorUiState.getDateForPage(page)
-                                        scheduleState[dateForPage].let { lessons ->
-                                            lessons.map {
-                                                it.toUiModel(
-                                                    isFirst = lessons.first().startAt == it.startAt,
-                                                    isLast = lessons.last().startAt == it.startAt
-                                                )
-                                            }
+                            }
+                            is ScheduleLoadState.Success -> {
+                                val mappedLessons = remember(scheduleState, selectorUiState) {
+                                    val dateForPage = selectorUiState.getDateForPage(page)
+                                    scheduleState[dateForPage].let { lessons ->
+                                        lessons.map {
+                                            it.toUiModel(
+                                                isFirst = lessons.first().startAt == it.startAt,
+                                                isLast = lessons.last().startAt == it.startAt
+                                            )
                                         }
                                     }
-                                    if (mappedLessons.isEmpty()) {
-                                        AlertSchedule(
-                                            modifier = maxWidthModifier,
-                                            illustration = AppIllustrations.Calendar,
-                                            headline = stringResource(R.string.weekend),
-                                        )
-                                    } else {
+                                }
+
+                                if (mappedLessons.isEmpty()) {
+                                    AlertSchedule(
+                                        modifier = generalModifier.then(alertScheduleModifier),
+                                        illustration = AppIllustrations.Calendar,
+                                        headline = stringResource(R.string.weekend),
+                                        description = stringResource(R.string.no_classes_today)
+                                    )
+                                } else {
+                                    Column(
+                                        modifier = generalModifier
+                                            .verticalScroll(rememberScrollState())
+                                    ) {
                                         DaySchedule(
                                             lessons = mappedLessons,
                                             classLabelMessage = classLabelMessage.takeIf {
                                                 selectorUiState.currentDateTime.date == mappedLessons.first().date
                                             },
+                                            onAddNote = { uiLesson ->
+                                                onIntent(HomeIntent.NavigateToCreateNote(uiLesson.name))
+                                            },
                                             currentDateTime = selectorUiState.currentDateTime,
                                         )
+                                        Spacer(Modifier.height(innerPadding.bottom + AppTheme.spacing.l))
                                     }
                                 }
                             }
@@ -386,33 +452,84 @@ private fun HomeScreenContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 private fun AlertSchedule(
-    @DrawableRes illustration: Int,
+    illustration: ImageVector,
     headline: String,
+    description: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.l, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.padding(AppTheme.spacing.xl),
-    ) {
-        Image(
-            painter = painterResource(illustration),
-            contentDescription = null,
-            modifier = Modifier.width(200.dp)
-        )
-        Text(
-            text = headline,
-            style = AppTheme.typography.title3,
-            color = AppTheme.colorScheme.foreground1
-        )
+    val windowAdaptiveInfo = currentWindowAdaptiveInfo()
+
+    if (windowAdaptiveInfo.windowSizeClass.widthSizeClass <= WindowWidthSizeClass.Compact) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s, Alignment.CenterVertically),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = AppTheme.spacing.xl),
+        ) {
+            Image(
+                imageVector = illustration,
+                contentDescription = null,
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier
+                    .fillMaxWidth(),
+            )
+            Text(
+                text = headline,
+                style = AppTheme.typography.title3,
+                textAlign = TextAlign.Center,
+                color = AppTheme.colorScheme.foreground1
+            )
+            Text(
+                text = description,
+                style = AppTheme.typography.callout,
+                color = AppTheme.colorScheme.foreground2,
+                textAlign = TextAlign.Center
+            )
+        }
+    } else {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier.padding(AppTheme.spacing.xl)
+        ) {
+            Image(
+                imageVector = illustration,
+                contentDescription = null,
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier
+                    .weight(1f)
+                    .heightIn(max = 250.dp),
+            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = headline,
+                    style = AppTheme.typography.title3,
+                    textAlign = TextAlign.Center,
+                    color = AppTheme.colorScheme.foreground1
+                )
+                Spacer(Modifier.height(AppTheme.spacing.s))
+                Text(
+                    text = description,
+                    style = AppTheme.typography.callout,
+                    color = AppTheme.colorScheme.foreground2,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
     }
 }
 
 @Composable
 private fun ColumnScope.DaySchedule(
     lessons: List<UiLesson>,
+    onAddNote: (UiLesson) -> Unit,
     classLabelMessage: TextResource?,
     currentDateTime: LocalDateTime
 ) {
@@ -459,6 +576,7 @@ private fun ColumnScope.DaySchedule(
                 LessonItem(
                     lesson = uiLesson,
                     onClick = { expanded = !expanded },
+                    onAddNote = { onAddNote(uiLesson) },
                     expanded = expanded,
                     now = currentDateTime,
                     minTimeWidth = minTimeSize.width,
@@ -476,12 +594,16 @@ private fun HomeScreenTopBar(
     onDateSelect: (LocalDate) -> Unit
 ) {
     val calendarState = rememberUseCaseState(visible = false)
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp)
             .padding(horizontal = AppTheme.spacing.l)
+            .thenIf(context.screenRotation == ScreenRotation.RIGHT) {
+                displayCutoutPadding()
+            }
     ) {
         val context = LocalContext.current
         val actualScheduleDate = remember(selectorState) {
@@ -568,7 +690,7 @@ private fun HomeScreenTopBar(
         }
         AppIconButton(
             onClick = calendarState::show,
-            icon = AppIcons.Calendar2,
+            icon = AppIcons.CalendarOutlined,
             tint = AppTheme.colorScheme.foreground,
             modifier = Modifier.align(Alignment.CenterEnd),
         )
@@ -603,10 +725,12 @@ private fun GroupTabs(
     onGroupSettingsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val view = LocalView.current
+
     Row(
         horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.xxs),
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .background(
                 color = AppTheme.colorScheme.background4,
                 shape = AppTheme.shapes.default
@@ -617,11 +741,25 @@ private fun GroupTabs(
             icon = AppIcons.Swap,
             tint = AppTheme.colorScheme.foreground3
         )
+
+        val tabs = @Composable {
+            AppRippleTheme(NoRippleConfig) {
+                groups.forEach { group ->
+                    AppTab(
+                        text = group.name,
+                        selected = selectedGroup == group,
+                        onClick = {
+                            onGroupSelected(group)
+                            view.playSoundEffect(SoundEffectConstants.CLICK)
+                        }
+                    )
+                }
+            }
+        }
         ScrollableTabRow(
             containerColor = Color.Transparent,
             selectedTabIndex = remember(groups, selectedGroup) { groups.indexOf(selectedGroup) },
             edgePadding = 0.dp,
-            modifier = modifier,
             indicator = { tabPositions ->
                 val tabIndex = remember(groups, selectedGroup, tabPositions) {
                     runCatching {
@@ -639,18 +777,9 @@ private fun GroupTabs(
                         )
                 )
             },
-            divider = {}
-        ) {
-            AppRippleTheme(NoRippleConfig) {
-                groups.forEach { group ->
-                    AppTab(
-                        text = group.name,
-                        selected = selectedGroup == group,
-                        onClick = { onGroupSelected(group) }
-                    )
-                }
-            }
-        }
+            divider = {},
+            tabs = tabs
+        )
     }
 }
 

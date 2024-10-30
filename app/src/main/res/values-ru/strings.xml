@@ -5,5 +5,11 @@
     <string name="relaunch_app">Перезапустить</string>
     <string name="retry">Повторить</string>
     <string name="label_auth">Авторизация</string>
-
+    <string name="label_profile">профиль</string>
+    <string name="label_teacher_search">преподаватели</string>
+    <string name="label_schedule">расписание</string>
+    <string name="label_files">файлы</string>
+    <string name="label_mates">помощники</string>
+    <string name="label_notes">д/з</string>
+    <string name="label_settings">настройки</string>
 </resources>

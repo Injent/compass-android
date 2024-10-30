@@ -5,7 +5,7 @@ import ru.bgitu.core.model.Group
 data class UserPrefs(
     val theme: UiTheme,
     val showPinnedSchedule: Boolean,
-    val teacherSortByWeeks: Boolean,
+    val teacherFilterByDays: Boolean,
     val savedGroups: List<Group>,
     val showGroupsOnMainScreen: Boolean,
     val helpSiteTraffic: Boolean

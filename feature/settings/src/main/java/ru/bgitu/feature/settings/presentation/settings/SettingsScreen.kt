@@ -1,8 +1,12 @@
 package ru.bgitu.feature.settings.presentation.settings
 
+import android.view.SoundEffectConstants
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -12,16 +16,24 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.androidx.compose.koinViewModel
+import ru.bgitu.core.common.ScreenRotation
+import ru.bgitu.core.common.screenRotation
 import ru.bgitu.core.designsystem.components.AppSnackbarHost
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
+import ru.bgitu.core.designsystem.theme.LocalExternalPadding
+import ru.bgitu.core.designsystem.util.thenIf
 import ru.bgitu.core.model.settings.UiTheme
 import ru.bgitu.core.model.settings.UserPrefs
 import ru.bgitu.core.navigation.LocalNavController
@@ -64,10 +76,20 @@ private fun SettingsScreenContent(
     uiState: SettingsUiState.Success,
     onIntent: (SettingsIntent) -> Unit,
 ) {
+    val context = LocalContext.current
+
     Scaffold(
-        modifier = Modifier.systemBarsPadding(),
+        modifier = Modifier
+            .systemBarsPadding()
+            .thenIf(context.screenRotation == ScreenRotation.RIGHT) {
+                displayCutoutPadding()
+            }
+            .padding(LocalExternalPadding.current),
         topBar = {
             TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent
+                ),
                 title = {
                     Text(
                         text = stringResource(R.string.settings),
@@ -82,7 +104,7 @@ private fun SettingsScreenContent(
                 }
             )
         },
-        snackbarHost = { AppSnackbarHost() }
+        snackbarHost = { AppSnackbarHost() },
     ) { innerPadding ->
         val scrollState = rememberScrollState()
         Column(
@@ -90,13 +112,15 @@ private fun SettingsScreenContent(
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(horizontal = AppTheme.spacing.xl)
-                .padding(top = AppTheme.spacing.xl)
                 .verticalScroll(scrollState),
         ) {
+            Spacer(Modifier.height(AppTheme.spacing.xs))
+            val view = LocalView.current
             AppThemeView(
                 currentTheme = uiState.prefs.theme,
                 onChangeTheme = { theme ->
                     onIntent(SettingsIntent.ChangeUiTheme(theme))
+                    view.playSoundEffect(SoundEffectConstants.CLICK)
                 }
             )
             HorizontalDivider(
@@ -118,6 +142,7 @@ private fun SettingsScreenContent(
                     onIntent(SettingsIntent.SwitchHelpSiteTraffic(enabled))
                 }
             )
+            Spacer(Modifier.height(AppTheme.spacing.xl))
         }
     }
 }
@@ -131,7 +156,7 @@ private fun SettingsScreenPreview() {
                 prefs = UserPrefs(
                     theme = UiTheme.SYSTEM,
                     showPinnedSchedule = false,
-                    teacherSortByWeeks = false,
+                    teacherFilterByDays = false,
                     savedGroups = emptyList(),
                     showGroupsOnMainScreen = true,
                     helpSiteTraffic = true

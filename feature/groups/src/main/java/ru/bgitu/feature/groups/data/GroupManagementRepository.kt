@@ -33,7 +33,7 @@ class GroupManagementRepository(
         EventBus.post(GlobalAppEvent.ChangeGroup)
     }
 
-    suspend fun searchGroup(query: String) = compassService.searchGroups(query)
+    suspend fun searchGroup(query: String) = compassService.searchGroups(query.replace("-", ""))
 
     suspend fun setGroupsVisibility(visible: Boolean) {
         settingsRepository.updateUserPrefs {

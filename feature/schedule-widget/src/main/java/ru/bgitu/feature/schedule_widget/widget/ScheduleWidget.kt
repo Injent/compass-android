@@ -1,10 +1,11 @@
 package ru.bgitu.feature.schedule_widget.widget
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import androidx.annotation.DrawableRes
+import android.os.Build.VERSION.SDK_INT
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -45,13 +46,17 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
+import org.koin.android.ext.android.get
 import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.common.HOME_DEEPLINK
 import ru.bgitu.core.common.MAIN_ACTIVITY_CLASS
-import ru.bgitu.core.designsystem.icon.AppIllustrations
+import ru.bgitu.core.datastore.SettingsRepository
+import ru.bgitu.core.designsystem.illustration.AppIllustrations
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.feature.schedule_widget.R
 import ru.bgitu.feature.schedule_widget.WidgetPb.WidgetDataPb
@@ -81,12 +86,16 @@ class ScheduleWidget : GlanceAppWidget() {
                 mode = uiState.options.themeMode,
                 opacity = uiState.options.opacity
             )
-            NewContent()
+            NewContent(
+                isGroupSelected = runBlocking {
+                    (context as Application).get<SettingsRepository>().data.first().primaryGroup != null
+                }
+            )
         }
     }
 
     @Composable
-    fun NewContent() {
+    fun NewContent(isGroupSelected: Boolean) {
         val uiState: ScheduleWidgetState = currentState<WidgetDataPb>().toWidgetState()
         val context = LocalContext.current
         val size = LocalSize.current
@@ -99,12 +108,18 @@ class ScheduleWidget : GlanceAppWidget() {
                     WidgetThemeMode.DARK -> R.drawable.dark_widget_background
                 }
             ),
-            horizontalPadding = if (size.width >= HORIZONTAL_RECTANGLE.width) 12.dp else 6.dp,
+            horizontalPadding = when {
+                SDK_INT < 31 -> 14.dp
+                size.width >= HORIZONTAL_RECTANGLE.width -> 12.dp
+                else -> 6.dp
+            },
             titleBar = {
                 TitleBar(
                     title = uiState.getTitle(context),
-                    hasNext = uiState.queryDate > DateTimeUtil.weeksDateBoundary.start,
-                    hasPrevious = uiState.queryDate < DateTimeUtil.weeksDateBoundary.endInclusive,
+                    hasNext = (uiState.queryDate > DateTimeUtil.weeksDateBoundary.start)
+                            && isGroupSelected,
+                    hasPrevious = (uiState.queryDate < DateTimeUtil.weeksDateBoundary.endInclusive)
+                            && isGroupSelected,
                     onNext = actionRunCallback<ChangeDateAction>(
                         actionParametersOf(
                             QueryDateParam to uiState.queryDate.plus(1, DateTimeUnit.DAY).toString()
@@ -119,6 +134,18 @@ class ScheduleWidget : GlanceAppWidget() {
             }
         ) {
             when {
+                !isGroupSelected -> {
+                    SelectGroupView(
+                        onClick = actionStartActivity(
+                            Intent().apply {
+                                component = ComponentName(context, MAIN_ACTIVITY_CLASS)
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or
+                                        Intent.FLAG_ACTIVITY_TASK_ON_HOME
+                            }
+                        ),
+                        modifier = GlanceModifier.fillMaxSize()
+                    )
+                }
                 uiState.classesForQueryDate.isNotEmpty() -> {
                     DaySchedule(
                         lessons = uiState.classesForQueryDate,
@@ -182,7 +209,11 @@ class ScheduleWidget : GlanceAppWidget() {
             modifier = GlanceModifier
                 .fillMaxWidth()
                 .padding(
-                    horizontal = if (size.width >= HORIZONTAL_RECTANGLE.width) 12.dp else 8.dp,
+                    horizontal = when {
+                        SDK_INT < 31 -> 14.dp
+                        size.width >= HORIZONTAL_RECTANGLE.width -> 12.dp
+                        else -> 8.dp
+                    },
                     vertical = if (size.width >= HORIZONTAL_RECTANGLE.width) 12.dp else 6.dp
                 )
         ) {
@@ -208,9 +239,6 @@ class ScheduleWidget : GlanceAppWidget() {
                     contentColor = colorScheme.foreground1
                 ),
                 modifier = GlanceModifier
-                    .padding(
-                        top = if (size.width <= SMALL_SQUARE.width) 3.dp else 0.dp
-                    )
                     .height(40.dp)
                     .defaultWeight(),
                 onClick = actionRunCallback<ChangeDateAction>(
@@ -229,6 +257,33 @@ class ScheduleWidget : GlanceAppWidget() {
                 enabled = hasNext,
                 onClick = onNext,
                 modifier = GlanceModifier.size(40.dp)
+            )
+        }
+    }
+
+    @Composable
+    private fun SelectGroupView(
+        onClick: Action,
+        modifier: GlanceModifier = GlanceModifier
+    ) {
+        val context = LocalContext.current
+
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.Center
+        ) {
+            Button(
+                text = context.getString(R.string.select_group),
+                onClick = onClick,
+                style = TextStyle(
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal
+                ),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = colorScheme.brand,
+                    contentColor = colorScheme.onBrand,
+                ),
             )
         }
     }
@@ -291,7 +346,7 @@ class ScheduleWidget : GlanceAppWidget() {
         throwable: Throwable
     ) {
         super.onCompositionError(context, glanceId, appWidgetId, throwable)
-        WidgetScheduleWorker.start(context, DateTimeUtil.currentDate)
+        //WidgetScheduleWorker.start(context, DateTimeUtil.currentDate)
     }
 
     companion object {

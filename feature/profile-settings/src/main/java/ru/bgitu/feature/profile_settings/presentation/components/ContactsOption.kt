@@ -1,6 +1,5 @@
 package ru.bgitu.feature.profile_settings.presentation.components
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,13 +13,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.bgitu.core.designsystem.components.AppCard
-import ru.bgitu.core.designsystem.components.DynamicAsyncImage
 import ru.bgitu.core.designsystem.icon.AppIcons
+import ru.bgitu.core.designsystem.icon.Telegram
+import ru.bgitu.core.designsystem.icon.Vk
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.model.Contacts
 import ru.bgitu.core.ui.Headline
@@ -41,14 +40,14 @@ fun ContactOption(
         AppCard {
             contacts.tg?.let {
                 ContactEntry(
-                    iconRes = AppIcons.Telegram,
+                    icon = AppIcons.Telegram,
                     contactUrl = it,
                     onClick = { }
                 )
             }
             contacts.vk?.let {
                 ContactEntry(
-                    iconRes = AppIcons.VK,
+                    icon = AppIcons.Vk,
                     contactUrl = it,
                     onClick = { }
                 )
@@ -59,7 +58,7 @@ fun ContactOption(
 
 @Composable
 private fun ContactEntry(
-    @DrawableRes iconRes: Int,
+    icon: ImageVector,
     contactUrl: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -76,7 +75,7 @@ private fun ContactEntry(
             modifier = modifier
         ) {
             Icon(
-                painter = painterResource(iconRes),
+                imageVector = icon,
                 contentDescription = null,
                 tint = Color.Unspecified,
                 modifier = Modifier.size(24.dp)

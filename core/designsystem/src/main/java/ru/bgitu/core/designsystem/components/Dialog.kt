@@ -80,58 +80,6 @@ fun AppDialog(
     }
 }
 
-@Composable
-fun AppDialogBase(
-    title: String,
-    modifier: Modifier = Modifier,
-    onConfirm: () -> Unit,
-    onDismiss: (() -> Unit)? = null,
-    content: @Composable () -> Unit
-) {
-    BasicAlertDialog(
-        onDismissRequest = onDismiss ?: {},
-        modifier = modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .background(
-                color = AppTheme.colorScheme.background2,
-                shape = AppTheme.shapes.default
-            ),
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
-            modifier = Modifier.padding(
-                horizontal = AppTheme.spacing.xl,
-                vertical = AppTheme.spacing.l
-            )
-        ) {
-            Text(
-                text = title,
-                style = AppTheme.typography.title3,
-                color = AppTheme.colorScheme.foreground1
-            )
-            content()
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                onDismiss?.let {
-                    AppTextButton(
-                        text = stringResource(android.R.string.cancel),
-                        onClick = it,
-                        color = AppTheme.colorScheme.foregroundError
-                    )
-                    Spacer(Modifier.width(AppTheme.spacing.s))
-                }
-                AppConfirmButton(
-                    text = stringResource(android.R.string.ok),
-                    onClick = onConfirm,
-                )
-            }
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppConfirmDialog(

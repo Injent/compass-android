@@ -12,6 +12,7 @@
                 android:value="androidx.startup"
                 tools:node="remove" />
         </provider>
+
     </application>
 
 </manifest>

@@ -1,8 +1,10 @@
 package ru.bgitu.feature.help.model
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.ui.graphics.vector.ImageVector
 import ru.bgitu.core.designsystem.icon.AppIcons
+import ru.bgitu.core.designsystem.icon.Telegram
+import ru.bgitu.core.designsystem.icon.Vk
 import ru.bgitu.feature.help.BuildConfig
 import ru.bgitu.feature.help.R
 
@@ -20,11 +22,11 @@ internal enum class DevContact(
         descriptionResId = R.string.mobile_dev_description,
         _socials =  listOf(
             Social(
-                iconResId = AppIcons.Telegram,
+                icon = AppIcons.Telegram,
                 url = "tg"
             ),
             Social(
-                iconResId = AppIcons.VK,
+                icon = AppIcons.Vk,
                 url = "vk"
             )
         )
@@ -36,11 +38,11 @@ internal enum class DevContact(
         descriptionResId = R.string.backend_dev_description,
         _socials = listOf(
             Social(
-                iconResId = AppIcons.Telegram,
+                icon = AppIcons.Telegram,
                 url = "tg"
             ),
             Social(
-                iconResId = AppIcons.VK,
+                icon = AppIcons.Vk,
                 url = "vk"
             )
         )
@@ -57,7 +59,7 @@ internal enum class DevContact(
         get() = "${baseUrl}avatar.png"
 
     data class Social(
-        @DrawableRes val iconResId: Int,
+        val icon: ImageVector,
         val url: String
     )
 }

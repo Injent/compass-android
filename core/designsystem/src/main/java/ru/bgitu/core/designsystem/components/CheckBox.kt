@@ -1,5 +1,6 @@
 package ru.bgitu.core.designsystem.components
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -48,7 +49,7 @@ fun AppCheckBox(
         Box(
             modifier = Modifier
                 .size(24.dp)
-                .background(checkedColor!!, shape)
+                .background(animateColorAsState(checkedColor!!).value, shape)
                 .then(
                     borderColor?.let {
                         Modifier.border(1.dp, it, shape)

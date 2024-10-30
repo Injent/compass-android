@@ -95,7 +95,7 @@ private fun HelpScreenContent(
                     for (social in devContact.socials) {
                         AppFilledIconButton(
                             onClick = { onClickUrl(social.url) },
-                            icon = social.iconResId,
+                            icon = social.icon,
                             tint = Color.Unspecified
                         )
                     }

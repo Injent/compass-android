@@ -104,7 +104,7 @@ private fun AppUpdateBottomSheetDialogContent(
             DialogActions(
                 onUpdateDismiss = onUpdateDismiss,
                 onUpdateRequest = onUpdateRequest,
-                dissmissable = false
+                dismissible = false
             )
         }
     }
@@ -216,11 +216,11 @@ private fun DialogBody(
             ) {
                 MarkdownText(
                     markdown = changelog,
-                    color = AppTheme.colorScheme.foreground1,
                     linkColor = AppTheme.colorScheme.foreground,
                     isTextSelectable = false,
                     onLinkClicked = context::openUrl,
                     style = AppTheme.typography.body,
+                    color = AppTheme.colorScheme.foreground1,
                     imageLoader = Coil.imageLoader(context),
                 )
             }
@@ -243,7 +243,7 @@ private fun DialogBody(
 private fun DialogActions(
     onUpdateDismiss: () -> Unit,
     onUpdateRequest: () -> Unit,
-    dissmissable: Boolean,
+    dismissible: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -255,7 +255,7 @@ private fun DialogActions(
             onClick = onUpdateRequest,
             modifier = Modifier.fillMaxWidth()
         )
-        if (dissmissable) {
+        if (dismissible) {
             AppSecondaryButton(
                 text = stringResource(R.string.later),
                 onClick = onUpdateDismiss,

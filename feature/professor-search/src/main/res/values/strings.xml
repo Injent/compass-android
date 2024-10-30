@@ -7,9 +7,10 @@
     <string name="attention">Attention!</string>
     <string name="alert_text">The schedule provided {is not} a schedule of retakes or make-up works</string>
     <string name="clear_search">clear</string>
-    <string name="filter_by_weeks">by weeks</string>
-    <string name="filter_by_days">by days</string>
+    <string name="filter_by_days">by days of week</string>
+    <string name="not_filter">all days</string>
     <string name="from_date_to_date" translatable="false">%s - %s</string>
     <string name="search_professors_title">Teacher\'s schedule</string>
     <string name="hint_enterTeacherLastName">Teacher\'s last name...</string>
+    <string name="no_classes_until">No more classes until %s</string>
 </resources>

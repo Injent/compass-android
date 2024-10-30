@@ -2,10 +2,5 @@
 
     <application>
 
-        <service android:name=".SiteTrafficService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="shortService"
-            />
     </application>
 </manifest>

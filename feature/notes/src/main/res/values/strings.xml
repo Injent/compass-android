@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_homework">Homework</string>
+    <string name="start_typing">Start typing…</string>
+    <string name="empty">Empty</string>
+    <string name="click_on_card_to_add_note">Click on the card with a class to add homework</string>
+</resources>

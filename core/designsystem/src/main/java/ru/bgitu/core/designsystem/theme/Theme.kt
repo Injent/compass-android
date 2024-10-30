@@ -43,7 +43,10 @@ object AppTheme {
         @Composable get() = LocalStrokeWidth.current
 
     val isDarkTheme: Boolean
-        @Composable get()= LocalNewColorScheme.current.isDarkTheme
+        @Composable get() = LocalNewColorScheme.current.isDarkTheme
+
+    val isDynamicThemeEnabled: Boolean
+        @Composable get() = isDynamicColorsEnabled()
 }
 
 val LocalTypography = staticCompositionLocalOf { Typography }
@@ -126,7 +129,8 @@ private fun createColorScheme(
                 backgroundBrand = provideColor(android.R.color.system_accent1_200),
                 foregroundOnBrand = provideColor(android.R.color.system_accent1_800),
                 foreground = provideColor(android.R.color.system_accent1_200),
-                foregroundAccent = provideColor(android.R.color.system_accent2_200)
+                foregroundAccent = provideColor(android.R.color.system_accent2_200),
+                brandStroke = provideColor(android.R.color.system_accent1_200)
             )
         } else NewDarkColorScheme
     } else {
@@ -136,6 +140,7 @@ private fun createColorScheme(
                 foregroundOnBrand = provideColor(android.R.color.system_accent1_0),
                 foreground = provideColor(android.R.color.system_accent1_600),
                 foregroundAccent = provideColor(android.R.color.system_accent2_600),
+                brandStroke = provideColor(android.R.color.system_accent1_600)
             )
         } else NewLightColorScheme
     }

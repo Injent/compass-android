@@ -25,6 +25,7 @@ import ru.bgitu.feature.help.navigation.helpRoute
 import ru.bgitu.feature.home.impl.navigation.homeRoute
 import ru.bgitu.feature.input.navigation.inputRoute
 import ru.bgitu.feature.login.navigation.loginRoute
+import ru.bgitu.feature.notes.navigation.notesRoute
 import ru.bgitu.feature.onboarding.navigation.onboardingRoute
 import ru.bgitu.feature.professor_search.navigation.professorSearchRoute
 import ru.bgitu.feature.profile.navigation.profileRoute
@@ -64,16 +65,8 @@ private fun NavGraphBuilder.mainGraph() {
         homeRoute()
         professorSearchRoute()
         findMateGraph()
-        profileGraph()
-    }
-}
-
-private fun NavGraphBuilder.profileGraph() {
-    navigation<Screen.ProfileGraph>(
-        startDestination = Screen.Profile,
-    ) {
+        notesRoute()
         profileRoute()
-        profileSettingsRoutes()
     }
 }
 

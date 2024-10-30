@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,6 +30,8 @@ import ru.bgitu.core.designsystem.components.AppSwitch
 import ru.bgitu.core.designsystem.components.LocalSnackbarController
 import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.theme.AppTheme
+import ru.bgitu.core.designsystem.theme.LocalExternalPadding
+import ru.bgitu.core.designsystem.theme.bottom
 import ru.bgitu.core.model.Group
 import ru.bgitu.core.navigation.BackResultEffect
 import ru.bgitu.core.navigation.LocalNavController
@@ -148,7 +149,8 @@ private fun GroupsScreen(
                 modifier = Modifier
                     .padding(bottom = AppTheme.spacing.l)
             )
-        }
+        },
+        modifier = Modifier.padding(bottom = LocalExternalPadding.current.bottom)
     ) { innerPadding ->
         Column(
             modifier = Modifier

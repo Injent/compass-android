@@ -6,4 +6,10 @@
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:windowShowWallpaper">true</item>
     </style>
+
+    <style name="ThemeWidgetCircularLoading" parent="android:Widget.ProgressBar">
+        <item name="android:indeterminateTint">@color/colorBrand</item>
+        <item name="android:indeterminate">true</item>
+        <item name="android:indeterminateTintMode">src_atop</item>
+    </style>
 </resources>

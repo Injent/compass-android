@@ -5,15 +5,7 @@
     <string name="logout_description">All data will be saved and uploaded upon further login, but you will not be able to receive notifications</string>
     <string name="student_of_group">Student of %s</string>
     <string name="status_not_verified">Not verified</string>
-    <string name="break_in">Break</string>
-    <string name="middle_of_lesson">The middle of class</string>
-    <string name="class_is_over">Class is over</string>
-    <string name="break_was">The break was %s</string>
-    <string name="break_for">Break for %s</string>
-    <string name="class_started_last">Class started</string>
-    <string name="classes_ended_last">Class ended</string>
-    <string name="break_at">Break at</string>
-    <string name="classes_end_in">Classes wil end %s</string>
+
     <string name="fakeProfile1_fullName" translatable="false">Лазарева Диана</string>
     <string name="fakeProfile1_bio" translatable="false">Помогу с математикой</string>
     <string name="fakeProfile2_fullName" translatable="false">Климов Михаил</string>

@@ -1,6 +1,7 @@
 package ru.bgitu.core.designsystem.components
 
 import android.os.Build.VERSION.SDK_INT
+import android.view.SoundEffectConstants
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +19,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -55,6 +56,8 @@ fun AppCard(
     contentColor: Color = Color.Unspecified,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    val view = LocalView.current
+
     CompositionLocalProvider(
         LocalMinimumInteractiveComponentSize provides 0.dp,
     ) {
@@ -62,7 +65,7 @@ fun AppCard(
             containerColor = color,
             contentColor = contentColor
         )
-        val shadowModifier = Modifier
+        val theModifier = Modifier
             .thenIf(shadowEnabled) {
                 if (SDK_INT < 28) {
                     roundRectShadow(
@@ -92,10 +95,13 @@ fun AppCard(
         AppRippleTheme {
             onClick?.let {
                 Card(
-                    onClick = it,
+                    onClick = {
+                        it.invoke()
+                        view.playSoundEffect(SoundEffectConstants.CLICK)
+                    },
                     shape = shape,
                     colors = colors,
-                    modifier = modifier.then(shadowModifier),
+                    modifier = modifier.then(theModifier),
                 ) {
                     contentInColumn()
                 }
@@ -103,7 +109,7 @@ fun AppCard(
                 Card(
                     shape = shape,
                     colors = colors,
-                    modifier = modifier.then(shadowModifier)
+                    modifier = modifier.then(theModifier)
                 ) {
                     contentInColumn()
                 }
@@ -197,7 +203,7 @@ fun AppItemCard(
 private fun AppItemCardPreview() {
     CompassTheme {
         AppItemCard(
-            icon = AppIcons.Settings,
+            icon = AppIcons.SettingsOutlined,
             label = "Settings",
             onClick = {},
             modifier = Modifier.width(428.dp)

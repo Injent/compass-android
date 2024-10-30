@@ -1,7 +1,6 @@
 package ru.bgitu.feature.schedule_widget.widget.component
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.ColorFilter
@@ -102,7 +101,7 @@ fun GlanceLesson(
         Box(GlanceModifier.padding(top = 4.dp)) {
             Image(
                 provider = ImageProvider(
-                    if (lesson.isLecture) AppIcons.BookCover else AppIcons.Flask
+                    if (lesson.isLecture) AppIcons.BookCover2 else AppIcons.Flask2
                 ),
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(iconColor),

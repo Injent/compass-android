@@ -13,7 +13,7 @@ data class AppRipple(
 )
 
 val AppLightRipple = AppRipple(
-    background1 = Color(0x141B1B1B),
+    background1 = Color(0x12B4B4B4),
     foreground1 = Color(0xFF242424)
 )
 
@@ -36,11 +36,11 @@ val DefaultRippleConfig: RippleConfiguration
         )
     }
 
-val NoRippleConfig = RippleConfiguration(Color.Unspecified, null)
+val NoRippleConfig = null
 
 @Composable
 fun AppRippleTheme(
-    rippleConfig: RippleConfiguration = DefaultRippleConfig,
+    rippleConfig: RippleConfiguration? = DefaultRippleConfig,
     content: @Composable () -> Unit
 ) {
     CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig, content = content)

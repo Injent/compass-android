@@ -26,10 +26,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ru.bgitu.core.designsystem.components.AppBottomBarTokens
 import ru.bgitu.core.designsystem.components.AppSearchField
-import ru.bgitu.core.designsystem.icon.AppIllustrations
+import ru.bgitu.core.designsystem.illustration.AppIllustrations
 import ru.bgitu.core.designsystem.theme.AppTheme
+import ru.bgitu.core.designsystem.theme.LocalExternalPadding
+import ru.bgitu.core.designsystem.theme.bottom
 import ru.bgitu.core.navigation.LocalNavController
 import ru.bgitu.feature.findmate.R
 import ru.bgitu.feature.findmate.presentation.components.MateView
@@ -85,7 +86,7 @@ private fun SearchMateScreen(
         },
         modifier = Modifier
             .systemBarsPadding()
-            .padding(bottom = AppBottomBarTokens.Height)
+            .padding(bottom = LocalExternalPadding.current.bottom)
     ) { paddingValues ->
         Column(
             modifier = Modifier

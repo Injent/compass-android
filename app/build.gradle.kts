@@ -115,8 +115,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.ktor.core)
-    implementation(libs.ktor.cio)
     // Features
     implementation(projects.feature.home)
     implementation(projects.feature.findmate)
@@ -134,6 +132,7 @@ dependencies {
     implementation(projects.feature.groups)
     implementation(projects.feature.input)
     implementation(projects.feature.onboarding)
+    implementation(projects.feature.notes)
 
     implementation(projects.core.designsystem)
     implementation(projects.core.network)

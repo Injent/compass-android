@@ -3,6 +3,7 @@ package ru.bgitu.feature.about.presentation
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -98,7 +99,7 @@ private fun AboutScreenContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = AppTheme.spacing.l),
+                .padding(horizontal = AppTheme.spacing.s),
         ) {
             item {
                 Spacer(Modifier.height(56.dp))
@@ -167,7 +168,15 @@ private fun AboutScreenContent(
                         color = AppTheme.colorScheme.foreground1
                     )
                     Spacer(Modifier.height(AppTheme.spacing.l))
-                    Changelog(markdown = it)
+                    Changelog(
+                        markdown = it,
+                        modifier = Modifier
+                            .background(
+                                AppTheme.colorScheme.background4,
+                                AppTheme.shapes.default
+                            )
+                            .padding(AppTheme.spacing.s)
+                    )
                     Spacer(modifier = Modifier.height(AppTheme.spacing.l))
                 }
             }

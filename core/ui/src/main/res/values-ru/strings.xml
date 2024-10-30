@@ -5,13 +5,5 @@
     <string name="logout_description">Все данные сохранятся и будут загружены при дальнейшем входе, но вы не сможете получать уведомления</string>
     <string name="student_of_group">Студент %s</string>
     <string name="status_not_verified">Не подтвержден</string>
-    <string name="break_in">Перерыв</string>
-    <string name="middle_of_lesson">Сейчас идет пара</string>
-    <string name="class_is_over">Пара окончена</string>
-    <string name="break_was">Перерыв был %s</string>
-    <string name="break_for">Перерыв %s</string>
-    <string name="class_started_last">Пара началась</string>
-    <string name="classes_ended_last">Пара закончилась</string>
-    <string name="break_at">Перерыв в</string>
-    <string name="classes_end_in">Пары закончатся %s</string>
+
 </resources>

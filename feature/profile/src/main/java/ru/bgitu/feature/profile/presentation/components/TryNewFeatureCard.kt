@@ -21,7 +21,8 @@ import androidx.compose.ui.unit.dp
 import ru.bgitu.core.designsystem.components.AppCard
 import ru.bgitu.core.designsystem.components.AppIconButton
 import ru.bgitu.core.designsystem.icon.AppIcons
-import ru.bgitu.core.designsystem.icon.AppIllustrations
+import ru.bgitu.core.designsystem.icon.Close
+import ru.bgitu.core.designsystem.illustration.AppIllustrations
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
 import ru.bgitu.core.ui.MatesBannerContent

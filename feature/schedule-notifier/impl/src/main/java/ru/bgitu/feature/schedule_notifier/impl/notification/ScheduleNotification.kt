@@ -18,6 +18,8 @@ fun Context.createScheduleNotification(
     currentClass: ClassInNotification,
     nextClass: ClassInNotification,
 ): Notification {
+    println("CREATED NOTIFICATIN")
+
     return NotificationCompat.Builder(this, AppChannelManager.PINNED_SCHEDULE_CHANNEL_ID)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setOngoing(true)

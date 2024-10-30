@@ -5,11 +5,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
@@ -20,13 +19,13 @@ import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.common.eventChannel
 import ru.bgitu.core.common.getOrElse
 import ru.bgitu.core.data.repository.CompassRepository
+import ru.bgitu.core.data.util.NetworkMonitor
 import ru.bgitu.core.datastore.SettingsRepository
 import ru.bgitu.core.model.ProfessorClass
 
 sealed class ProfessorDetailsIntent {
-    data class ChangeDate(val date: LocalDate) : ProfessorDetailsIntent()
-    data class ChangeWeek(val week: DayOfWeek) : ProfessorDetailsIntent()
-    data class ChangeFilter(val sortByWeeks: Boolean) : ProfessorDetailsIntent()
+    data class ChangeFilter(val filterByDays: Boolean) : ProfessorDetailsIntent()
+    data class ChangePage(val page: Int) : ProfessorDetailsIntent()
     data object Back : ProfessorDetailsIntent()
 }
 
@@ -41,8 +40,7 @@ sealed class FilteredSchedule {
         val schedules: Map<LocalDate, List<ProfessorClass>> = emptyMap()
     ) : FilteredSchedule()
 
-    data class ByDays(
-        val selectedDate: LocalDate? = null,
+    data class All(
         val classes: List<ProfessorClass> = emptyList()
     ) : FilteredSchedule()
 }
@@ -52,25 +50,31 @@ data class ProfessorDetailsUiState internal constructor(
     val toDate: LocalDate = DateTimeUtil.getEndOfWeek(fromDate.plus(2, DateTimeUnit.WEEK)),
     val dateBoundary: ClosedRange<LocalDate> = fromDate..toDate,
     val professorName: String,
-    val filteredSchedule: FilteredSchedule? = null,
-    val isLoading: Boolean = true
-) {
-    val filteredByWeek: Boolean
-        get() = filteredSchedule is FilteredSchedule.ByWeek
-}
+    val schedules: List<ProfessorClass> = emptyList(),
+    val selectedPage: Int,
+    val filterByDays: Boolean = false,
+    val loading: Boolean = true,
+)
 
 class TeacherDetailsViewModel(
     private val compassRepository: CompassRepository,
     private val settingsRepository: SettingsRepository,
     val teacherName: String,
+    networkMonitor: NetworkMonitor
 ) : ViewModel() {
     private val _events = eventChannel<ProfessorDetailsEvent>()
     val events = _events.receiveAsFlow()
 
-    private val _uiState = MutableStateFlow(ProfessorDetailsUiState(professorName = teacherName))
-    private val fullSchedule = flow {
+    private val _uiState = MutableStateFlow(
+        ProfessorDetailsUiState(
+            professorName = teacherName,
+            selectedPage = DateTimeUtil.currentDate.dayOfWeek.ordinal
+                .coerceAtMost(DayOfWeek.SATURDAY.ordinal)
+        )
+    )
+    private val fullSchedule = networkMonitor.isOnline.map {
         var id = 0L
-        val lessons = compassRepository.getProfessorSchedule(
+        compassRepository.getProfessorSchedule(
             professorName = teacherName,
             from = _uiState.value.fromDate,
             to = _uiState.value.toDate
@@ -83,68 +87,47 @@ class TeacherDetailsViewModel(
                 id++
                 it.copy(id = id)
             }
-        emit(lessons)
     }
-    private val selectedDate = MutableStateFlow<LocalDate?>(null)
-    private val selectedWeek = MutableStateFlow(_uiState.value.fromDate.dayOfWeek)
 
     val uiState = combine(
         fullSchedule,
+        _uiState,
         settingsRepository.data,
-        selectedDate,
-        selectedWeek
-    ) { fullSchedule, userdata, selectedDate, selectedWeek ->
-        val filteredSchedule = if (userdata.userPrefs.teacherSortByWeeks) {
-            FilteredSchedule.ByWeek(
-                selectedWeek = selectedWeek,
-                schedules = fullSchedule.filter { it.date.dayOfWeek == selectedWeek }
-                    .groupBy { it.date }
-            )
-        } else {
-            FilteredSchedule.ByDays(
-                selectedDate = selectedDate,
-                classes = if (selectedDate == null) {
-                    fullSchedule
-                } else {
-                    fullSchedule.filter {
-                        it.date == selectedDate
-                    }
-                }
-            )
-        }
-
-        _uiState.updateAndGet {
-            it.copy(
-                filteredSchedule = filteredSchedule,
-                isLoading = false
-            )
-        }
+    ) { fullSchedule, state, userdata ->
+        state.copy(
+            schedules = fullSchedule,
+            loading = false,
+            filterByDays = userdata.userPrefs.teacherFilterByDays
+        )
     }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = ProfessorDetailsUiState(professorName = teacherName)
+            initialValue = _uiState.value
         )
 
     fun onIntent(intent: ProfessorDetailsIntent) {
         when (intent) {
-            is ProfessorDetailsIntent.ChangeDate -> {
-                selectedDate.update { old ->
-                    intent.date.takeIf { new -> new != old }
-                }
-            }
             ProfessorDetailsIntent.Back -> {
                 _events.trySend(ProfessorDetailsEvent.Back)
             }
             is ProfessorDetailsIntent.ChangeFilter -> {
                 viewModelScope.launch {
                     settingsRepository.updateUserPrefs {
-                        it.copy(teacherSortByWeeks = intent.sortByWeeks)
+                        it.copy(teacherFilterByDays = intent.filterByDays)
                     }
                 }
             }
-            is ProfessorDetailsIntent.ChangeWeek -> {
-                selectedWeek.value = intent.week
+            is ProfessorDetailsIntent.ChangePage -> {
+                _uiState.update {
+                    it.copy(
+                        selectedPage = intent.page,
+                        filterByDays = true
+                    )
+                }
+                viewModelScope.launch {
+                    settingsRepository.updateUserPrefs { it.copy(teacherFilterByDays = true) }
+                }
             }
         }
     }

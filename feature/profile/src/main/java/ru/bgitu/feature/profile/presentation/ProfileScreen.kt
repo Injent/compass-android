@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -50,8 +52,9 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.layoutId
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.androidx.compose.koinViewModel
+import ru.bgitu.core.common.ScreenRotation
 import ru.bgitu.core.common.openUrl
-import ru.bgitu.core.designsystem.components.AppBottomBarTokens
+import ru.bgitu.core.common.screenRotation
 import ru.bgitu.core.designsystem.components.AppCard
 import ru.bgitu.core.designsystem.components.AppItemCard
 import ru.bgitu.core.designsystem.components.AppSmallButton
@@ -60,9 +63,15 @@ import ru.bgitu.core.designsystem.components.MotionContent
 import ru.bgitu.core.designsystem.components.Status
 import ru.bgitu.core.designsystem.components.StatusDecor
 import ru.bgitu.core.designsystem.icon.AppIcons
+import ru.bgitu.core.designsystem.icon.Edit
+import ru.bgitu.core.designsystem.icon.Vk
 import ru.bgitu.core.designsystem.theme.AppTheme
+import ru.bgitu.core.designsystem.theme.LocalExternalPadding
+import ru.bgitu.core.designsystem.theme.bottom
+import ru.bgitu.core.designsystem.theme.start
 import ru.bgitu.core.designsystem.util.boxShadow
 import ru.bgitu.core.designsystem.util.shimmer
+import ru.bgitu.core.designsystem.util.thenIf
 import ru.bgitu.core.navigation.LocalNavController
 import ru.bgitu.core.navigation.Screen
 import ru.bgitu.core.navigation.push
@@ -149,6 +158,7 @@ private fun ProfileScreenTopBar(
     val additionalStatusBarHeight = LocalDensity.current.run {
         WindowInsets.statusBars.getTop(this).toDp()
     }
+    val context = LocalContext.current
     MotionContent(
         scrollBehavior = scrollBehavior,
         motionSceneResId = R.raw.profile_topbar_scene,
@@ -157,6 +167,7 @@ private fun ProfileScreenTopBar(
         ),
         pinnedHeight = 56.dp + additionalStatusBarHeight,
         maxHeight = 120.dp + additionalStatusBarHeight,
+        modifier = Modifier
     ) { fraction ->
         val headerColorTransition = AppTheme.colorScheme.background3.copy(fraction)
         Box(
@@ -212,11 +223,12 @@ private fun NewProfileScreenContent(
     onIntent: (ProfileIntent) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val context = LocalContext.current
 
     Scaffold(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .padding(bottom = AppBottomBarTokens.Height),
+            .padding(start = LocalExternalPadding.current.start),
         topBar = {
             ProfileScreenTopBar(
                 scrollBehavior = scrollBehavior,
@@ -231,6 +243,9 @@ private fun NewProfileScreenContent(
                 verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.l),
                 modifier = Modifier
                     .fillMaxSize()
+                    .thenIf(context.screenRotation == ScreenRotation.RIGHT) {
+                        displayCutoutPadding()
+                    }
                     .verticalScroll(
                         state = rememberScrollState(),
                     )
@@ -317,6 +332,8 @@ private fun NewProfileScreenContent(
                 )
             }
 
+            Spacer(Modifier.height(LocalExternalPadding.current.bottom))
+
 
                 // TODO("Add signout button in future releases"
 //                AppCard(
@@ -375,13 +392,13 @@ private fun AuthorizedProfileHeader(
                     modifier = Modifier
                         .weight(1f)
                 )
-                AppSmallButton(
-                    text = stringResource(R.string.settings),
-                    onClick = { onIntent(ProfileIntent.NavigateToSettings) },
-                    icon = AppIcons.Settings,
-                    modifier = Modifier
-                        .weight(1f)
-                )
+//                AppSmallButton(
+//                    text = stringResource(R.string.settings),
+//                    onClick = { onIntent(ProfileIntent.NavigateToSettings) },
+//                    icon = AppIcons,
+//                    modifier = Modifier
+//                        .weight(1f)
+//                )
             }
         }
     }
@@ -445,14 +462,14 @@ private fun ContactsCard(
                         ) {
                             contacts.vk?.let { url ->
                                 LinkButton(
-                                    icon = AppIcons.VK,
+                                    icon = AppIcons.Vk,
                                     text = url.substringAfterLast('/'),
                                     url = url
                                 )
                             }
                             contacts.vk?.let { url ->
                                 LinkButton(
-                                    icon = AppIcons.VK,
+                                    icon = AppIcons.Vk,
                                     text = url.substringAfterLast('/'),
                                     url = url
                                 )
@@ -546,7 +563,7 @@ private fun SpecifyCardContent(
 
 @Composable
 private fun LinkButton(
-    icon: Int,
+    icon: ImageVector,
     text: String,
     url: String,
     modifier: Modifier = Modifier
@@ -559,7 +576,7 @@ private fun LinkButton(
         }
     ) {
         Image(
-            painter = painterResource(icon),
+            imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(24.dp)
         )

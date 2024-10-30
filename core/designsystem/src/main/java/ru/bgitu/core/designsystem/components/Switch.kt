@@ -1,5 +1,6 @@
 package ru.bgitu.core.designsystem.components
 
+import android.view.SoundEffectConstants
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -17,6 +18,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.bgitu.core.designsystem.components.AppSwitchTokens.Gap
@@ -30,9 +32,10 @@ import ru.bgitu.core.designsystem.theme.CompassTheme
 fun AppSwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    modifier: Modifier = Modifier
 ) {
+    val view = LocalView.current
     val thumbRadius = (TrackHeight / 2) - Gap
 
     val animatePosition by animateFloatAsState(
@@ -59,7 +62,10 @@ fun AppSwitch(
             .size(width = TrackWidth, height = TrackHeight)
             .pointerInput(checked) {
                 detectTapGestures(
-                    onTap = { onCheckedChange(!checked) }
+                    onTap = {
+                        onCheckedChange(!checked)
+                        view.playSoundEffect(SoundEffectConstants.CLICK)
+                    }
                 )
             }
     ) {

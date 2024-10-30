@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.bgitu.core.designsystem.icon.AppIcons
+import ru.bgitu.core.designsystem.icon.Close
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
 import ru.bgitu.core.designsystem.theme.applyState
@@ -427,7 +428,7 @@ private fun AppTextField2Preview() {
             trailingIcon = {
                 AppIconButton(
                     onClick = {},
-                    icon = AppIcons.VisibilityOn,
+                    icon = AppIcons.Close,
                     iconPadding = PaddingValues(0.dp)
                 )
             },

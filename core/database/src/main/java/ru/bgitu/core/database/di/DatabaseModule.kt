@@ -4,7 +4,6 @@ import androidx.room.Room
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import ru.bgitu.core.database.CompassDatabase
-import ru.bgitu.core.database.dao.ScheduleDao
 
 val DatabaseModule = module {
     single<CompassDatabase> {
@@ -17,7 +16,6 @@ val DatabaseModule = module {
             .build()
     }
 
-    factory<ScheduleDao> {
-        get<CompassDatabase>().scheduleDao()
-    }
+    factory { get<CompassDatabase>().scheduleDao() }
+    factory { get<CompassDatabase>().noteDao() }
 }

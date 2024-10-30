@@ -5,6 +5,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.serialization.generateHashCode
 import kotlinx.serialization.InternalSerializationApi
@@ -14,24 +15,10 @@ val LocalNavController = staticCompositionLocalOf<NavController> {
     error("Navigator not provided")
 }
 
-fun NavController.navigateTopDestination(tab: Tab) {
-    val navigatingId = when(tab) {
-        Tab.HOME -> getId<Screen.Home>()
-        Tab.PROFESSOR_SEARCH -> getId<Screen.TeacherSearch>()
-        //Tab.MATES -> getId<Screen.SearchMate>()
-        Tab.PROFILE -> getId<Screen.Profile>()
-    }
+fun NavController.navigateTopDestination(tab: Any) {
+    if (currentDestination?.hasRoute(tab::class) == true) return
 
-    if (currentDestination?.id == navigatingId) return
-
-    navigate(
-        when (tab) {
-            Tab.HOME -> Screen.Home
-            Tab.PROFESSOR_SEARCH -> Screen.TeacherSearch()
-            //Tab.MATES -> Screen.SearchMate
-            Tab.PROFILE -> Screen.ProfileGraph
-        }
-    ) {
+    navigate(tab) {
         popUpTo(graph.findStartDestination().id) {
             saveState = true
         }

@@ -20,4 +20,16 @@
     <string name="dialog_description_reset_group">Группы в расписании поменялись, необходимо выбрать новую</string>
     <string name="skip">Пропустить</string>
     <string name="select">Выбрать</string>
+    <string name="action_add_homework">Добавить д/з</string>
+    <string name="break_in">Перерыв</string>
+    <string name="middle_of_lesson">Сейчас идет пара</string>
+    <string name="class_is_over">Пара окончена</string>
+    <string name="break_was">Перерыв был %s</string>
+    <string name="break_for">Перерыв %s</string>
+    <string name="class_started_last">Пара началась</string>
+    <string name="classes_ended_last">Пара закончилась</string>
+    <string name="break_at">Перерыв в</string>
+    <string name="classes_end_in">Пары закончатся %s</string>
+    <string name="try_clear_cache">Попробуйте очистить кэш</string>
+    <string name="no_classes_today">Сегодня нет пар</string>
 </resources>

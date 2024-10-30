@@ -39,7 +39,7 @@ import ru.bgitu.core.designsystem.components.AppSnackbarHost
 import ru.bgitu.core.designsystem.components.LocalSnackbarController
 import ru.bgitu.core.designsystem.components.rememberSnackbarController
 import ru.bgitu.core.designsystem.icon.AppIcons
-import ru.bgitu.core.designsystem.icon.AppIllustrations
+import ru.bgitu.core.designsystem.illustration.AppIllustrations
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
 import ru.bgitu.core.designsystem.util.TopGoneLayout
@@ -176,7 +176,6 @@ private fun LoginSection(
                 if (signInParams is Result.Success) {
                     onIntent(LoginIntent.SignIn(signInParams.value))
                 } else {
-                    println("FAILED")
                 }
             },
             modifier = Modifier

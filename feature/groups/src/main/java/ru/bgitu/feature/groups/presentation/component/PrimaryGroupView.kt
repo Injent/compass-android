@@ -8,12 +8,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import ru.bgitu.core.designsystem.components.AppCard
 import ru.bgitu.core.designsystem.icon.AppIcons
+import ru.bgitu.core.designsystem.icon.Swap
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.feature.groups.R
 
@@ -47,7 +47,7 @@ internal fun PrimaryGroupItem(
                 color = AppTheme.colorScheme.foregroundOnBrand
             )
             Icon(
-                painter = painterResource(AppIcons.Swap),
+                imageVector = AppIcons.Swap,
                 contentDescription = null,
                 tint = AppTheme.colorScheme.foregroundOnBrand
             )
