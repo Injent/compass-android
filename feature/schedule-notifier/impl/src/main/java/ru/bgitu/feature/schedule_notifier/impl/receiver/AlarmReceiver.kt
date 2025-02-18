@@ -4,18 +4,18 @@ import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.atDate
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.common.LessonDataUtils
 import ru.bgitu.core.common.atStartOfStudyDay
 import ru.bgitu.core.data.repository.ScheduleRepository
-import ru.bgitu.core.model.Lesson
+import ru.bgitu.core.datastore.model.StoredLesson
 import ru.bgitu.core.notifications.Notifier
 import ru.bgitu.feature.schedule_notifier.api.ScheduleNotifier
 import ru.bgitu.feature.schedule_notifier.impl.R
@@ -35,12 +35,12 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
         val scheduleNotifier = _scheduleNotifier as ScheduleNotifierAlarm
 
         val now = DateTimeUtil.currentDateTime
-        val classes = runBlocking { scheduleRepository.getClasses(now.date) }
+        val lessons = runBlocking { scheduleRepository.getLessonsForDate(now.date) }
         val msg = initialMessage(
             now = now,
-            classes = classes
+            lessons = lessons
         )
-        val alarmData = context.getAlarmData(msg)
+        val alarmData = context.getAlarmData(msg = msg)
 
         val notificationManager = NotificationManagerCompat.from(context)
 
@@ -58,18 +58,18 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
 
     private fun initialMessage(
         now: LocalDateTime,
-        classes: List<Lesson>,
+        lessons: List<StoredLesson>,
     ): NotificationData {
-        if (classes.isEmpty()) {
+        if (lessons.isEmpty()) {
             return NotificationData(
                 lesson = null,
                 nextLesson = null,
                 type = MsgType.NEXT_DAY
             )
         }
-        val sortedClasses = classes.sortedBy { it.startAt }
+        val sortedClasses = lessons.sortedBy { it.startAt }
 
-        if (now >= sortedClasses.maxBy { it.endDateTime }.endDateTime) {
+        if (now >= sortedClasses.maxBy { it.endAt }.endAt.atDate(now.date)) {
             return NotificationData(
                 lesson = sortedClasses.first(),
                 nextLesson = sortedClasses.getOrNull(1),
@@ -77,7 +77,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
             )
         }
 
-        if (sortedClasses.first().startDateTime > now) {
+        if (sortedClasses.first().startAt.atDate(now.date) > now) {
             return NotificationData(
                 lesson = sortedClasses.first(),
                 nextLesson = sortedClasses.getOrNull(1),
@@ -86,7 +86,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
         }
 
         val ongoingClass = sortedClasses.find {
-            it.startDateTime <= now && it.endDateTime > now
+            it.startAt.atDate(now.date) <= now && it.endAt.atDate(now.date) > now
         }
         if (ongoingClass != null) {
             return NotificationData(
@@ -100,7 +100,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
             val lesson = sortedClasses[i]
             val nextLesson = sortedClasses.getOrNull(i + 1)
 
-            if (lesson.endDateTime < now && nextLesson?.let { it.startDateTime > now } == true) {
+            if (lesson.endAt.atDate(now.date) < now && nextLesson?.let { it.startAt.atDate(now.date) > now } == true) {
                 return NotificationData(
                     lesson = lesson,
                     nextLesson = nextLesson,
@@ -125,15 +125,17 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
     }
 
     private fun Context.getAlarmData(msg: NotificationData): AlarmData {
+        val now = DateTimeUtil.currentDate
+
         return when (msg.type) {
             MsgType.START_SOON -> {
                 val lesson = requireNotNull(msg.lesson)
 
                 AlarmData(
-                    triggerAt = lesson.startDateTime,
+                    triggerAt = lesson.startAt.atDate(now),
                     notification = createScheduleNotification(
                         currentClass = ClassInNotification(
-                            subject = lesson.subject.name,
+                            subject = lesson.subjectName,
                             location = formatLocation(lesson),
                             startTime = DateTimeUtil.formatTime(lesson.startAt),
                             endTime = DateTimeUtil.formatTime(lesson.endAt),
@@ -142,7 +144,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
                         ),
                         nextClass = msg.nextLesson?.let { nextLesson ->
                             ClassInNotification(
-                                subject = nextLesson.subject.name,
+                                subject = nextLesson.subjectName,
                                 location = formatLocation(nextLesson),
                                 startTime = DateTimeUtil.formatTime(nextLesson.startAt),
                                 endTime = DateTimeUtil.formatTime(nextLesson.endAt),
@@ -151,6 +153,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
                             )
                         } ?: ClassInNotification.Empty.copy(
                             shortMessage = "${getString(R.string.next)} ${getString(R.string.then_end_of_classes)}",
+                            subject = getString(R.string.then_end_of_classes),
                             startTime = DateTimeUtil.formatTime(lesson.endAt)
                         ),
                     )
@@ -159,10 +162,10 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
             MsgType.ONGOING -> {
                 val lesson = requireNotNull(msg.lesson)
                 AlarmData(
-                    triggerAt = lesson.endDateTime,
+                    triggerAt = lesson.endAt.atDate(now),
                     notification = createScheduleNotification(
                         currentClass = ClassInNotification(
-                            subject = lesson.subject.name,
+                            subject = lesson.subjectName,
                             location = formatLocation(lesson),
                             startTime = DateTimeUtil.formatTime(lesson.startAt),
                             endTime = DateTimeUtil.formatTime(lesson.endAt),
@@ -170,7 +173,7 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
                         ),
                         nextClass = msg.nextLesson?.let { nextLesson ->
                             ClassInNotification(
-                                subject = nextLesson.subject.name,
+                                subject = nextLesson.subjectName,
                                 location = formatLocation(nextLesson),
                                 startTime = DateTimeUtil.formatTime(nextLesson.startAt),
                                 endTime = DateTimeUtil.formatTime(nextLesson.endAt),
@@ -178,31 +181,36 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
                             )
                         } ?: ClassInNotification.Empty.copy(
                             shortMessage = "${getString(R.string.next)} ${getString(R.string.then_end_of_classes)}",
+                            subject = getString(R.string.then_end_of_classes),
                             startTime = DateTimeUtil.formatTime(lesson.endAt)
                         ),
                     )
                 )
             }
             MsgType.NEXT_DAY -> AlarmData(
-                triggerAt = (msg.lesson?.date ?: DateTimeUtil.currentDate).atStartOfStudyDay(),
+                triggerAt = now.atStartOfStudyDay(),
                 notification = null
             )
             MsgType.BREAK_STARTED -> {
                 AlarmData(
-                    triggerAt = msg.nextLesson?.startDateTime
-                        ?: requireNotNull(msg.lesson).date.atStartOfStudyDay(),
+                    triggerAt = msg.nextLesson?.startAt?.atDate(now)
+                        ?: now.atStartOfStudyDay(),
                     notification = createScheduleNotification(
-                        currentClass = ClassInNotification(getString(R.string.break_title)),
+                        currentClass = ClassInNotification(
+                            shortMessage = "${getString(R.string.now)} ${getString(R.string.break_title)}",
+                            fullMessage = getString(R.string.break_title)
+                        ),
                         nextClass = msg.nextLesson?.let { nextLesson ->
                             ClassInNotification(
-                                subject = nextLesson.subject.name,
+                                subject = nextLesson.subjectName,
                                 location = formatLocation(nextLesson),
                                 startTime = DateTimeUtil.formatTime(nextLesson.startAt),
                                 endTime = DateTimeUtil.formatTime(nextLesson.endAt),
                                 shortMessage = shortLocationMessage(R.string.next, nextLesson)
                             )
                         } ?: ClassInNotification(
-                            shortMessage = "${getString(R.string.next)} ${getString(R.string.then_end_of_classes)}"
+                            shortMessage = "${getString(R.string.next)} ${getString(R.string.then_end_of_classes)}",
+                            fullMessage = getString(R.string.then_end_of_classes)
                         ),
                     )
                 )
@@ -212,13 +220,13 @@ class AlarmReceiver : BroadcastReceiver(), KoinComponent {
 
     private fun Context.shortLocationMessage(
         @StringRes statusResId: Int,
-        lesson: Lesson
+        lesson: StoredLesson
     ): String {
-        val subject = LessonDataUtils.shortenSentence(lesson.subject.name)
+        val subject = LessonDataUtils.shortenSentence(lesson.subjectName)
         return "${getString(statusResId)}: ${formatLocation(lesson)}, $subject"
     }
 
-    private fun Context.formatLocation(lesson: Lesson): String {
+    private fun Context.formatLocation(lesson: StoredLesson): String {
         return LessonDataUtils.provideLocation(
             context = this,
             building = lesson.building,

@@ -31,8 +31,8 @@ fun AppChip(
 
     val color by animateColorAsState(
         targetValue = if (selected) {
-            AppTheme.colorScheme.foreground
-        } else AppTheme.colorScheme.background3,
+            AppTheme.colorScheme.backgroundBrand
+        } else AppTheme.colorScheme.background2,
         label = "transition"
     )
     Surface(
@@ -75,7 +75,7 @@ fun AppChip(
 ) {
     val view = LocalView.current
 
-    val color by animateColorAsState(
+    val animatedColor by animateColorAsState(
         targetValue = if (selected) {
             selectedColor
         } else color,
@@ -84,7 +84,7 @@ fun AppChip(
     Surface(
         modifier = modifier
             .height(36.dp),
-        color = color,
+        color = animatedColor,
         shape = shape,
         contentColor = if (selected) {
             AppTheme.colorScheme.foregroundOnBrand

@@ -3,16 +3,10 @@
 <resources>
     <style name="TextHeadline" parent="TextAppearance.Compat.Notification.Title">
         <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">bold</item>
         <item name="android:maxLines">1</item>
     </style>
     <style name="TextLabel" parent="TextAppearance.Compat.Notification.Info">
         <item name="android:textSize">12sp</item>
         <item name="android:fontWeight">400</item>
-    </style>
-    <style name="TextButton" parent="TextAppearance.Compat.Notification.Title">
-        <item name="android:textSize">10sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:maxLines">1</item>
     </style>
 </resources>

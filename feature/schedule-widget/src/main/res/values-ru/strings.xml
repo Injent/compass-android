@@ -13,10 +13,10 @@
     <string name="location_placeholder_3">к. 1, ауд. 308</string>
     <string name="widget_settings">Настройки виджета</string>
     <string name="widget_opacity">Прозрачность</string>
-    <string name="widget_theme">Тема</string>
-    <string name="theme_auto">Автоматическая</string>
-    <string name="theme_light">Светлая</string>
-    <string name="theme_dark">Темная</string>
+    <string name="widget_background">Цвет фона</string>
+    <string name="theme_auto">Динамический</string>
+    <string name="theme_light">Белый</string>
+    <string name="theme_dark">Черный</string>
     <string name="theme_dynamic">Динамическая</string>
     <string name="text_color_from_theme">Из темы</string>
     <string name="text_color_black">Черный</string>
@@ -26,4 +26,6 @@
     <string name="toast_failed_to_open_settings">Не удалось открыть настройки виджета</string>
     <string name="widget_loading">Загрузка…</string>
     <string name="select_group">Выбери группу</string>
+    <string name="reload">Перезагрузить</string>
+    <string name="error_happend">Ошибка</string>
 </resources>

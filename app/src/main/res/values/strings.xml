@@ -11,4 +11,7 @@
     <string name="label_mates">mates</string>
     <string name="label_notes">homework</string>
     <string name="label_settings">settings</string>
+    <string name="dialog_wantToReceiveNotifications">Do you want to receive notifications about schedule changes?</string>
+    <string name="dialog_youCanEnableNotifications">You can always turn on notifications in the app settings</string>
+    <string name="change">Edit</string>
 </resources>

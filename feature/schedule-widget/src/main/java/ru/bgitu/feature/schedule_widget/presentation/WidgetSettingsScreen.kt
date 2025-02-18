@@ -4,24 +4,28 @@ import android.annotation.SuppressLint
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -50,8 +54,8 @@ import ru.bgitu.feature.schedule_widget.R
 import ru.bgitu.feature.schedule_widget.model.WidgetColorScheme
 import ru.bgitu.feature.schedule_widget.model.WidgetOptions
 import ru.bgitu.feature.schedule_widget.model.WidgetThemeMode
-import ru.bgitu.feature.schedule_widget.rememberWidgetOptions
 import ru.bgitu.feature.schedule_widget.presentation.component.WidgetPreview
+import ru.bgitu.feature.schedule_widget.rememberWidgetOptions
 import kotlin.math.round
 
 @SuppressLint("InflateParams")
@@ -135,7 +139,7 @@ fun WidgetSettingsScreen(
                 .padding(AppTheme.spacing.l),
         ) {
             AppCardWithContent(
-                label = stringResource(R.string.widget_theme)
+                label = stringResource(R.string.widget_background)
             ) {
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
@@ -154,6 +158,54 @@ fun WidgetSettingsScreen(
                             )
                         )
                     }
+                }
+                HorizontalDivider(
+                    thickness = AppTheme.strokeWidth.thin,
+                    color = AppTheme.colorScheme.stroke2,
+                    modifier = Modifier.padding(top = AppTheme.spacing.s, bottom = AppTheme.spacing.m)
+                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${((options.opacity * 100).toInt())}%",
+                        style = AppTheme.typography.callout,
+                        color = AppTheme.colorScheme.foreground1,
+                        modifier = Modifier.width(50.dp)
+                    )
+                    Slider(
+                        value = options.opacity,
+                        onValueChange = {
+                            val alpha = round(it * 10) / 10
+                            options = options.copy(opacity = alpha)
+                        },
+                        colors = SliderDefaults.colors(
+                            thumbColor = AppTheme.colorScheme.foreground,
+                            activeTrackColor = AppTheme.colorScheme.foreground,
+                            inactiveTrackColor = AppTheme.colorScheme.foreground4,
+                            inactiveTickColor = AppTheme.colorScheme.stroke2,
+                            activeTickColor = AppTheme.colorScheme.foregroundOnBrand
+                        ),
+                        thumb = {
+                            Surface(
+                                color = AppTheme.colorScheme.foregroundOnBrand,
+                                shape = CircleShape,
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .border(
+                                        width = AppTheme.strokeWidth.large,
+                                        color = AppTheme.colorScheme.brandStroke,
+                                        shape = CircleShape
+                                    )
+                            ) {
+
+                            }
+                        },
+                        steps = 9,
+                        valueRange = 0f..1f,
+                        modifier = Modifier.weight(1f)
+                    )
                 }
             }
         }
@@ -186,6 +238,7 @@ private fun WidgetSettingsTopBar(
             options = widgetOptions,
             colorScheme = colors,
             modifier = Modifier
+                .padding(horizontal = AppTheme.spacing.s)
                 .fillMaxWidth()
                 .height(300.dp)
                 .drawWithContent {

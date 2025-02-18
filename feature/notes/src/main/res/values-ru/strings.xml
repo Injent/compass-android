@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_homework">Домашняя работа</string>
-    <string name="start_typing">Начните печатать…</string>
+    <string name="placeholder_text">Текст</string>
     <string name="empty">Пусто</string>
     <string name="click_on_card_to_add_note">Кликни по карточке с парой для добавления домашнего задания</string>
+    <string name="action_delete">Удалить</string>
+    <string name="action_share">Поделиться</string>
+    <string name="action_copy">Скопировать</string>
 </resources>

@@ -1,18 +1,18 @@
 package ru.bgitu.feature.groups.presentation.component
 
-import android.content.Context
 import android.os.Build.VERSION.SDK_INT
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -29,14 +29,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.layout.onPlaced
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import ru.bgitu.core.designsystem.components.AppSecondaryButton
 import ru.bgitu.core.designsystem.layout.DraggableItem
 import ru.bgitu.core.designsystem.layout.dragContainer
 import ru.bgitu.core.designsystem.layout.rememberDragDropState
@@ -53,14 +48,12 @@ import ru.bgitu.feature.groups.R
 internal fun ReorderableGroupTabs(
     groups: List<Group>,
     onChange: (List<Group>) -> Unit,
-    onAddGroupRequest: () -> Unit,
     onGroupClick: (Group) -> Unit,
     enabled: Boolean,
+    showHint: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val view = LocalView.current
-    val density = LocalDensity.current
-    var singleTabWidth by remember { mutableStateOf(0.dp) }
     // Duplicate is required for correct composition and animations
     var list by remember {
         mutableStateOf(groups)
@@ -77,16 +70,18 @@ internal fun ReorderableGroupTabs(
             targetValue = if (enabled) 1f else .25f
         )
 
-        Text(
-            text = if (groups.size <= 1) {
-                stringResource(R.string.add_groups)
-            } else stringResource(R.string.organize_groups),
-            style = AppTheme.typography.subheadline,
-            color = AppTheme.colorScheme.foreground2,
-            modifier = Modifier
-                .alpha(alpha)
-                .padding(bottom = AppTheme.spacing.s)
-        )
+        if (showHint) {
+            Text(
+                text = if (groups.size <= 1) {
+                    stringResource(R.string.add_groups)
+                } else stringResource(R.string.organize_groups),
+                style = AppTheme.typography.subheadline,
+                color = AppTheme.colorScheme.foreground2,
+                modifier = Modifier
+                    .alpha(alpha)
+                    .padding(bottom = AppTheme.spacing.s)
+            )
+        }
 
         val listState = rememberLazyListState()
         val dragDropState = rememberDragDropState(listState) { from, to ->
@@ -96,21 +91,15 @@ internal fun ReorderableGroupTabs(
             onChange(list)
         }
 
-        LazyRow(
+        LazyColumn(
             state = listState,
+            contentPadding = PaddingValues(AppTheme.spacing.xs),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
             modifier = Modifier
                 .fillMaxWidth()
                 .thenIf(enabled) {
                     dragContainer(dragDropState)
-                }
-                .onPlaced { coords ->
-                    singleTabWidth = density.run {
-                        if (list.isNotEmpty()) {
-                            coords.size.width / list.size
-                        } else {
-                            0
-                        }.toDp()
-                    }
                 }
                 .background(
                     color = AppTheme.colorScheme.background4,
@@ -118,6 +107,18 @@ internal fun ReorderableGroupTabs(
                 )
                 .alpha(alpha),
         ) {
+            if (groups.isEmpty()) {
+                item {
+                    Text(
+                        text = stringResource(R.string.noGroups),
+                        style = AppTheme.typography.callout,
+                        color = AppTheme.colorScheme.foreground3,
+                        modifier = Modifier
+                            .padding(vertical = AppTheme.spacing.l)
+                    )
+                }
+            }
+
             itemsIndexed(
                 items = list,
                 key = { _, group -> group.id }
@@ -126,10 +127,7 @@ internal fun ReorderableGroupTabs(
                     dragDropState = dragDropState,
                     index = index,
                     modifier = Modifier
-                        .width(singleTabWidth)
-                        .thenIf(index == 0) {
-                            padding(start = AppTheme.spacing.s)
-                        }
+                        .fillMaxWidth()
                 ) { isDragging ->
                     LaunchedEffect(isDragging) {
                         val hapticConstant = when {
@@ -148,33 +146,9 @@ internal fun ReorderableGroupTabs(
                         enabled = enabled,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = AppTheme.spacing.s)
-                            .padding(end = AppTheme.spacing.s)
                     )
                 }
             }
-        }
-
-        if (list.size > 1) {
-            Text(
-                text = stringResource(R.string.hint_groups),
-                style = AppTheme.typography.footnote,
-                color = AppTheme.colorScheme.foreground3,
-                modifier = Modifier
-                    .padding(top = AppTheme.spacing.s)
-                    .alpha(alpha)
-            )
-        }
-        Spacer(Modifier.height(AppTheme.spacing.l))
-
-        if (groups.size in 0 until 3) {
-            AppSecondaryButton(
-                text = stringResource(R.string.add_group),
-                onClick = onAddGroupRequest,
-                enabled = enabled,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
         }
     }
 }
@@ -210,27 +184,22 @@ private fun ReorderableGroupTab(
             onClick = onClick,
             enabled = enabled,
             modifier = modifier
-                .height(72.dp)
+                .height(48.dp)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(
-                    start = AppTheme.spacing.s,
-                    end = AppTheme.spacing.s,
-                    top = AppTheme.spacing.l,
-                    bottom = AppTheme.spacing.s
-                )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(AppTheme.spacing.s)
             ) {
-                AutoSizeText(
-                    text = group.name,
-                    style = AppTheme.typography.calloutButton,
-                    color = textColor,
-                )
-                Spacer(Modifier.weight(1f))
                 Icon(
                     imageVector = Icons.Rounded.Menu,
                     contentDescription = null,
                     tint = iconColor
+                )
+                AutoSizeText(
+                    text = group.name,
+                    style = AppTheme.typography.calloutButton,
+                    color = textColor,
                 )
             }
         }

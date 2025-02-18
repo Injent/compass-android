@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import ru.bgitu.components.signin.repository.CompassAuthenticator
 import ru.bgitu.core.common.eventChannel
 import ru.bgitu.core.common.eventbus.EventBus
 import ru.bgitu.core.common.eventbus.GlobalAppEvent
 import ru.bgitu.core.datastore.SettingsRepository
+import ru.bgitu.core.datastore.model.UnseenFeatures
 import ru.bgitu.core.model.UserProfile
 
 sealed interface ProfileUiState {
@@ -46,7 +46,6 @@ sealed interface ProfileEvent {
 
 class ProfileViewModel(
     private val settingsRepository: SettingsRepository,
-    private val compassAuthenticator: CompassAuthenticator
 ) : ViewModel() {
 
     private val _events = eventChannel<ProfileEvent>()
@@ -74,7 +73,6 @@ class ProfileViewModel(
     fun onIntent(intent: ProfileIntent) {
         when (intent) {
             ProfileIntent.SignOut -> viewModelScope.launch {
-                compassAuthenticator.signOut()
                 EventBus.post(GlobalAppEvent.SignOut)
                 _events.send(ProfileEvent.NavigateToLogin(autoSignOut = true))
             }
@@ -82,7 +80,12 @@ class ProfileViewModel(
             ProfileIntent.NavigateToProfileSettings -> _events.trySend(
                 ProfileEvent.NavigateToProfileSettings
             )
-            ProfileIntent.NavigateToAboutApp -> _events.trySend(ProfileEvent.NavigateToAboutApp)
+            ProfileIntent.NavigateToAboutApp -> viewModelScope.launch {
+                settingsRepository.updateMetadata {
+                    it.copy(unseenFeatureIds = it.unseenFeatureIds - UnseenFeatures.NEW_CHANGELOG)
+                }
+                _events.send(ProfileEvent.NavigateToAboutApp)
+            }
             ProfileIntent.NavigateToHelp -> _events.trySend(ProfileEvent.NavigateToHelp)
             ProfileIntent.NavigateToLogin -> _events.trySend(
                 ProfileEvent.NavigateToLogin(autoSignOut = false)

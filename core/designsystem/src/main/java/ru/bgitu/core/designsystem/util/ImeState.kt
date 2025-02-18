@@ -1,6 +1,8 @@
 package ru.bgitu.core.designsystem.util
 
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.graphics.Rect
 import android.os.Build.VERSION.SDK_INT
 import android.view.View
@@ -106,7 +108,7 @@ fun rememberImeState(): State<Boolean> {
                 isImeVisible.value = it
             }
             KeyboardUtils.addKeyboardToggleListener(
-                activity = context as Activity,
+                activity = context.unwrap(),
                 listener = listener
             )
 
@@ -127,4 +129,13 @@ fun rememberImeState(): State<Boolean> {
     }
 
     return isImeVisible
+}
+
+private fun Context.unwrap(): Activity {
+    var context: Context? = this
+    while (context !is Activity && context is ContextWrapper) {
+        context = context.baseContext
+    }
+
+    return context as Activity
 }

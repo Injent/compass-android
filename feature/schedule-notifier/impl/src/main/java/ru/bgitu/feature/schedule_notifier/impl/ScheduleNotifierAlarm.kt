@@ -50,13 +50,14 @@ class ScheduleNotifierAlarm(
             Toast.makeText(context, R.string.alarm_disabled, Toast.LENGTH_SHORT).show()
             return false
         }
-        context.sendBroadcast(Intent(context, AlarmReceiver::class.java))
 
         runBlocking {
             settingsRepository.updateUserPrefs {
                 it.copy(showPinnedSchedule = true)
             }
         }
+
+        context.sendBroadcast(Intent(context, AlarmReceiver::class.java))
 
         return true
     }
@@ -82,17 +83,25 @@ class ScheduleNotifierAlarm(
         notificationManager.cancel(Notifier.PINNED_SCHEDULE_NOTIFICATION_ID)
     }
 
-    override fun restart() {
+    override fun restart(forced: Boolean) {
         if (notificationManager.areNotificationsEnabled().not()) return
 
         runBlocking {
-            val wasEnabled = settingsRepository.data.first().userPrefs.showPinnedSchedule
+            val data = settingsRepository.data.first()
+
+            val wasEnabled = data.userPrefs.showPinnedSchedule
+
+            if (forced && wasEnabled) {
+                disable()
+                enable()
+                return@runBlocking
+            }
 
             val isNotificationVisible = notificationManager.activeNotifications.any {
                 it.id == Notifier.PINNED_SCHEDULE_NOTIFICATION_ID
             }
-
             val alarmDateTime = settingsRepository.metadata.first().scheduleNotifierAlarmDateTime
+
             if (wasEnabled && !isNotificationVisible &&
                 (alarmDateTime == null || alarmDateTime < DateTimeUtil.currentDateTime)) {
                 enable()

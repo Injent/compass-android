@@ -15,7 +15,7 @@ import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.data.downloader.DownloadState
 import java.io.File
 
-internal class AppUpdateSaver(
+class AppUpdateSaver(
     context: Context
 ) {
     private val workManager = WorkManager.getInstance(context)

@@ -13,10 +13,10 @@
     <string name="location_placeholder_3">b. 1, classroom 308</string>
     <string name="widget_settings">Widget Settings</string>
     <string name="widget_opacity">Opacity</string>
-    <string name="widget_theme">Theme</string>
-    <string name="theme_auto">System</string>
-    <string name="theme_light">Light</string>
-    <string name="theme_dark">Dark</string>
+    <string name="widget_background">Background color</string>
+    <string name="theme_auto">Dynamic</string>
+    <string name="theme_light">White</string>
+    <string name="theme_dark">Black</string>
     <string name="theme_dynamic">Dynamic</string>
     <string name="text_color_from_theme">From theme</string>
     <string name="text_color_black">Black</string>
@@ -26,5 +26,7 @@
     <string name="toast_failed_to_open_settings">Failed to open widget settings</string>
     <string name="widget_loading">Loading…</string>
     <string name="select_group">Select group</string>
+    <string name="reload">Reload</string>
+    <string name="error_happend">Error</string>
 
 </resources>

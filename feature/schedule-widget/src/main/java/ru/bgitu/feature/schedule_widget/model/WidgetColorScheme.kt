@@ -33,7 +33,11 @@ class WidgetColorScheme private constructor(
                 return ColorProvider(
                     Color(
                         ContextCompat.getColor(context, id)
-                    )
+                    ).let {
+                        if (applyOpacity) {
+                            it.copy(alpha = opacity)
+                        } else it
+                    }
                 )
             }
 

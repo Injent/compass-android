@@ -2,7 +2,6 @@ package ru.bgitu.app.crashscreen
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -41,7 +40,8 @@ class CrashActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
-        if (SDK_INT >= Build.VERSION_CODES.Q) {
+        if (SDK_INT in 29..34) {
+            @Suppress("DEPRECATION")
             window.isStatusBarContrastEnforced = false
             window.isNavigationBarContrastEnforced = false
         }

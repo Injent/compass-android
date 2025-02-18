@@ -13,6 +13,7 @@ import ru.bgitu.feature.settings.R
 fun NotificationsPermissionDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
+    text: String,
     modifier: Modifier = Modifier
 ) {
     AppDialog(
@@ -28,7 +29,7 @@ fun NotificationsPermissionDialog(
         modifier = modifier,
     ) {
         Text(
-            text = stringResource(R.string.dialog_notification_text),
+            text = text,
             style = AppTheme.typography.body,
             color = AppTheme.colorScheme.foreground1,
         )

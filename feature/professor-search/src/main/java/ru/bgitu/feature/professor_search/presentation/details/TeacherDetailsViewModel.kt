@@ -34,18 +34,7 @@ sealed class ProfessorDetailsEvent {
     data object Back : ProfessorDetailsEvent()
 }
 
-sealed class FilteredSchedule {
-    data class ByWeek(
-        val selectedWeek: DayOfWeek? = null,
-        val schedules: Map<LocalDate, List<ProfessorClass>> = emptyMap()
-    ) : FilteredSchedule()
-
-    data class All(
-        val classes: List<ProfessorClass> = emptyList()
-    ) : FilteredSchedule()
-}
-
-data class ProfessorDetailsUiState internal constructor(
+data class ProfessorDetailsUiState(
     val fromDate: LocalDate = DateTimeUtil.currentDate,
     val toDate: LocalDate = DateTimeUtil.getEndOfWeek(fromDate.plus(2, DateTimeUnit.WEEK)),
     val dateBoundary: ClosedRange<LocalDate> = fromDate..toDate,

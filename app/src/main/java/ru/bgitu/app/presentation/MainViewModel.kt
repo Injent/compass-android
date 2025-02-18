@@ -4,11 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import ru.bgitu.components.signin.model.AuthState
-import ru.bgitu.components.signin.repository.CompassAuthenticator
 import ru.bgitu.components.updates.api.AppUpdateManager
 import ru.bgitu.components.updates.api.model.InstallState
 import ru.bgitu.components.updates.api.model.NativeUpdateInfo
@@ -25,14 +24,14 @@ import ru.bgitu.core.model.settings.UiTheme
 
 data class MainActivityUiState(
     val isLoading: Boolean = true,
-    val authState: AuthState = AuthState.LOADING,
     val uiTheme: UiTheme = UiTheme.SYSTEM,
     val updateInfo: UpdateInfo = UnknownUpdateInfo,
     val installState: InstallState = InstallState.Unknown,
     val showUpdateSheet: Boolean = false,
     val avatarUrl: String? = null,
     val shouldShowOnboarding: Boolean = false,
-    val helpSiteTraffic: Boolean = false
+    val helpSiteTraffic: Boolean = false,
+    val useDynamicTheme: Boolean = false
 )
 
 sealed interface MainActivityIntent {
@@ -46,45 +45,42 @@ sealed interface MainActivityEvent {
 }
 
 class MainViewModel(
-    compassAuthenticator: CompassAuthenticator,
     private val appUpdateManager: AppUpdateManager,
     settingsRepository: SettingsRepository,
-    syncManager: SyncManager
+    syncManager: SyncManager,
 ) : ViewModel() {
 
     private val _events = eventChannel<MainActivityEvent>()
     val events = _events.receiveAsFlow()
 
-    init {
-        viewModelScope.launch {
-            EventBus.subscribe<GlobalAppEvent.ChangeGroup> {
-                syncManager.requestSync(isFirstSync = true)
-            }
-        }
-    }
-
     val uiState = combine(
-        compassAuthenticator.authState,
         settingsRepository.data,
         appUpdateManager.appUpdateInfo,
         appUpdateManager.installState,
-    ) { authState, data, updateInfo, installState ->
+    ) { data, updateInfo, installState ->
         val showUpdateSheet = (updateInfo as? NativeUpdateInfo)?.let {
             updateInfo.updateAvailability == UpdateAvailability.UPDATE_AVAILABLE
         } ?: false
 
         MainActivityUiState(
-            isLoading = authState == AuthState.LOADING,
-            authState = authState,
+            isLoading = false,
             uiTheme = data.userPrefs.theme,
             updateInfo = updateInfo,
             installState = installState,
             avatarUrl = data.userProfile?.avatarUrl,
             showUpdateSheet = showUpdateSheet,
             shouldShowOnboarding = data.shouldShowOnboarding,
-            helpSiteTraffic = data.userPrefs.helpSiteTraffic
+            helpSiteTraffic = data.userPrefs.helpSiteTraffic,
+            useDynamicTheme = data.userPrefs.useDynamicTheme
         )
     }
+        .onStart {
+            viewModelScope.launch {
+                EventBus.subscribe<GlobalAppEvent.ChangePrimaryGroup> {
+                    syncManager.requestSync(isManualSync = true)
+                }
+            }
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,

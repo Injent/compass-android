@@ -10,9 +10,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import coil.compose.AsyncImagePainter.State.Error
-import coil.compose.AsyncImagePainter.State.Loading
-import coil.compose.rememberAsyncImagePainter
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
 import ru.bgitu.core.designsystem.util.shimmer
 import ru.bgitu.core.designsystem.util.thenIf
 
@@ -30,7 +29,7 @@ fun DynamicAsyncImage(
     val imageLoader = rememberAsyncImagePainter(
         model = imageUrl,
         onState = { state ->
-            isLoading = state is Loading
+            isLoading = state is AsyncImagePainter.State.Loading
             isError = state is Error
 
             onResult?.invoke(!isError)

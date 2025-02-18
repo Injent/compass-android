@@ -1,27 +1,21 @@
 package ru.bgitu.feature.groups.presentation.search
 
-import android.app.Activity
-import android.view.WindowManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +45,6 @@ import ru.bgitu.core.ui.AppSearchItem
 import ru.bgitu.core.ui.listenEvents
 import ru.bgitu.feature.groups.R
 import ru.bgitu.feature.groups.model.GroupParcelable
-import kotlin.time.Duration.Companion.INFINITE
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -63,7 +56,7 @@ fun GroupSearchRoute(resultKey: String) {
 
     viewModel.events.listenEvents { event ->
         when (event) {
-            is GroupSearchEvent.ShowSnackbarError -> {
+            else -> {
                 snackbarController.show(
                     duration = 3.seconds,
                     message = event.msg.asString(context),
@@ -122,7 +115,8 @@ private fun GroupSearchScreen(
                     .padding(bottom = AppTheme.spacing.l)
             )
         },
-        modifier = Modifier.imePadding()
+        modifier = Modifier
+            .imePadding()
     ) { innerPadding ->
         Column(
             verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.l),

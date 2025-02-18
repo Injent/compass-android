@@ -1,12 +1,15 @@
 package ru.bgitu.feature.home.impl.presentation.component
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import ru.bgitu.core.designsystem.components.AppTextButton
 import ru.bgitu.core.designsystem.theme.AppTheme
@@ -18,6 +21,7 @@ fun DashedOutlinedButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     val density = LocalDensity.current
     val shape = AppTheme.shapes.default
     val stroke = Stroke(
@@ -32,7 +36,14 @@ fun DashedOutlinedButton(
             onClick = onClick,
             shape = shape,
             modifier = Modifier
-                .fillMaxWidth()
+                .then(
+                    if (isLandscape) {
+                        Modifier
+                            .wrapContentWidth()
+                    } else {
+                        Modifier.fillMaxWidth()
+                    }
+                )
                 .drawBehind {
                     drawRoundRect(
                         color = borderColor,

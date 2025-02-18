@@ -32,14 +32,18 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.radusalagean.infobarcompose.BaseInfoBarMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import ru.bgitu.core.designsystem.components.AppSnackbarTokens.MaxHeight
@@ -56,15 +60,49 @@ val LocalSnackbarController = staticCompositionLocalOf<SnackbarController> {
     error("Snackbar controller not provided")
 }
 
+val LocalSnackController = staticCompositionLocalOf<SnackController> {
+    error("SnackbarController not provided")
+}
+
 @Composable
 fun rememberSnackbarController(): SnackbarController {
     val coroutineScope = rememberCoroutineScope()
-    return remember { ru.bgitu.core.designsystem.components.SnackbarController(coroutineScope) }
+    return remember { SnackbarController(coroutineScope) }
+}
+
+@Composable
+fun rememberSnackController(key1: Any? = null): SnackController {
+    return remember(key1 = key1) { SnackController() }
+}
+
+class SnackbarMessage(
+    val text: String,
+    val icon: ImageVector,
+    val tint: Color,
+    val actionLabel: String? = null,
+    val onAction: (() -> Unit)? = null,
+    val onDismiss: (() -> Unit)? = null,
+    override val displayTimeSeconds: Int? = 4,
+) : BaseInfoBarMessage() {
+    override val containsControls = false
 }
 
 data class SnackbarState(
     val content: @Composable () -> Unit
 )
+
+class SnackController {
+    private val _message = MutableStateFlow<SnackbarMessage?>(null)
+    val message = _message.asStateFlow()
+
+    fun show(message: SnackbarMessage) {
+        _message.value = message
+    }
+
+    fun dismiss() {
+        _message.value = null
+    }
+}
 
 @Stable
 class SnackbarController(
@@ -154,6 +192,27 @@ class SnackbarController(
     companion object {
         private val IndefiniteDuration = ChronoUnit.FOREVER.duration.toKotlinDuration()
     }
+}
+
+val snackbarContent: @Composable (SnackbarMessage, () -> Unit) -> Unit = { message, onDismiss ->
+    DefaultSnackbar(
+        text = message.text,
+        icon = {
+            Icon(
+                imageVector = message.icon,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+                tint = message.tint
+            )
+        },
+        onDismissRequest = {
+            onDismiss()
+            message.onDismiss?.invoke()
+        },
+        actionLabel = message.actionLabel,
+        onAction = { message.onAction?.invoke() },
+        withDismissAction = message.onDismiss != null
+    )
 }
 
 @Composable

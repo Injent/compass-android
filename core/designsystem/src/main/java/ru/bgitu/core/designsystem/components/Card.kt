@@ -2,7 +2,6 @@ package ru.bgitu.core.designsystem.components
 
 import android.os.Build.VERSION.SDK_INT
 import android.view.SoundEffectConstants
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -29,9 +28,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -163,7 +162,7 @@ fun AppCardWithContent(
 
 @Composable
 fun AppItemCard(
-    @DrawableRes icon: Int,
+    icon: ImageVector,
     label: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -175,7 +174,7 @@ fun AppItemCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                painter = painterResource(icon),
+                imageVector = icon,
                 contentDescription = null,
                 tint = tint,
                 modifier = Modifier
@@ -195,19 +194,6 @@ fun AppItemCard(
                 tint = AppTheme.colorScheme.foreground3
             )
         }
-    }
-}
-
-@Preview
-@Composable
-private fun AppItemCardPreview() {
-    CompassTheme {
-        AppItemCard(
-            icon = AppIcons.SettingsOutlined,
-            label = "Settings",
-            onClick = {},
-            modifier = Modifier.width(428.dp)
-        )
     }
 }
 

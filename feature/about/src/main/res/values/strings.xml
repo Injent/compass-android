@@ -6,5 +6,14 @@
     <string name="user_agreement">User agreement</string>
     <string name="share_app">Share app</string>
     <string name="share_app_message">Try the Android app to view the class schedule of BGITU <br />%s</string>
-    <string name="changelogs">Changelogs</string>
+    <string name="changelogs">What\'s new?</string>
+
+    <string name="app_question">Questions, bug reports, and suggestions for the app</string>
+    <string name="suggestions">Suggestions about functionality</string>
+    <string name="mobile_dev_name">Elisey Verevkin</string>
+    <string name="backend_dev">Kirill Pudov</string>
+    <string name="mobile_dev_role">The developer of the BGITU Compass app</string>
+    <string name="backend_dev_role">Developer of Telegram bot and server logic of BGITU Compass</string>
+    <string name="noChangelogFor">No changelog for version %s</string>
+    <string name="easter" translatable="false">Пасхалко</string>
 </resources>

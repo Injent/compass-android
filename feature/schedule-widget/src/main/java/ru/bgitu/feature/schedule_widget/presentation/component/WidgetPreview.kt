@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.heightIn
@@ -55,8 +54,10 @@ fun WidgetPreview(
                     textView.setTextColor(colorScheme.foreground2.getColor(context).toArgb())
                 }
 
-            view.findViewById<View>(R.id.widget_background).background
-                .overrideColor(colorScheme.widgetBackground.getColor(context))
+            view.findViewById<View>(R.id.widget_background).background.apply {
+                overrideColor(colorScheme.widgetBackground.getColor(context))
+                alpha = (options.opacity * 255).toInt()
+            }
 
             arrayOf(
                 view.findViewById<ImageButton>(R.id.previous_btn),
@@ -72,10 +73,12 @@ fun WidgetPreview(
                 view.findViewById(R.id.item3),
             ).forEach { layout ->
                 layout.background.overrideColor(colorScheme.background1.getColor(context))
+                layout.background.alpha = (options.opacity * 255).toInt()
             }
 
             view.findViewById<TextView>(R.id.date_control).apply {
                 background.overrideColor(colorScheme.background2.getColor(context))
+                background.alpha = (options.opacity * 255).toInt()
                 setTextColor(colorScheme.foreground1.getColor(context).toArgb())
             }
 

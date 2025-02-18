@@ -5,11 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build.VERSION.SDK_INT
-import android.provider.Settings
 import androidx.core.net.toUri
-import java.lang.ref.WeakReference
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 val Context.versionName: String
     get() {
@@ -19,7 +15,7 @@ val Context.versionName: String
             )
         } else {
             this.packageManager.getPackageInfo(this.packageName, 0)
-        }.versionName
+        }.versionName ?: "unknown"
     }
 
 val Context.versionCode: Long
@@ -36,28 +32,6 @@ val Context.versionCode: Long
             this.packageManager.getPackageInfo(this.packageName, 0).versionCode.toLong()
         }
     }
-
-private var _animationDurationScale: Float? = null
-
-val Context.animationDurationScale: Float
-    get() = if (_animationDurationScale == null) {
-        Settings.Global.getFloat(contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f).also {
-            _animationDurationScale = it
-        }
-    } else _animationDurationScale!!
-
-fun <T> weakReference(tIn: T? = null): ReadWriteProperty<Any?, T?> {
-    return object : ReadWriteProperty<Any?, T?> {
-        var t = WeakReference<T?>(tIn)
-        override fun getValue(thisRef: Any?, property: KProperty<*>): T? {
-            return t.get()
-        }
-
-        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
-            t = WeakReference(value)
-        }
-    }
-}
 
 fun Context.openUrl(url: String) {
     this.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))

@@ -14,21 +14,17 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,13 +37,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.unit.dp
 import androidx.core.content.getSystemService
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -57,7 +50,6 @@ import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.designsystem.components.AppCard
 import ru.bgitu.core.designsystem.components.AppCardTokens
 import ru.bgitu.core.designsystem.components.AppSwitch
-import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.ui.Headline
 import ru.bgitu.feature.settings.R
@@ -117,6 +109,7 @@ fun ScheduleNotificationView(
         }
         if (SDK_INT >= 33 && context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
             == PackageManager.PERMISSION_GRANTED) {
+            showNotificationDialog = false
             requiredFeatures -= RequiredFeature.POST_NOTIFICATIONS
         }
         if (rememberedPermissionClick) {
@@ -145,15 +138,15 @@ fun ScheduleNotificationView(
                     )
                 } else return@NotificationsPermissionDialog
 
-                if (!shouldShowRationale) {
+                if (shouldShowRationale) {
                     notificationPermissionState?.launch(Manifest.permission.POST_NOTIFICATIONS)
                 } else {
                     rememberedPermissionClick = true
                     context.openSettings()
                 }
-                showNotificationDialog = false
             },
-            onDismiss = { showNotificationDialog = false }
+            onDismiss = { showNotificationDialog = false },
+            text = stringResource(R.string.dialog_notification_text)
         )
     }
 
@@ -225,7 +218,7 @@ private fun ScheduleNotificationContent(
                 AppSwitch(
                     checked = enabled,
                     onCheckedChange = { onSwitchRequest() },
-                    modifier = modifier
+                    modifier = Modifier
                 )
             }
 
@@ -291,7 +284,7 @@ private fun Context.openScheduleAlarmSettings() {
     Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).also(::startActivity)
 }
 
-private fun Context.openSettings() {
+internal fun Context.openSettings() {
     Intent(
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
         Uri.fromParts("package", packageName, null)

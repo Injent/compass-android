@@ -63,17 +63,16 @@ class BuiltInAppUpdateManager(
     private val managerScope = CoroutineScope(ioDispatcher + SupervisorJob())
 
     override val appUpdateInfo = flow<UpdateInfo> {
-        val currentVersionCode = context.versionCode
         val updateResponse = compassService.getUpdateAvailability().getOrThrow()
 
-        if (updateResponse.versionCode > currentVersionCode) {
+        if (updateResponse.versionCode > context.versionCode) {
             settings.updateMetadata {
                 it.copy(
                     newestUpdateChecksum = updateResponse.checksum,
                     availableVersionCode = updateResponse.versionCode
                 )
             }
-            emit(updateResponse.toExternalModel(currentVersionCode = currentVersionCode))
+            emit(updateResponse.toExternalModel())
         }
     }
         .onStart { emit(UnknownUpdateInfo) }
@@ -154,6 +153,9 @@ class BuiltInAppUpdateManager(
                 availableVersionCode to newestUpdateChecksum
             }
             val updateApk = context.updateApkFile(availableVersionCode).takeIf {
+                println(checksum)
+                println(availableVersionCode)
+                println("${it.exists()} ${isUpdateValid(availableVersionCode, checksum)}")
                 it.exists() && isUpdateValid(availableVersionCode, checksum)
             }
                 ?: run {
@@ -240,7 +242,9 @@ class BuiltInAppUpdateManager(
             }
 
             input.close()
-            digest.digest().toHexString() == checksum
+            val a = digest.digest().toHexString()
+            println("$a = $checksum")
+            a == checksum
         }
     }
 
@@ -254,13 +258,11 @@ class BuiltInAppUpdateManager(
     }
 }
 
-private fun UpdateAvailabilityResponse.toExternalModel(
-    currentVersionCode: Long
-): NativeUpdateInfo {
+private fun UpdateAvailabilityResponse.toExternalModel(): NativeUpdateInfo {
     return NativeUpdateInfo(
         availableVersionCode = versionCode,
         totalBytesToDownload = size,
-        forced = forceUpdateVersions.max() > currentVersionCode,
+        forced = true,
         downloadUrl = downloadUrl,
         updateAvailability = UpdateAvailability.UPDATE_AVAILABLE,
         checksum = checksum

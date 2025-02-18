@@ -10,16 +10,14 @@
         android:id="@+id/schedule_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.Compat.Notification.Title"
+        android:textAppearance="@style/TextHeadline"
         android:textSize="14sp"
-        android:ellipsize="marquee"
-        android:maxLines="1"
-        android:textStyle="bold" />
+        android:maxLines="1" />
     <TextView
         android:id="@+id/schedule_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="12sp"
         android:maxLines="2"
-        android:textAppearance="@style/TextAppearance.Compat.Notification.Info" />
+        android:textAppearance="@style/TextAppearance.Compat.Notification.Line2" />
 </LinearLayout>

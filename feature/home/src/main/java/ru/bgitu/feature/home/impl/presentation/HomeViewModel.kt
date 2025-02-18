@@ -11,7 +11,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -21,37 +24,36 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.atDate
+import kotlinx.datetime.atTime
 import kotlinx.datetime.plus
-import kotlinx.datetime.toJavaLocalDate
-import kotlinx.datetime.toKotlinLocalDate
-import ru.bgitu.core.common.CommonStrings
 import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.common.eventChannel
 import ru.bgitu.core.common.eventbus.EventBus
 import ru.bgitu.core.common.eventbus.GlobalAppEvent
-import ru.bgitu.core.data.model.ScheduleLoadState
+import ru.bgitu.core.data.model.ScheduleState
+import ru.bgitu.core.data.model.getLessons
 import ru.bgitu.core.data.repository.ScheduleRepository
 import ru.bgitu.core.data.util.NetworkMonitor
 import ru.bgitu.core.data.util.SyncManager
 import ru.bgitu.core.data.util.SyncStatus
 import ru.bgitu.core.datastore.SettingsRepository
+import ru.bgitu.core.datastore.model.StoredLesson
 import ru.bgitu.core.model.Group
-import ru.bgitu.core.model.Lesson
-import ru.bgitu.feature.home.BuildConfig
 import ru.bgitu.feature.home.R
-import ru.bgitu.feature.home.impl.presentation.component.DayOfWeekSelectorUiState
+import ru.bgitu.feature.home.impl.model.DayOfWeekSelectorUiState
 import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 private const val SELECTED_DATE = "selected_date"
 
+data class ChangeGroupView(val group: Group)
+
 sealed interface HomeIntent {
     data class ChangeDate(val date: LocalDate) : HomeIntent
     data class ChangeGroupView(val group: Group) : HomeIntent
     data object NavigateToGroupSettings : HomeIntent
-    data object NavigateToNewFeatures : HomeIntent
     data class NavigateToCreateNote(val subjectName: String) : HomeIntent
     data object DismissPickGroupQuery : HomeIntent
     data object PickGroup : HomeIntent
@@ -83,20 +85,12 @@ class HomeViewModel(
     networkMonitor: NetworkMonitor,
     context: Context,
 ) : ViewModel() {
-
     private val _events = eventChannel<HomeEvent>()
     val events = _events.receiveAsFlow()
 
     private val _selectedGroup = MutableStateFlow(
         runBlocking { settings.data.first().primaryGroup }
     )
-    init {
-        viewModelScope.launch {
-            EventBus.subscribe<GlobalAppEvent.ChangeGroup> {
-                _selectedGroup.value = settings.data.first().primaryGroup
-            }
-        }
-    }
 
     val uiState = combine(
         _selectedGroup,
@@ -114,6 +108,13 @@ class HomeViewModel(
             syncStatus = if (!isOnline) SyncStatus.FAILED else syncStatus,
         )
     }
+        .onStart {
+            viewModelScope.launch {
+                EventBus.subscribe<GlobalAppEvent.ChangePrimaryGroup> {
+                    _selectedGroup.value = settings.data.first().primaryGroup
+                }
+            }
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -121,42 +122,43 @@ class HomeViewModel(
         )
 
     private val _selectedDate = savedStateHandle.getStateFlow(
-        SELECTED_DATE, (openScheduleDate ?: getActualDate()).toEpochDays()
+        SELECTED_DATE, (openScheduleDate ?: DateTimeUtil.currentDate).toEpochDays()
     )
-        .map { LocalDate.fromEpochDays(it) }
-
-    val scheduleState: StateFlow<ScheduleLoadState> = combine(
-        _selectedDate,
-        _selectedGroup,
-        settings.data,
-        networkMonitor.isOnline,
-    ) { selectedDate, selectedGroup, userdata, _ ->
-        when {
-            selectedGroup == userdata.primaryGroup -> {
-                scheduleRepository.getClassesStream(getActualDate(), 2).first()
-            }
-            selectedGroup != null -> {
-                scheduleRepository.getNetworkClasses(
-                    groupId = selectedGroup.id,
-                    from = selectedDate.toJavaLocalDate().with(DayOfWeek.MONDAY).toKotlinLocalDate(),
-                    to = selectedDate.toJavaLocalDate().with(DayOfWeek.SUNDAY).toKotlinLocalDate()
-                )
-            }
-            else -> ScheduleLoadState.Error(TextResource.Id(CommonStrings.error_unknown))
+        .map {
+            LocalDate.fromEpochDays(it).skipSunday()
         }
+
+    val scheduleUiState = combine(
+        scheduleRepository.schedule,
+        _selectedGroup,
+        settings.data.map { it.primaryGroup },
+        _selectedGroup.flatMapLatest { group ->
+            if (group != settings.data.first().primaryGroup) {
+                group?.let {
+                    scheduleRepository.getNetworkLessonsFlow(it.id)
+                } ?: flowOf(ScheduleState.Loading)
+            } else flowOf(ScheduleState.Loading)
+        }
+    ) { schedule, selectedGroup, primaryGroup, networkSchedule ->
+        if (selectedGroup == null) return@combine ScheduleState.Loading
+
+        if (selectedGroup == primaryGroup) {
+            schedule
+        } else networkSchedule
+
     }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = ScheduleLoadState.Loading
+            initialValue = ScheduleState.Loading
         )
 
     val classLabelMessage: StateFlow<TextResource?> = combine(
-        scheduleState,
+        scheduleUiState,
         DateTimeUtil.currentDateTimeFlow(context),
-    ) { scheduleLoad, time ->
-        if (scheduleLoad is ScheduleLoadState.Success) {
-            getCurrentClassLabelState(time, scheduleLoad[time.date])
+    ) { scheduleState, now ->
+        if (scheduleState is ScheduleState.Loaded) {
+            getCurrentClassLabelState(now, scheduleState.getLessons(now.date))
         } else {
             null
         }
@@ -170,43 +172,27 @@ class HomeViewModel(
     val selectorUiState = combine(
         _selectedDate,
         DateTimeUtil.currentDateTimeFlow(context),
-    ) { selectedDate, currentDateTime ->
+    ) { selectedDate, now ->
         DayOfWeekSelectorUiState(
-            currentDateTime = currentDateTime,
-            selectedDate = selectedDate
+            now = now.skipSunday(),
+            selectedDate = selectedDate.skipSunday(),
+            initialDate = openScheduleDate?.skipSunday()
         )
     }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = DayOfWeekSelectorUiState(
-                currentDateTime = DateTimeUtil.currentDateTime,
-                selectedDate = openScheduleDate ?: getActualDate()
+                now = DateTimeUtil.currentDateTime.skipSunday(),
+                selectedDate = (openScheduleDate ?: DateTimeUtil.currentDate).skipSunday(),
+                initialDate = openScheduleDate?.skipSunday()
             )
-        )
-
-    val hasNewFeatures = settings.data.map {
-        it.newFeaturesVersion < BuildConfig.LAST_BIG_UPDATE_VERSION_CODE.toInt() &&
-                uiState.value is HomeUiState.Success
-    }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = false
         )
 
     fun onIntent(intent: HomeIntent) {
         when (intent) {
             is HomeIntent.ChangeDate -> {
                 savedStateHandle[SELECTED_DATE] = intent.date.toEpochDays()
-            }
-            HomeIntent.NavigateToNewFeatures -> {
-                viewModelScope.launch {
-                    settings.updateDataVersions {
-                        it.copy(newFeaturesVersion = BuildConfig.LAST_BIG_UPDATE_VERSION_CODE.toInt())
-                    }
-                    _events.send(HomeEvent.NavigateToGroupSettings)
-                }
             }
             is HomeIntent.ChangeGroupView -> {
                 _selectedGroup.value = intent.group
@@ -225,33 +211,31 @@ class HomeViewModel(
                 }
                 _events.send(HomeEvent.NavigateToGroupSettings)
             }
-            is HomeIntent.NavigateToCreateNote -> _events.trySend(
-                HomeEvent.NavigateToCreateNote(intent.subjectName)
-            )
+            is HomeIntent.NavigateToCreateNote -> Unit
         }
     }
 
     private fun getCurrentClassLabelState(
-        currentDateTime: LocalDateTime,
-        lessons: List<Lesson>
+        now: LocalDateTime,
+        lessons: List<StoredLesson>
     ): TextResource? {
         if (lessons.isEmpty()) return null
 
         val firstClass = lessons.first()
-        val firstClassStart = firstClass.startAt.atDate(firstClass.date)
+        val firstClassStart = firstClass.startAt.atDate(now.date)
         val timeDiffForFirstClass = DateTimeUtil.difference(
-            currentDateTime,
+            now,
             firstClassStart,
             ChronoUnit.MINUTES
         ).absoluteValue
 
         val currentClassIndex = lessons.indexOfFirst {
-            val start = it.startAt.atDate(it.date)
-            val end = it.endAt.atDate(it.date)
-            currentDateTime in start..end
+            val start = it.startAt.atDate(now.date)
+            val end = it.endAt.atDate(now.date)
+            now in start..end
         }.takeIf { it != -1 }
 
-        if (firstClassStart > currentDateTime) {
+        if (firstClassStart > now) {
             return if (timeDiffForFirstClass <= 59) {
                 TextResource.DynamicString(
                     R.string.the_first_class_will_start_in,
@@ -276,31 +260,34 @@ class HomeViewModel(
             val startedClass = lessons[currentClassIndex!!]
             return TextResource.DynamicString(
                 R.string.this_class_will_end_in,
-                DateTimeUtil.formatRelativeAdaptiveTime(currentDateTime.time, startedClass.endAt)
+                DateTimeUtil.formatRelativeAdaptiveTime(now.time, startedClass.endAt)
             )
         }
 
-        if (lessons.last().let { it.endAt.atDate(it.date) } < currentDateTime) {
+        if (lessons.last().endAt.atDate(now.date) < now) {
             return TextResource.Id(R.string.classes_are_over)
         }
 
-        val lastClassEnd = lessons.last().endDateTime
+        val lastClassEnd = lessons.last().endAt.atDate(now.date)
         val justEndedClass = lessons.lastOrNull { lesson ->
-            currentDateTime >= lesson.endDateTime &&
-                    lessons.firstOrNull { it.startDateTime > currentDateTime }?.startDateTime
-                        ?.let { currentDateTime < it } ?: false
+            now >= lesson.endAt.atDate(now.date) &&
+                    lessons.firstOrNull {
+                        it.startAt.atDate(now.date) > now
+                    }
+                        ?.startAt?.atDate(now.date)
+                        ?.let { now < it } ?: false
         } ?: return null
 
         val willStartClass = lessons.getOrNull(lessons.indexOf(justEndedClass) + 1)
             ?: return null
         val currDateTimeInBreak = lessons.fastAny { lesson ->
-            currentDateTime in lesson.startDateTime..lesson.endDateTime
+            now in lesson.startAt.atDate(now.date)..lesson.endAt.atDate(now.date)
         }.not()
-        if (currentDateTime in firstClassStart..lastClassEnd && currDateTimeInBreak) {
+        if (now in firstClassStart..lastClassEnd && currDateTimeInBreak) {
             return TextResource.DynamicString(
                 R.string.study_break,
                 DateTimeUtil.formatRelativeAdaptiveTime(
-                    currentDateTime.time,
+                    now.time,
                     willStartClass.startAt
                 )
             )
@@ -308,13 +295,16 @@ class HomeViewModel(
 
         return null
     }
+}
 
-    private fun getActualDate(): LocalDate {
-        val currentDate: LocalDate = DateTimeUtil.currentDate
-        return if (currentDate.dayOfWeek != DayOfWeek.SUNDAY) {
-            currentDate
-        } else {
-            currentDate.plus(1, DateTimeUnit.DAY)
-        }
-    }
+fun LocalDate.skipSunday(): LocalDate {
+    return if (dayOfWeek == DayOfWeek.SUNDAY) {
+        this.plus(1, DateTimeUnit.DAY)
+    } else this
+}
+
+fun LocalDateTime.skipSunday(): LocalDateTime {
+    return if (dayOfWeek == DayOfWeek.SUNDAY) {
+        this.date.plus(1, DateTimeUnit.DAY).atTime(time)
+    } else this
 }

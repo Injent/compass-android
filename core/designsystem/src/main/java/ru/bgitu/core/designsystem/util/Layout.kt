@@ -1,8 +1,6 @@
 package ru.bgitu.core.designsystem.util
 
 import androidx.compose.animation.core.animateIntAsState
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf

@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TabRow
@@ -63,7 +62,6 @@ import ru.bgitu.core.designsystem.illustration.AppIllustrations
 import ru.bgitu.core.designsystem.illustration.Tasks
 import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
-import ru.bgitu.core.designsystem.theme.NoRippleConfig
 import ru.bgitu.core.ui.Headline
 import ru.bgitu.feature.notes.R
 import ru.bgitu.feature.notes.model.ShortNote
@@ -225,7 +223,7 @@ fun NoteTopAppBar(
                 divider = {},
                 modifier = Modifier.padding(AppTheme.spacing.xs)
             ) {
-                AppRippleTheme(NoRippleConfig) {
+                AppRippleTheme(null) {
                     tabIcons.forEachIndexed { tabIndex, icon ->
                         Surface(
                             color = Color.Transparent,
@@ -234,20 +232,25 @@ fun NoteTopAppBar(
                             },
                             shape = AppTheme.shapes.default,
                             modifier = Modifier
-                                .height(48.dp)
+                                .height(40.dp)
                         ) {
                             val iconColor by animateColorAsState(
                                 targetValue = if (tabIndex == selectedTabIndex) {
                                     AppTheme.colorScheme.foreground
                                 } else AppTheme.colorScheme.foreground2
                             )
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = null,
-                                tint = iconColor,
-                                modifier = Modifier
-                                    .padding(vertical = 14.dp)
+                            Text(
+                                text = "В процессе",
+                                color = iconColor,
+                                style = AppTheme.typography.callout
                             )
+//                            Icon(
+//                                imageVector = icon,
+//                                contentDescription = null,
+//                                tint = iconColor,
+//                                modifier = Modifier
+//                                    .padding(vertical = 8.dp)
+//                            )
                         }
                     }
                 }

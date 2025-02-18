@@ -1,14 +1,17 @@
 package ru.bgitu.core.data.util
 
 import kotlinx.coroutines.flow.Flow
-import ru.bgitu.core.data.model.CloudMessagingTokenType
 
 interface SyncManager {
     val syncState: Flow<SyncStatus>
 
-    fun requestSync(isFirstSync: Boolean = false)
+    fun requestSync(isManualSync: Boolean = false)
 
-    fun refreshServicesToken(token: String, type: CloudMessagingTokenType)
-
-    fun fullSync()
+    companion object {
+        const val ACTION_SYNC_COMPLETED = "ru.bgitu.app.SYNC_COMPLETED"
+        const val EXTRA_RESULT = "result"
+        const val EXTRA_IS_MANUAL = "isManual"
+        const val SYNC_COMPLETED = 0
+        const val SYNC_FAIL = 1
+    }
 }

@@ -5,7 +5,6 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.LineHeightStyle
@@ -15,17 +14,11 @@ import ru.bgitu.core.designsystem.R
 
 internal val AlshaussFont = FontFamily(
     Font(R.font.alshauss_black, FontWeight.Black),
-    Font(R.font.alshauss_black_italic, FontWeight.Black, FontStyle.Italic),
     Font(R.font.alshauss_bold, FontWeight.Bold),
-    Font(R.font.alshauss_bold_italic, FontWeight.Bold, FontStyle.Italic),
     Font(R.font.alshauss_medium, FontWeight.Medium),
-    Font(R.font.alshauss_medium_italic, FontWeight.Medium, FontStyle.Italic),
     Font(R.font.alshauss_regular, FontWeight.Normal),
-    Font(R.font.alshauss_regular_italic, FontWeight.Normal, FontStyle.Italic),
     Font(R.font.alshauss_light, FontWeight.Light),
-    Font(R.font.alshauss_light_italic, FontWeight.Light, FontStyle.Italic),
     Font(R.font.alshauss_thin, FontWeight.Thin),
-    Font(R.font.alshauss_thin_italic, FontWeight.Thin, FontStyle.Italic),
 )
 
 private val baselineShift = BaselineShift(-0f)

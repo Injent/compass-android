@@ -1,7 +1,7 @@
 package ru.bgitu.feature.profile_settings.di
 
-import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import ru.bgitu.feature.profile_settings.data.ProfileRepository
 import ru.bgitu.feature.profile_settings.presentation.expert.ExpertApplyViewModel

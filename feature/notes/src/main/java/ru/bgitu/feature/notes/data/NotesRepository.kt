@@ -30,6 +30,10 @@ class NotesRepository(
         noteDao.setCompleted(noteId, isCompleted)
     }
 
+    suspend fun putIntoBin(noteId: Int) {
+        noteDao.setAsDeleted(noteId = noteId, deleted = true)
+    }
+
     suspend fun delete(noteId: Int) {
         noteDao.deleteNote(noteId)
     }

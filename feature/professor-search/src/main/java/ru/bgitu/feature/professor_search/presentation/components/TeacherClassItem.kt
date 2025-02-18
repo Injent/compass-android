@@ -22,42 +22,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.datetime.LocalDate
 import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.common.LessonDataUtils
 import ru.bgitu.core.designsystem.icon.AppIcons
+import ru.bgitu.core.designsystem.icon.Flask
+import ru.bgitu.core.designsystem.icon.OpenBook
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.util.MeasureComposable
 import ru.bgitu.core.model.ProfessorClass
-import ru.bgitu.feature.professor_search.R
-
-internal fun LazyListScope.teacherEmptyDay(
-    date: LocalDate,
-    maxWidthOfDayAndWeek: Dp,
-    modifier: Modifier = Modifier
-) {
-    item {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.l),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier.fillMaxWidth(),
-        ) {
-            DateWithWeek(date = date, modifier = Modifier.width(maxWidthOfDayAndWeek))
-            Text(
-                text = stringResource(R.string.not_holding_classes),
-                style = AppTheme.typography.headline1,
-                fontWeight = FontWeight.Normal,
-                color = AppTheme.colorScheme.foreground3,
-                modifier = Modifier.padding(start = AppTheme.spacing.l)
-            )
-        }
-    }
-}
 
 internal fun LazyListScope.teacherClassesGroup(
     classes: List<ProfessorClass>,
@@ -142,7 +119,7 @@ internal fun TeacherClassItem(
                     modifier = Modifier
                 )
                 Text(
-                    text = "Математика",
+                    text = lesson.subjectName,
                     style = AppTheme.typography.headline2,
                     color = AppTheme.colorScheme.foreground2,
                     fontWeight = FontWeight.Normal,
@@ -151,7 +128,7 @@ internal fun TeacherClassItem(
             }
 
             Icon(
-                painter = painterResource(if (lesson.isLecture) AppIcons.BookCover2 else AppIcons.Flask2),
+                imageVector = if (lesson.isLecture) AppIcons.OpenBook else AppIcons.Flask,
                 contentDescription = null,
                 tint = AppTheme.colorScheme.foreground2,
                 modifier = Modifier
@@ -174,7 +151,7 @@ internal fun maxWidthOfDayAndWeek(): State<Dp> {
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "000",
+                    text = "MON",
                     style = AppTheme.typography.headline2,
                     color = AppTheme.colorScheme.foreground3
                 )
@@ -204,11 +181,15 @@ private fun DateWithWeek(
         Text(
             text = remember(date) { DateTimeUtil.formatWeek(date).uppercase() },
             style = AppTheme.typography.headline2,
+            maxLines = 1,
+            overflow = TextOverflow.Visible,
             color = AppTheme.colorScheme.foreground3
         )
         Text(
             text = "${date.dayOfMonth}",
             color = AppTheme.colorScheme.foreground1,
+            maxLines = 1,
+            overflow = TextOverflow.Visible,
             style = AppTheme.typography.title3
         )
     }

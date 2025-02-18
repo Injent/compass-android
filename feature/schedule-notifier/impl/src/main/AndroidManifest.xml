@@ -15,9 +15,21 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".receiver.AlarmReceiver">
+            android:name=".receiver.AlarmReceiver"
+            android:exported="false"
+            android:enabled="true">
         </receiver>
-        <receiver android:name=".receiver.TurnOffForTodayReceiver" />
+        <receiver
+            android:name=".receiver.TurnOffForTodayReceiver"
+            android:exported="false"
+            android:enabled="true"
+            />
+        <receiver android:name=".receiver.SyncCompletedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="ru.bgitu.app.SYNC_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

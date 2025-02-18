@@ -10,7 +10,6 @@
         height: 'wrap',
         start: ['parent', 'start', 16],
         top: ['parent', 'top', 'title_top'],
-        translationY: 16,
       },
       avatar: {
         width: 80,
@@ -27,10 +26,10 @@
       title: {
         width: 'wrap',
         height: 'wrap',
-        start: ['parent', 'start', 16],
+        start: ['parent', 'avatar', 16],
         top: ['parent', 'top', 'title_top'],
         bottom: ['parent', 'bottom', 0],
-        translationX: 120,
+        translationX: 48,
       },
       avatar: {
         width: 32,

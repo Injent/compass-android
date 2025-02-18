@@ -1,5 +1,6 @@
 package ru.bgitu.core.datastore.migrations
 
+import android.os.Build.VERSION.SDK_INT
 import androidx.datastore.core.DataMigration
 import ru.bgitu.core.SettingsPb
 import ru.bgitu.core.copy
@@ -14,6 +15,8 @@ class MigrationV3 : DataMigration<SettingsPb> {
             }
             prefs = prefs.copy {
                 helpSiteTraffic = true
+                useDynamicTheme = SDK_INT >= 31
+                notificationDelegationEnabled = true
             }
         }
     }

@@ -13,7 +13,4 @@ internal data class DeprecatedStudentInfo(
     val name: String,
     val surname: String,
     val middleName: String?,
-) {
-    val fullName: String
-        get() = "$surname $name${if (middleName != null) " $middleName" else ""}"
-}
+)

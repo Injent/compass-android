@@ -8,5 +8,8 @@ data class UserPrefs(
     val teacherFilterByDays: Boolean,
     val savedGroups: List<Group>,
     val showGroupsOnMainScreen: Boolean,
-    val helpSiteTraffic: Boolean
+    val helpSiteTraffic: Boolean,
+    val useDynamicTheme: Boolean,
+    val subscribedTopics: List<SubscribedTopic>,
+    val notificationDelegationEnabled: Boolean
 )

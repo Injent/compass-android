@@ -16,7 +16,7 @@ dependencies {
     implementation(projects.core.datastore)
     implementation(projects.core.network)
     implementation(projects.core.model)
-    implementation(projects.core.database)
+    implementation(projects.core.notifications)
 
     implementation(libs.kotlinx.serialization)
     implementation(libs.kotlinx.datetime)
@@ -25,16 +25,15 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
 
+    huaweiImplementation(libs.huawei.pushKit)
+
+    rustoreImplementation(platform(libs.rustore.bom))
+    rustoreImplementation(libs.rustore.push)
+
     implementation(libs.ktor.core)
     
     testImplementation(libs.datastore)
-    testImplementation(projects.core.dataTest)
-    testImplementation(projects.core.datastoreTest)
-    testImplementation(projects.core.testing)
 
     androidTestImplementation(libs.datastore)
-    androidTestImplementation(projects.core.dataTest)
-    androidTestImplementation(projects.core.datastoreTest)
-    androidTestImplementation(projects.core.testing)
     androidTestImplementation(libs.robolectric)
 }

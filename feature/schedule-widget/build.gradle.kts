@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.bgitu.library.compose)
     alias(libs.plugins.bgitu.koin)
     alias(libs.plugins.bgitu.serialization)
-    alias(libs.plugins.protobuf)
     alias(libs.plugins.secrets)
 }
 
@@ -14,24 +13,6 @@ android {
         consumerProguardFiles("consumer-proguard-rules.pro")
     }
     buildFeatures.buildConfig = true
-}
-
-protobuf {
-    protoc {
-        artifact = libs.protobuf.protoc.get().toString()
-    }
-    generateProtoTasks {
-        all().forEach { task ->
-            task.builtins {
-                val java by registering {
-                    option("lite")
-                }
-                val kotlin by registering {
-                    option("lite")
-                }
-            }
-        }
-    }
 }
 
 dependencies {

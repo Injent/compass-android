@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +21,7 @@ import androidx.core.net.toUri
 import ru.bgitu.core.common.TELEGRAM_BOT_DOMAIN
 import ru.bgitu.core.designsystem.components.AppCard
 import ru.bgitu.core.designsystem.icon.AppIcons
+import ru.bgitu.core.designsystem.icon.Support
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.feature.profile.R
 
@@ -40,7 +40,7 @@ fun SupportDevelopersCard(modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                painter = painterResource(AppIcons.Support),
+                imageVector = AppIcons.Support,
                 contentDescription = null,
                 tint = AppTheme.colorScheme.foreground,
                 modifier = Modifier.size(20.dp)
@@ -70,7 +70,7 @@ private fun Context.launchTelegramBotSupportFeature() {
     } catch (e: ActivityNotFoundException) {
         Toast.makeText(
             this,
-            ru.bgitu.components.signin.R.string.telegram_appNotFound,
+            "Telegram not installed",
             Toast.LENGTH_SHORT
         ).show()
     }

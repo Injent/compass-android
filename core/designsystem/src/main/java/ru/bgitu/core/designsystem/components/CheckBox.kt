@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import ru.bgitu.core.designsystem.R
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.theme.CompassTheme
+import ru.bgitu.core.designsystem.util.thenIf
 
 @Composable
 fun AppCheckBox(
@@ -32,13 +34,14 @@ fun AppCheckBox(
     modifier: Modifier = Modifier,
     text: String? = null,
     shape: Shape = RoundedCornerShape(6.dp),
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    loading: Boolean = false
 ) {
     val (checkedColor, checkColor, borderColor) = when {
         checked && enabled -> arrayOf(AppTheme.colorScheme.foreground, AppTheme.colorScheme.foregroundOnBrand, null)
         !checked && enabled -> arrayOf(AppTheme.colorScheme.background1, null, AppTheme.colorScheme.foreground3)
-        checked && !enabled -> arrayOf(AppTheme.colorScheme.foreground3, AppTheme.colorScheme.backgroundTouchable, null)
-        else -> arrayOf(AppTheme.colorScheme.foreground, null, AppTheme.colorScheme.foreground3)
+        checked && !enabled -> arrayOf(AppTheme.colorScheme.foreground.copy(.5f), AppTheme.colorScheme.backgroundTouchable, null)
+        else -> arrayOf(AppTheme.colorScheme.foreground3, null, AppTheme.colorScheme.foreground2)
     }
 
     Row(
@@ -47,6 +50,7 @@ fun AppCheckBox(
         modifier = modifier
     ) {
         Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(24.dp)
                 .background(animateColorAsState(checkedColor!!).value, shape)
@@ -63,14 +67,20 @@ fun AppCheckBox(
                 )
                 .padding(1.dp)
         ) {
+            if (loading) {
+                AppCircularLoading(
+                    modifier = Modifier.size(16.dp),
+                    tint = checkColor ?: AppTheme.colorScheme.foreground
+                )
+            }
             checkColor?.let {
                 Icon(
                     painter = painterResource(R.drawable.ic_check),
                     contentDescription = null,
                     tint = it,
                     modifier = Modifier
-                        .align(Alignment.Center)
                         .size(20.dp)
+                        .thenIf(loading) { alpha(0f) }
                 )
             }
         }

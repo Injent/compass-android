@@ -105,7 +105,7 @@
             android:layout_height="14dp"
             android:layout_marginTop="4dp"
             android:contentDescription="@null"
-            android:src="@drawable/ic_book_cover"
+            android:src="@drawable/ic_book"
             android:tint="@color/colorBrand"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true" />

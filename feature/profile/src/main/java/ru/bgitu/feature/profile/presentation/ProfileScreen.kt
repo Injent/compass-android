@@ -1,5 +1,10 @@
 package ru.bgitu.feature.profile.presentation
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NO_ANIMATION
+import android.os.Build.VERSION.SDK_INT
 import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -26,6 +31,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Badge
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,12 +41,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -51,10 +61,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.layoutId
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 import ru.bgitu.core.common.ScreenRotation
 import ru.bgitu.core.common.openUrl
 import ru.bgitu.core.common.screenRotation
+import ru.bgitu.core.datastore.SettingsRepository
+import ru.bgitu.core.datastore.model.UnseenFeatures
 import ru.bgitu.core.designsystem.components.AppCard
 import ru.bgitu.core.designsystem.components.AppItemCard
 import ru.bgitu.core.designsystem.components.AppSmallButton
@@ -63,6 +78,7 @@ import ru.bgitu.core.designsystem.components.MotionContent
 import ru.bgitu.core.designsystem.components.Status
 import ru.bgitu.core.designsystem.components.StatusDecor
 import ru.bgitu.core.designsystem.icon.AppIcons
+import ru.bgitu.core.designsystem.icon.CalendarOutlined
 import ru.bgitu.core.designsystem.icon.Edit
 import ru.bgitu.core.designsystem.icon.Vk
 import ru.bgitu.core.designsystem.theme.AppTheme
@@ -85,6 +101,8 @@ import ru.bgitu.feature.profile.presentation.components.SignOutDialog
 import ru.bgitu.feature.profile.presentation.components.SupportDevelopersCard
 import ru.bgitu.feature.profile.presentation.components.TryNewFeatureCard
 import ru.bgitu.feature.profile.presentation.components.TryNewFeatureDialog
+import ru.bgitu.feature.schedule_widget.presentation.WidgetSettingsActivity
+import ru.bgitu.feature.schedule_widget.receiver.ScheduleWidgetReceiver
 import kotlin.math.roundToInt
 
 @Composable
@@ -121,7 +139,7 @@ internal fun ProfileScreen() {
 
     NewProfileScreenContent(
         uiState = uiState,
-        onIntent = viewModel::onIntent
+        onIntent = viewModel::onIntent,
     )
 }
 
@@ -130,23 +148,99 @@ private fun ProfileMenuItems(
     onIntent: (ProfileIntent) -> Unit,
     hideSettings: Boolean,
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    val settings = koinInject<SettingsRepository>()
+    val unseenFeatures by settings.unseenFeatures.collectAsStateWithLifecycle(emptyList())
+
     ProfileItem.entries.forEach { profileItem ->
         if (hideSettings && profileItem == ProfileItem.SETTINGS) return@forEach
 
-        AppItemCard(
-            label = stringResource(profileItem.labelRes),
-            icon = profileItem.iconRes,
-            onClick = {
-                val action: ProfileIntent = when (profileItem) {
-                    ProfileItem.HELP -> ProfileIntent.NavigateToHelp
-                    ProfileItem.ABOUT -> ProfileIntent.NavigateToAboutApp
-                    ProfileItem.MY_GROUPS -> ProfileIntent.NavigateToGroups
-                    ProfileItem.SETTINGS -> ProfileIntent.NavigateToSettings
+        Box {
+            AppItemCard(
+                label = stringResource(profileItem.labelRes),
+                icon = profileItem.icon,
+                onClick = {
+                    when (profileItem) {
+                        ProfileItem.HELP -> ProfileIntent.NavigateToHelp
+                        ProfileItem.ABOUT -> ProfileIntent.NavigateToAboutApp
+                        ProfileItem.MY_GROUPS -> ProfileIntent.NavigateToGroups
+                        ProfileItem.SETTINGS -> ProfileIntent.NavigateToSettings
+                    }.also(onIntent)
                 }
+            )
 
-                onIntent(action)
+            if (UnseenFeatures.NEW_CHANGELOG in unseenFeatures && profileItem == ProfileItem.ABOUT) {
+                Badge(
+                    containerColor = AppTheme.colorScheme.foregroundError,
+                    modifier = Modifier
+                        .size(10.dp)
+                        .align(Alignment.TopEnd)
+                )
             }
-        )
+        }
+    }
+
+    val appWidgetManager = remember { AppWidgetManager.getInstance(context) }
+
+    val showWidgetCard = remember {
+        if (SDK_INT >= 26) {
+            appWidgetManager.isRequestPinAppWidgetSupported
+        } else false
+    }
+    val isWidgetPlaced = remember {
+        appWidgetManager.getAppWidgetIds(ComponentName(context, ScheduleWidgetReceiver::class.java))
+            .isNotEmpty()
+    }
+
+    if (showWidgetCard) {
+        Box {
+            AppItemCard(
+                label = remember(unseenFeatures, isWidgetPlaced) {
+                    context.getString(
+                        when {
+                            UnseenFeatures.ADD_WIDGET in unseenFeatures -> R.string.try_widget
+                            isWidgetPlaced -> R.string.widget_settings
+                            else -> R.string.add_widget
+                        }
+                    )
+                },
+                icon = AppIcons.CalendarOutlined,
+                onClick = {
+                    val provider = ComponentName(context, ScheduleWidgetReceiver::class.java)
+
+                    if (isWidgetPlaced) {
+                        val widgetId = appWidgetManager.getAppWidgetIds(provider).first()
+                        val intent = Intent(context, WidgetSettingsActivity::class.java).apply {
+                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+                            flags = FLAG_ACTIVITY_NO_ANIMATION
+                        }
+                        context.startActivity(intent)
+                        return@AppItemCard
+                    }
+
+                    scope.launch(NonCancellable) {
+                        settings.updateMetadata {
+                            it.copy(unseenFeatureIds = it.unseenFeatureIds - UnseenFeatures.ADD_WIDGET)
+                        }
+                    }
+
+
+                    if (SDK_INT >= 26) {
+                        appWidgetManager.requestPinAppWidget(provider, null, null)
+                    }
+                }
+            )
+            if (UnseenFeatures.ADD_WIDGET in unseenFeatures) {
+                Badge(
+                    containerColor = AppTheme.colorScheme.foregroundError,
+                    modifier = Modifier
+                        .size(10.dp)
+                        .align(Alignment.TopEnd)
+                )
+            }
+        }
     }
 }
 
@@ -158,7 +252,6 @@ private fun ProfileScreenTopBar(
     val additionalStatusBarHeight = LocalDensity.current.run {
         WindowInsets.statusBars.getTop(this).toDp()
     }
-    val context = LocalContext.current
     MotionContent(
         scrollBehavior = scrollBehavior,
         motionSceneResId = R.raw.profile_topbar_scene,
@@ -187,6 +280,17 @@ private fun ProfileScreenTopBar(
                     }
                 }
         ) {
+            val gradientStartColor = AppTheme.colorScheme.background2
+            val gradientBrush = remember(gradientStartColor) {
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color.Transparent,
+                        Color.Transparent,
+                        gradientStartColor,
+                    )
+                )
+            }
+
             Image(
                 painter = painterResource(R.drawable.profile_bg),
                 contentDescription = null,
@@ -194,17 +298,24 @@ private fun ProfileScreenTopBar(
                 modifier = Modifier
                     .matchParentSize()
                     .drawWithContent {
-                        if (fraction < 1f) drawContent()
+                        if (fraction < 1f) {
+                            drawContent()
+                            drawRect(brush = gradientBrush)
+                        }
                     }
             )
         }
 
-        Box(modifier = Modifier.layoutId("title")) {
+        Box(
+            contentAlignment = Alignment.CenterStart,
+            modifier = Modifier
+                .layoutId("title")
+                .height(56.dp)
+        ) {
             Text(
                 text = stringResource(R.string.profile),
                 style = AppTheme.typography.title3,
                 color = AppTheme.colorScheme.foreground1,
-                modifier = Modifier.align(Alignment.Center)
             )
         }
 
@@ -316,7 +427,7 @@ private fun NewProfileScreenContent(
 
                 ProfileMenuItems(
                     onIntent = onIntent,
-                    hideSettings = uiState is ProfileUiState.Success
+                    hideSettings = uiState is ProfileUiState.Success,
                 )
                 var showSignOutDialog by rememberSaveable { mutableStateOf(false) }
 

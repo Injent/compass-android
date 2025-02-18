@@ -10,15 +10,11 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.bgitu.feature.notes.data.NotesRepository
-import ru.bgitu.feature.notes.model.ShortNote
-
-data class NotesUiState(
-    val notes: List<ShortNote>
-)
 
 sealed interface NotesIntent {
     data class SetCompleted(val noteId: Int, val completed: Boolean) : NotesIntent
     data class SelectTab(val tabIndex: Int) : NotesIntent
+    data class Delete(val noteId: Int) : NotesIntent
 }
 
 class NotesViewModel(
@@ -77,6 +73,9 @@ class NotesViewModel(
                     1 -> lazyCompletedNotesKey.value = true
                     2 -> lazyDeletedNotesKey.value = true
                 }
+            }
+            is NotesIntent.Delete -> viewModelScope.launch {
+                notesRepository.putIntoBin(noteId = intent.noteId)
             }
         }
     }

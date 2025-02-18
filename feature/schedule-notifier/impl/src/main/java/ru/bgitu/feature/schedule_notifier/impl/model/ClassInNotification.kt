@@ -8,12 +8,15 @@ data class ClassInNotification(
     val shortMessage: String,
     val startsSoon: Boolean = false
 ) {
-    constructor(shortMessage: String) : this("", "", "", null, shortMessage)
+    constructor(
+        shortMessage: String,
+        fullMessage: String
+    ) : this(fullMessage, "", "", null, shortMessage)
 
     fun isEmpty() = this.subject.isEmpty() && this.location.isEmpty()
 
     companion object {
         val Empty: ClassInNotification
-            get() = ClassInNotification("")
+            get() = ClassInNotification("", "")
     }
 }

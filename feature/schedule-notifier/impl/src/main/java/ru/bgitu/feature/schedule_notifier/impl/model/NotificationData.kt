@@ -1,10 +1,10 @@
 package ru.bgitu.feature.schedule_notifier.impl.model
 
-import ru.bgitu.core.model.Lesson
+import ru.bgitu.core.datastore.model.StoredLesson
 
 data class NotificationData(
-    val lesson: Lesson?,
-    val nextLesson: Lesson?,
+    val lesson: StoredLesson?,
+    val nextLesson: StoredLesson?,
     val type: MsgType,
 )
 

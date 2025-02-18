@@ -6,7 +6,6 @@ import ru.bgitu.app.R
 import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.icon.Calendar
 import ru.bgitu.core.designsystem.icon.Case
-import ru.bgitu.core.designsystem.icon.Settings
 import ru.bgitu.core.navigation.Screen
 
 class TopLevelRoute<T : Any>(
@@ -26,19 +25,14 @@ val topLevelRoutes = listOf(
         route = Screen.TeacherSearch(),
         icon = AppIcons.Case
     ),
-    TopLevelRoute(
-        name = R.string.label_notes,
-        route = Screen.Notes(null),
-        icon = AppIcons.Calendar // unused placeholder
-    ),
+//    TopLevelRoute(
+//        name = R.string.label_notes,
+//        route = Screen.Notes(null),
+//        icon = AppIcons.Calendar // unused placeholder
+//    ),
     TopLevelRoute(
         name = R.string.label_profile,
         route = Screen.Profile,
         icon = AppIcons.Calendar // unused placeholder
-    ),
-    TopLevelRoute(
-        name = R.string.label_settings,
-        route = Screen.Settings,
-        icon = AppIcons.Settings
     )
 )

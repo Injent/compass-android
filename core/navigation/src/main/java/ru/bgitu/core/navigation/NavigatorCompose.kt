@@ -5,27 +5,12 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.serialization.generateHashCode
 import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.serializer
 
 val LocalNavController = staticCompositionLocalOf<NavController> {
     error("Navigator not provided")
-}
-
-fun NavController.navigateTopDestination(tab: Any) {
-    if (currentDestination?.hasRoute(tab::class) == true) return
-
-    navigate(tab) {
-        popUpTo(graph.findStartDestination().id) {
-            saveState = true
-        }
-
-        launchSingleTop = true
-        restoreState = true
-    }
 }
 
 @OptIn(InternalSerializationApi::class)

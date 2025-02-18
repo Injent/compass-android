@@ -11,6 +11,7 @@ data class ProfessorClass(
     val classroom: String,
     val building: String,
     val isLecture: Boolean,
+    val subjectName: String,
     @SerialName("lessonDate")
     val date: LocalDate,
     val startAt: LocalTime,

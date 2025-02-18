@@ -25,7 +25,6 @@ data class LoginUiState(
 )
 
 sealed class LoginIntent {
-
     data object Back : LoginIntent()
     data class SignIn(val signInParams: SignInParams?) : LoginIntent()
     data object ReadUserAgreement : LoginIntent()

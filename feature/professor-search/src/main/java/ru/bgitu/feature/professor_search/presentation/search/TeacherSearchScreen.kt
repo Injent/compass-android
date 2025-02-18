@@ -147,6 +147,7 @@ private fun TeacherSearchScreen(
             Modifier
                 .fillMaxSize()
                 .padding(top = innerPadding.calculateTopPadding())
+                .padding(top = AppTheme.spacing.l)
                 .padding(horizontal = AppTheme.spacing.l)
         ) {
             SearchResults(

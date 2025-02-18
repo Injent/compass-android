@@ -1,5 +1,6 @@
 package ru.bgitu.core.designsystem.util.shadow
 
+import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.DrawModifier
@@ -11,7 +12,30 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.dp
 import ru.bgitu.core.designsystem.theme.SpotCard
+import ru.bgitu.core.designsystem.util.boxShadow
+
+fun Modifier.basicShadow(shape: Shape = RectangleShape): Modifier {
+    return if (SDK_INT < 28) {
+        roundRectShadow(
+            offset = DpOffset(0.dp, 2.dp),
+            shape = shape,
+            radius = 10.dp,
+        )
+    } else {
+        boxShadow(
+            color = SpotCard,
+            blurRadius = 6.dp,
+            spreadRadius = 0.dp,
+            offset = DpOffset(0.dp, 2.dp),
+            shape = shape,
+            clip = false,
+            inset = false,
+            alpha = .5f
+        )
+    }
+}
 
 fun Modifier.roundRectShadow(
     color: Color = SpotCard,

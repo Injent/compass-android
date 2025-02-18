@@ -73,7 +73,7 @@ class DragDropState internal constructor(
 
     internal fun onDragStart(offset: Offset) {
         state.layoutInfo.visibleItemsInfo
-            .firstOrNull { item -> offset.x.toInt() in item.offset..(item.offset + item.size) }
+            .firstOrNull { item -> offset.y.toInt() in item.offset..(item.offset + item.size) }
             ?.also {
                 draggingItemIndex = it.index
                 draggingItemInitialOffset = it.offset
@@ -99,7 +99,7 @@ class DragDropState internal constructor(
     }
 
     internal fun onDrag(offset: Offset) {
-        draggingItemDraggedDelta += offset.x
+        draggingItemDraggedDelta += offset.y
 
         val draggingItem = draggingItemLayoutInfo ?: return
         val startOffset = draggingItem.offset + draggingItemOffset
@@ -168,12 +168,12 @@ fun LazyItemScope.DraggableItem(
         if (dragging) {
             Modifier
                 .zIndex(1f)
-                .graphicsLayer { translationX = dragDropState.draggingItemOffset }
+                .graphicsLayer { translationY = dragDropState.draggingItemOffset }
         } else if (index == dragDropState.previousIndexOfDraggedItem) {
             Modifier
                 .zIndex(1f)
                 .graphicsLayer {
-                    translationX = dragDropState.previousItemOffset.value
+                    translationY = dragDropState.previousItemOffset.value
                 }
         } else {
             Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)

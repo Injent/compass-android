@@ -3,7 +3,7 @@
     <string name="profile">Профиль</string>
     <string name="settings">Настройки</string>
     <string name="about_app">О приложении</string>
-    <string name="help">Помощь и поддержка</string>
+    <string name="help">Тех. поддержка</string>
     <string name="sign_out">Выйти</string>
     <string name="edit">Редактировать</string>
     <string name="about_me">Обо мне</string>
@@ -17,4 +17,7 @@
     <string name="new_feature_dialog_text">Войдите со своим аккаунтом от {ВК}, {Telegram} или {Google}</string>
     <string name="new_feature_dialog_text_warning">Будет произведен выход из приложения</string>
     <string name="support_devs">Поддержи разработчиков словами</string>
+    <string name="try_widget">Попробуй новый виджет</string>
+    <string name="widget_settings">Настройки виджета</string>
+    <string name="add_widget">Добавить виджет</string>
 </resources>

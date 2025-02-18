@@ -2,7 +2,7 @@ package ru.bgitu.feature.update.di
 
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import ru.bgitu.feature.update.presentation.AppUpdateViewModel
 

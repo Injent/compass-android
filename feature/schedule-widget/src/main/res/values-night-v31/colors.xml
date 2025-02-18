@@ -2,7 +2,7 @@
 <resources>
     <color name="colorBrand">@android:color/system_accent1_100</color>
     <color name="colorOnBrand">@android:color/system_accent2_800</color>
-    <color name="colorBackground1">@android:color/system_accent3_700</color>
+    <color name="colorBackground1">@android:color/system_accent2_600</color>
     <color name="colorBackground2">@android:color/system_accent2_700</color>
     <color name="colorForeground1">@android:color/system_neutral1_0</color>
     <color name="colorForeground2">@android:color/system_neutral2_200</color>

@@ -1,6 +1,7 @@
 package ru.bgitu.app.presentation.components
 
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -67,6 +68,7 @@ fun AppUpdateBottomSheetSetup(uiState: MainActivityUiState) {
     sheetData?.let { data ->
         ModalBottomSheet(
             onDismissRequest = { sheetData = null },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             containerColor = AppTheme.colorScheme.background1
         ) {
             AppUpdateBottomSheet(

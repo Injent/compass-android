@@ -16,14 +16,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import ru.bgitu.core.designsystem.components.AppTextButton
 import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.theme.AppTheme
-import ru.bgitu.core.ui.onClick
 import ru.bgitu.feature.professor_search.R
 import ru.bgitu.feature.professor_search.presentation.search.TeacherSearchUiState
 

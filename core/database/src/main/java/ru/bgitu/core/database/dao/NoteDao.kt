@@ -28,7 +28,7 @@ interface NoteDao {
     suspend fun upsertNote(note: NoteEntity): Long
 
     @Query("UPDATE notes SET is_deleted = :deleted WHERE id = :noteId")
-    suspend fun setDeleted(noteId: Int, deleted: Boolean)
+    suspend fun setAsDeleted(noteId: Int, deleted: Boolean)
 
     @Query("DELETE FROM notes WHERE id = :noteId")
     suspend fun deleteNote(noteId: Int)

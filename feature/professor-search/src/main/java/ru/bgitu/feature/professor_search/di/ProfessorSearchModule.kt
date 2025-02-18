@@ -1,7 +1,7 @@
 package ru.bgitu.feature.professor_search.di
 
-import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import ru.bgitu.feature.professor_search.presentation.details.TeacherDetailsViewModel
 import ru.bgitu.feature.professor_search.presentation.search.TeacherSearchViewModel

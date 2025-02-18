@@ -1,7 +1,6 @@
 package ru.bgitu.feature.schedule_widget.widget
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -22,6 +21,7 @@ import androidx.glance.LocalContext
 import androidx.glance.LocalSize
 import androidx.glance.action.Action
 import androidx.glance.action.actionParametersOf
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
@@ -46,29 +46,29 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
-import org.koin.android.ext.android.get
+import ru.bgitu.core.SettingsPb
+import ru.bgitu.core.WidgetStatePb
 import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.common.HOME_DEEPLINK
 import ru.bgitu.core.common.MAIN_ACTIVITY_CLASS
-import ru.bgitu.core.datastore.SettingsRepository
+import ru.bgitu.core.copy
 import ru.bgitu.core.designsystem.illustration.AppIllustrations
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.feature.schedule_widget.R
-import ru.bgitu.feature.schedule_widget.WidgetPb.WidgetDataPb
-import ru.bgitu.feature.schedule_widget.model.MinifiedLesson
 import ru.bgitu.feature.schedule_widget.model.ScheduleWidgetState
 import ru.bgitu.feature.schedule_widget.model.WidgetColorScheme
 import ru.bgitu.feature.schedule_widget.model.WidgetThemeMode
 import ru.bgitu.feature.schedule_widget.model.toWidgetState
-import ru.bgitu.feature.schedule_widget.widget.ChangeDateAction.Companion.QueryDateParam
+import ru.bgitu.feature.schedule_widget.receiver.ChangeDateCallback
+import ru.bgitu.feature.schedule_widget.receiver.dateKey
+import ru.bgitu.feature.schedule_widget.updateScheduleWidgetState
 import ru.bgitu.feature.schedule_widget.widget.component.CustomScaffold
 import ru.bgitu.feature.schedule_widget.widget.component.GlanceLesson
-import ru.bgitu.feature.schedule_widget.work.WidgetScheduleWorker
 
 
 class ScheduleWidget : GlanceAppWidget() {
@@ -80,34 +80,27 @@ class ScheduleWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            val uiState = currentState<WidgetDataPb>().toWidgetState()
+            val uiState = currentState<SettingsPb>().toWidgetState()
             colorScheme = WidgetColorScheme.createFrom(
                 context = context,
                 mode = uiState.options.themeMode,
                 opacity = uiState.options.opacity
             )
-            NewContent(
-                isGroupSelected = runBlocking {
-                    (context as Application).get<SettingsRepository>().data.first().primaryGroup != null
-                }
-            )
+            NewContent(uiState = uiState)
         }
     }
 
+    @SuppressLint("RestrictedApi")
     @Composable
-    fun NewContent(isGroupSelected: Boolean) {
-        val uiState: ScheduleWidgetState = currentState<WidgetDataPb>().toWidgetState()
+    fun NewContent(uiState: ScheduleWidgetState) {
         val context = LocalContext.current
         val size = LocalSize.current
 
         CustomScaffold(
-            background = ImageProvider(
-                when (uiState.options.themeMode) {
-                    WidgetThemeMode.AUTO -> R.drawable.dynamic_widget_background
-                    WidgetThemeMode.LIGHT -> R.drawable.light_widget_background
-                    WidgetThemeMode.DARK -> R.drawable.dark_widget_background
-                }
-            ),
+            backgroundColor = run {
+                colorScheme.widgetBackground.getColor(context)
+            },
+            backgroundAlpha = uiState.options.opacity,
             horizontalPadding = when {
                 SDK_INT < 31 -> 14.dp
                 size.width >= HORIZONTAL_RECTANGLE.width -> 12.dp
@@ -117,40 +110,30 @@ class ScheduleWidget : GlanceAppWidget() {
                 TitleBar(
                     title = uiState.getTitle(context),
                     hasNext = (uiState.queryDate > DateTimeUtil.weeksDateBoundary.start)
-                            && isGroupSelected,
+                            && uiState.groupIsSelected,
                     hasPrevious = (uiState.queryDate < DateTimeUtil.weeksDateBoundary.endInclusive)
-                            && isGroupSelected,
-                    onNext = actionRunCallback<ChangeDateAction>(
-                        actionParametersOf(
-                            QueryDateParam to uiState.queryDate.plus(1, DateTimeUnit.DAY).toString()
-                        )
-                    ),
-                    onPrevious = actionRunCallback<ChangeDateAction>(
-                        actionParametersOf(
-                            QueryDateParam to uiState.queryDate.minus(1, DateTimeUnit.DAY).toString()
-                        )
-                    ),
+                            && uiState.groupIsSelected,
+                    onNext = changeDateAction(uiState.queryDate.plus(1, DateTimeUnit.DAY)),
+                    onPrevious = changeDateAction(uiState.queryDate.minus(1, DateTimeUnit.DAY)),
+                    onReset = changeDateAction(DateTimeUtil.currentDate)
                 )
             }
         ) {
             when {
-                !isGroupSelected -> {
+                uiState.error -> ErrorView()
+                !uiState.groupIsSelected -> {
                     SelectGroupView(
                         onClick = actionStartActivity(
                             Intent().apply {
                                 component = ComponentName(context, MAIN_ACTIVITY_CLASS)
-                                flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or
-                                        Intent.FLAG_ACTIVITY_TASK_ON_HOME
                             }
                         ),
                         modifier = GlanceModifier.fillMaxSize()
                     )
                 }
-                uiState.classesForQueryDate.isNotEmpty() -> {
+                uiState.currentLessons.isNotEmpty() -> {
                     DaySchedule(
-                        lessons = uiState.classesForQueryDate,
-                        themeMode = uiState.options.themeMode,
-                        modifier = GlanceModifier
+                        uiState = uiState,
                     )
                 }
                 uiState.isLoading -> {
@@ -166,7 +149,7 @@ class ScheduleWidget : GlanceAppWidget() {
                         )
                     }
                 }
-                uiState.classesForQueryDate.isEmpty() -> {
+                uiState.currentLessons.isEmpty() -> {
                     Column(
                         modifier = GlanceModifier
                             .fillMaxSize(),
@@ -201,6 +184,7 @@ class ScheduleWidget : GlanceAppWidget() {
         hasPrevious: Boolean,
         onNext: Action,
         onPrevious: Action,
+        onReset: Action,
     ) {
         val size = LocalSize.current
 
@@ -241,11 +225,7 @@ class ScheduleWidget : GlanceAppWidget() {
                 modifier = GlanceModifier
                     .height(40.dp)
                     .defaultWeight(),
-                onClick = actionRunCallback<ChangeDateAction>(
-                    actionParametersOf(
-                        QueryDateParam to DateTimeUtil.currentDate.toString()
-                    )
-                ),
+                onClick = onReset,
                 maxLines = 1
             )
             Spacer(GlanceModifier.width(AppTheme.spacing.s))
@@ -290,18 +270,15 @@ class ScheduleWidget : GlanceAppWidget() {
 
     @Composable
     private fun DaySchedule(
+        uiState: ScheduleWidgetState,
         modifier: GlanceModifier = GlanceModifier,
-        themeMode: WidgetThemeMode,
-        lessons: List<MinifiedLesson>,
     ) {
+        val size = LocalSize.current
         val context = LocalContext.current
         val action = actionStartActivity(
-            Intent().apply {
-                component = ComponentName(context, MAIN_ACTIVITY_CLASS)
-                flags = (Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        or Intent.FLAG_ACTIVITY_TASK_ON_HOME)
-                val openScheduleDate = lessons.firstOrNull()?.date ?: DateTimeUtil.currentDate
-                data = "$HOME_DEEPLINK/$openScheduleDate".toUri()
+            Intent.makeMainActivity(ComponentName(context, MAIN_ACTIVITY_CLASS)).apply {
+                data = "$HOME_DEEPLINK/${uiState.queryDate}".toUri()
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             }
         )
         LazyColumn(
@@ -309,21 +286,19 @@ class ScheduleWidget : GlanceAppWidget() {
             modifier = modifier
                 .fillMaxSize()
         ) {
-            lessons.forEachIndexed { index, lesson ->
+            uiState.currentLessons.forEachIndexed { index, lesson ->
                 item {
                     GlanceLesson(
                         lesson = lesson,
-                        background = ImageProvider(
-                            context.pickSurfaceDrawableId(
-                                themeMode = themeMode,
-                                index = index,
-                                size = lessons.size
-                            )
+                        opacity = uiState.options.opacity,
+                        background = context.pickSurfaceDrawableId(
+                            themeMode = uiState.options.themeMode,
+                            index = index,
+                            size = uiState.currentLessons.size
                         ),
-                        iconColor = colorScheme.brand,
-                        primaryContentColor = colorScheme.foreground1,
-                        secondaryContentColor = colorScheme.foreground2,
-                        action = action
+                        colorScheme = colorScheme,
+                        modifier = GlanceModifier
+                            .clickable(action)
                     )
                 }
 
@@ -331,12 +306,53 @@ class ScheduleWidget : GlanceAppWidget() {
                     Spacer(GlanceModifier.height(4.dp))
                 }
             }
+
+            item {
+                val height = if (size.width >= HORIZONTAL_RECTANGLE.width) 8.dp else 2.dp
+                Spacer(GlanceModifier.height(height))
+            }
         }
     }
 
-    override suspend fun onDelete(context: Context, glanceId: GlanceId) {
-        ScheduleStateDefinition.deleteDataStore(context)
-        WidgetScheduleWorker.cancel(context)
+    @Composable
+    private fun ErrorView() {
+        val context = LocalContext.current
+
+        Column(
+            horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
+            verticalAlignment = Alignment.Vertical.CenterVertically,
+            modifier = GlanceModifier.fillMaxSize()
+        ) {
+            Image(
+                provider = ImageProvider(R.drawable.ic_triangle_warning),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(colorScheme.brand),
+                modifier = GlanceModifier.size(64.dp)
+            )
+            Spacer(GlanceModifier.height(8.dp))
+            Text(
+                text = LocalContext.current.getString(R.string.error_happend),
+                style = TextStyle(
+                    color = colorScheme.brand,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 18.sp
+                )
+            )
+            Spacer(GlanceModifier.height(8.dp))
+            Button(
+                text = context.getString(R.string.error_happend),
+                onClick = changeDateAction(DateTimeUtil.currentDate),
+                style = TextStyle(
+                    textAlign = TextAlign.Center,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal
+                ),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = colorScheme.brand,
+                    contentColor = colorScheme.onBrand,
+                ),
+            )
+        }
     }
 
     override fun onCompositionError(
@@ -346,7 +362,25 @@ class ScheduleWidget : GlanceAppWidget() {
         throwable: Throwable
     ) {
         super.onCompositionError(context, glanceId, appWidgetId, throwable)
-        //WidgetScheduleWorker.start(context, DateTimeUtil.currentDate)
+        runBlocking {
+            context.updateScheduleWidgetState(
+                glanceId = glanceId,
+                updateState = {
+                    WidgetStatePb.getDefaultInstance().copy {
+                        error = true
+                        isLoading = false
+                    }
+                }
+            )
+        }
+    }
+
+    private fun changeDateAction(date: LocalDate): Action {
+        return actionRunCallback<ChangeDateCallback>(
+            actionParametersOf(
+                dateKey to date.toString()
+            )
+        )
     }
 
     companion object {

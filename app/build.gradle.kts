@@ -17,9 +17,8 @@ android {
 
     defaultConfig {
         applicationId = "ru.bgitu.app"
-        targetSdk = 34
-        versionCode = 14
-        versionName = "1.2-release"
+        versionCode = 16
+        versionName = "1.3-release"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -114,15 +113,16 @@ android {
     }
 }
 
+agcp {
+    manifest = false
+}
+
 dependencies {
     // Features
     implementation(projects.feature.home)
-    implementation(projects.feature.findmate)
     implementation(projects.feature.profile)
-    implementation(projects.feature.login)
     implementation(projects.feature.update)
     implementation(projects.feature.settings)
-    implementation(projects.feature.profileSettings)
     implementation(projects.feature.about)
     implementation(projects.feature.help)
     implementation(projects.feature.scheduleNotifier.api)
@@ -131,8 +131,6 @@ dependencies {
     implementation(projects.feature.professorSearch)
     implementation(projects.feature.groups)
     implementation(projects.feature.input)
-    implementation(projects.feature.onboarding)
-    implementation(projects.feature.notes)
 
     implementation(projects.core.designsystem)
     implementation(projects.core.network)
@@ -142,34 +140,30 @@ dependencies {
     implementation(projects.core.datastore)
     implementation(projects.core.model)
     implementation(projects.core.navigation)
-    implementation(projects.core.database)
     implementation(projects.core.notifications)
     implementation(projects.core.ui)
 
     implementation(projects.components.updates.api)
     implementation(projects.components.updates.impl)
     implementation(projects.components.sync)
-    implementation(projects.components.signin)
-    implementation(projects.components.siteTraffic)
-
-    implementation(libs.vk.id)
 
     // Core
     implementation(libs.compose.activity)
     implementation(libs.core.ktx)
-    implementation(libs.coil)
+
+    // Coil
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.ktor3)
 
     // Lifecycle
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.compose)
 
-    implementation(libs.koin.workManager)
     implementation(libs.koin.compose)
     implementation(libs.splashScreen)
 
     // Firebase
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.messaging)
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.analytics)
 
@@ -177,4 +171,9 @@ dependencies {
     implementation(libs.kotlinx.datetime)
 
     huaweiImplementation(libs.agconnect.core)
+    huaweiImplementation(libs.huawei.hianalytics)
+    huaweiImplementation(libs.huawei.crash)
+
+    rustoreImplementation(platform(libs.rustore.bom))
+    rustoreImplementation(libs.rustore.push)
 }

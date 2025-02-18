@@ -1,24 +1,26 @@
 package ru.bgitu.core.designsystem.icon
 
-import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
+import ru.bgitu.core.designsystem.theme.LocalNewColorScheme
 
-val AppIcons.Folder: ImageVector
-    get() {
-        if (_FolderFill != null) {
-            return _FolderFill!!
+val AppIcons.HomeFolder: ImageVector
+    @Composable get() {
+        if (_HomeFolder != null) {
+            return _HomeFolder!!
         }
-        _FolderFill = ImageVector.Builder(
-            name = "FolderFill",
+        _HomeFolder = ImageVector.Builder(
+            name = "HomeFolder",
             defaultWidth = 24.dp,
             defaultHeight = 24.dp,
             viewportWidth = 24f,
             viewportHeight = 24f
         ).apply {
-            path(fill = SolidColor(Color(0xFF000000))) {
+            path(fill = SolidColor(LocalContentColor.current)) {
                 moveTo(19.5f, 21f)
                 arcToRelative(3f, 3f, 0f, isMoreThanHalf = false, isPositiveArc = false, 3f, -3f)
                 verticalLineToRelative(-4.5f)
@@ -44,52 +46,32 @@ val AppIcons.Folder: ImageVector
                 arcToRelative(4.483f, 4.483f, 0f, isMoreThanHalf = false, isPositiveArc = false, -3f, 1.146f)
                 close()
             }
-        }.build()
-
-        return _FolderFill!!
-    }
-
-@Suppress("ObjectPropertyName")
-private var _FolderFill: ImageVector? = null
-
-val AppIcons.HomeInFolder: ImageVector
-    get() {
-        if (_HomeInFolder != null) {
-            return _HomeInFolder!!
-        }
-        _HomeInFolder = ImageVector.Builder(
-            name = "HomeInFolder",
-            defaultWidth = 24.dp,
-            defaultHeight = 24.dp,
-            viewportWidth = 24f,
-            viewportHeight = 24f
-        ).apply {
             path(
-                fill = SolidColor(Color(0xFF000000)),
-                strokeLineWidth = 0.556f
+                fill = SolidColor(LocalNewColorScheme.current.background3),
+                strokeLineWidth = 0.444445f
             ) {
-                moveToRelative(13.129f, 10.214f)
-                arcToRelative(1.111f, 1.111f, 0f, isMoreThanHalf = false, isPositiveArc = false, -1.333f, 0f)
-                lineTo(7.907f, 13.13f)
-                arcToRelative(1.111f, 1.111f, 0f, isMoreThanHalf = false, isPositiveArc = false, -0.444f, 0.889f)
-                lineToRelative(0f, 5.278f)
-                arcToRelative(1.111f, 1.111f, 0f, isMoreThanHalf = false, isPositiveArc = false, 1.111f, 1.111f)
-                lineToRelative(2.167f, 0f)
-                arcToRelative(0.611f, 0.611f, 0f, isMoreThanHalf = false, isPositiveArc = false, 0.611f, -0.611f)
-                lineToRelative(0f, -2.722f)
-                arcToRelative(1.111f, 1.111f, 0f, isMoreThanHalf = true, isPositiveArc = true, 2.222f, 0f)
-                lineToRelative(0f, 2.722f)
-                arcToRelative(0.611f, 0.611f, 0f, isMoreThanHalf = false, isPositiveArc = false, 0.611f, 0.611f)
-                lineToRelative(2.167f, 0f)
-                arcToRelative(1.111f, 1.111f, 135f, isMoreThanHalf = false, isPositiveArc = false, 1.111f, -1.111f)
-                lineToRelative(0f, -5.278f)
-                arcToRelative(1.111f, 1.111f, 0f, isMoreThanHalf = false, isPositiveArc = false, -0.444f, -0.889f)
+                moveToRelative(12.653f, 12.456f)
+                arcToRelative(0.778f, 0.778f, 0f, isMoreThanHalf = false, isPositiveArc = false, -0.933f, 0f)
+                lineTo(8.997f, 14.497f)
+                arcTo(0.778f, 0.778f, 0f, isMoreThanHalf = false, isPositiveArc = false, 8.686f, 15.119f)
+                verticalLineToRelative(3.694f)
+                arcToRelative(0.778f, 0.778f, 0f, isMoreThanHalf = false, isPositiveArc = false, 0.778f, 0.778f)
+                horizontalLineToRelative(1.517f)
+                arcToRelative(0.428f, 0.428f, 0f, isMoreThanHalf = false, isPositiveArc = false, 0.428f, -0.428f)
+                verticalLineToRelative(-1.906f)
+                arcToRelative(0.778f, 0.778f, 0f, isMoreThanHalf = true, isPositiveArc = true, 1.556f, 0f)
+                verticalLineToRelative(1.906f)
+                arcToRelative(0.428f, 0.428f, 0f, isMoreThanHalf = false, isPositiveArc = false, 0.428f, 0.428f)
+                horizontalLineToRelative(1.517f)
+                arcTo(0.778f, 0.778f, 0f, isMoreThanHalf = false, isPositiveArc = false, 15.686f, 18.814f)
+                verticalLineTo(15.119f)
+                arcTo(0.778f, 0.778f, 0f, isMoreThanHalf = false, isPositiveArc = false, 15.375f, 14.497f)
                 close()
             }
         }.build()
 
-        return _HomeInFolder!!
+        return _HomeFolder!!
     }
 
 @Suppress("ObjectPropertyName")
-private var _HomeInFolder: ImageVector? = null
+private var _HomeFolder: ImageVector? = null

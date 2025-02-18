@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<network-security-config>
-    <domain-config>
-        <domain includeSubdomains="true">api.bgitu-compass.ru</domain>
-    </domain-config>
-    <domain-config>
-        <domain includeSubdomains="true">bgitu-compass.ru</domain>
-    </domain-config>
-</network-security-config>

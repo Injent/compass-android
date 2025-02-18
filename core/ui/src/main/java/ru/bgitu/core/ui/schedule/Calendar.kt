@@ -13,6 +13,7 @@ fun CalendarTheme(content: @Composable () -> Unit) {
             primary = AppTheme.colorScheme.foreground,
             onPrimary = AppTheme.colorScheme.foregroundOnBrand,
             secondaryContainer = AppTheme.colorScheme.backgroundBrand,
+            surfaceVariant = AppTheme.colorScheme.background4
         ),
         content = content
     )

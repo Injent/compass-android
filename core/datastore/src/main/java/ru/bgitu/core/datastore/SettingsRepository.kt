@@ -5,33 +5,33 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import ru.bgitu.core.CredentialsPb
-import ru.bgitu.core.DataVersionPb
+import ru.bgitu.core.DayPb
 import ru.bgitu.core.GroupSlotPb
+import ru.bgitu.core.LessonPb
+import ru.bgitu.core.SchedulePb
 import ru.bgitu.core.SettingsPb
-import ru.bgitu.core.UserDataPb
 import ru.bgitu.core.copy
 import ru.bgitu.core.datastore.model.StoreVariants
-import ru.bgitu.core.datastore.model.toDataStoreModel
+import ru.bgitu.core.datastore.model.StoredLesson
+import ru.bgitu.core.datastore.model.StoredSchedule
 import ru.bgitu.core.datastore.model.toExternalModel
+import ru.bgitu.core.datastore.model.toStoredSchedule
 import ru.bgitu.core.datastore.util.toKotlinType
 import ru.bgitu.core.datastore.util.toProtobuf
 import ru.bgitu.core.idOrNull
-import ru.bgitu.core.metadataPb
 import ru.bgitu.core.model.Contacts
 import ru.bgitu.core.model.Group
 import ru.bgitu.core.model.UserProfile
 import ru.bgitu.core.model.UserRole
 import ru.bgitu.core.model.settings.AppMetadata
+import ru.bgitu.core.model.settings.SubscribedTopic
 import ru.bgitu.core.model.settings.UiTheme
 import ru.bgitu.core.model.settings.UserCredentials
 import ru.bgitu.core.model.settings.UserPrefs
 import ru.bgitu.core.model.settings.UserSettings
-import ru.bgitu.core.userPrefsPb
 
 private const val MAX_RECENT_SEARCH_POOL = 10
 
@@ -51,8 +51,14 @@ class SettingsRepository(
             userProfile = getProfile(it),
             isAnonymous = it.metadata.isAnonymousUser,
             shouldShowOnboarding = it.metadata.shouldShowOnboarding,
-            shouldShowDataResetAlert = it.metadata.shouldShowDataResetAlert
+            shouldShowDataResetAlert = it.metadata.shouldShowDataResetAlert,
         )
+    }
+
+    val unseenFeatures = datastore.data.map { it.metadata.unseenFeatureIdsList.toList() }
+
+    val schedule: Flow<StoredSchedule> = datastore.data.map {
+        it.schedule.toStoredSchedule()
     }
 
     val credentials: Flow<UserCredentials?> = datastore.data.map {
@@ -76,29 +82,11 @@ class SettingsRepository(
                 isAnonymousUser = isAnonymousUser,
                 shouldShowMateBanner = shouldShowMateBanner,
                 shouldShowOnboarding = shouldShowOnboarding,
-                shouldShowDataResetAlert = shouldShowDataResetAlert
+                shouldShowDataResetAlert = shouldShowDataResetAlert,
+                unseenFeatureIds = unseenFeatureIdsList.toList(),
+                isPushMessagesInitialized = isPushMessagesInitialized,
+                messagingToken = messagingToken
             )
-        }
-    }
-
-    suspend fun updateProfile(block: (UserProfile) -> UserProfile) {
-        val new = getProfile()?.let { block(it) } ?: return
-
-        datastore.updateData {
-            it.copy {
-                userdata = userdata.copy {
-                    this.bio = new.bio
-                    this.displayName = new.displayName
-                    this.avatarUrl = new.avatarUrl ?: ""
-                    this.tgUrl = new.contacts?.tg ?: ""
-                    this.vkUrl = new.contacts?.vk ?: ""
-                    this.publicProfile = new.publicProfile
-                    this.role = new.userRole.name
-                    this.variantsJson = json.encodeToString(
-                        new.variants.map(UserProfile.VariantEntry::toDataStoreModel)
-                    )
-                }
-            }
         }
     }
 
@@ -127,10 +115,6 @@ class SettingsRepository(
         }
     }
 
-    suspend fun getProfile(): UserProfile? {
-        return getProfile(datastore.data.first())
-    }
-
     suspend fun updateMetadata(block: (AppMetadata) -> AppMetadata) {
         val new = block(metadata.first())
 
@@ -150,29 +134,13 @@ class SettingsRepository(
                     shouldShowMateBanner = new.shouldShowMateBanner
                     shouldShowOnboarding = new.shouldShowOnboarding
                     shouldShowDataResetAlert = new.shouldShowDataResetAlert
+                    isPushMessagesInitialized = new.isPushMessagesInitialized
+                    messagingToken = new.messagingToken
+                    unseenFeatureIds.clear()
+                    unseenFeatureIds.addAll(new.unseenFeatureIds)
                 }
             }
         }
-    }
-
-    suspend fun setAuthData(
-        userId: Long,
-        credentials: UserCredentials,
-    ) {
-        datastore.updateData {
-            it.copy {
-                this.credentials = this.credentials.copy {
-                    this.userId = userId
-                    accessToken = credentials.accessToken
-                    refreshToken = credentials.refreshToken
-                    lastAuthDate = Clock.System.now().toEpochMilliseconds()
-                }
-            }
-        }
-    }
-
-    suspend fun getLastAuthDate(): Instant {
-        return Instant.fromEpochMilliseconds(datastore.data.first().credentials.lastAuthDate)
     }
 
     suspend fun setCredentials(
@@ -220,7 +188,10 @@ class SettingsRepository(
                         )
                     },
                 showGroupsOnMainScreen = showGroupsOnMainScreen,
-                helpSiteTraffic = helpSiteTraffic
+                helpSiteTraffic = helpSiteTraffic,
+                useDynamicTheme = useDynamicTheme,
+                subscribedTopics = subscribedTopicsList.map(SubscribedTopic::valueOf),
+                notificationDelegationEnabled = notificationDelegationEnabled
             )
         }
     }
@@ -234,6 +205,14 @@ class SettingsRepository(
                     theme = new.theme.toString()
                     showPinnedSchedule = new.showPinnedSchedule
                     teacherSortByWeeks = new.teacherFilterByDays
+                    showGroupsOnMainScreen = new.showGroupsOnMainScreen
+                    helpSiteTraffic = new.helpSiteTraffic
+                    useDynamicTheme = new.useDynamicTheme
+                    notificationDelegationEnabled = new.notificationDelegationEnabled
+                    subscribedTopics.apply {
+                        clear()
+                        addAll(new.subscribedTopics.map(SubscribedTopic::name))
+                    }
                     savedGroups.apply {
                         clear()
                         addAll(
@@ -246,8 +225,6 @@ class SettingsRepository(
                             }
                         )
                     }
-                    showGroupsOnMainScreen = new.showGroupsOnMainScreen
-                    helpSiteTraffic = new.helpSiteTraffic
                 }
             }
         }
@@ -304,23 +281,50 @@ class SettingsRepository(
         }
     }
 
-    suspend fun clearUserData() {
+    suspend fun setSchedule(schedule: StoredSchedule) {
         datastore.updateData {
             it.copy {
-                credentials = CredentialsPb.getDefaultInstance()
-                userdata = UserDataPb.getDefaultInstance()
-                dataVersions = DataVersionPb.getDefaultInstance()
-                val persistentPres = prefs
-                prefs = userPrefsPb {
-                    theme = persistentPres.theme
+                val scheduleBuilder = SchedulePb.newBuilder()
+
+                schedule.firstWeek.forEach { (dayOfWeek, storedLessons) ->
+                    scheduleBuilder.putFirstWeek(
+                        dayOfWeek.isoDayNumber, storedLessons.toDayPb()
+                    )
                 }
-                val persistentMetadata = metadata
-                metadata = metadataPb {
-                    newestUpdateChecksum = persistentMetadata.newestUpdateChecksum
-                    availableVersionCode = persistentMetadata.availableVersionCode
-                    isAnonymousUser = false
+
+                schedule.secondWeek.forEach { (dayOfWeek, storedLessons) ->
+                    scheduleBuilder.putSecondWeek(
+                        dayOfWeek.isoDayNumber, storedLessons.toDayPb()
+                    )
                 }
+
+                this.schedule = scheduleBuilder.build()
             }
         }
     }
+
+    suspend fun clearSchedule() {
+        datastore.updateData {
+            it.copy {
+                schedule = SchedulePb.getDefaultInstance()
+            }
+        }
+    }
+}
+
+private fun StoredLesson.toProtobuf(): LessonPb = LessonPb.newBuilder()
+    .setSubjectId(subjectId)
+    .setSubjectName(subjectName)
+    .setBuilding(building)
+    .setStartAt(startAt.toSecondOfDay())
+    .setEndAt(endAt.toSecondOfDay())
+    .setClassroom(classroom)
+    .setTeacher(teacher)
+    .setIsLecture(isLecture)
+    .build()
+
+private fun List<StoredLesson>.toDayPb(): DayPb {
+    return DayPb.newBuilder()
+        .addAllLessons(this.map(StoredLesson::toProtobuf))
+        .build()
 }

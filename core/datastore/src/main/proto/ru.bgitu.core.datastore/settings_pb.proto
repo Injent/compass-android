@@ -5,6 +5,43 @@ option java_multiple_files = true;
 
 import "google/protobuf/wrappers.proto";
 
+message WidgetOptionsPb {
+    float opacity = 1;
+    int32 mode = 5;
+
+    string theme = 2;
+    string deprecated_text_color = 3;
+    string deprecated_elements_color = 4;
+}
+
+message WidgetStatePb {
+    string query_date = 1;
+    WidgetOptionsPb options = 3;
+    bool is_loading = 4;
+    bool error = 6;
+    int32 widget_version = 5;
+}
+
+message LessonPb {
+    int32 subject_id = 1;
+    string subject_name = 2;
+    string building = 3;
+    int32 start_at = 4;
+    int32 end_at = 5;
+    string classroom = 6;
+    string teacher = 7;
+    bool is_lecture = 8;
+}
+
+message DayPb {
+    repeated LessonPb lessons = 1;
+}
+
+message SchedulePb {
+    map<int32, DayPb> first_week = 1;
+    map<int32, DayPb> second_week = 2;
+}
+
 message GroupSlotPb {
     google.protobuf.Int32Value id = 1;
     google.protobuf.StringValue name = 2;
@@ -18,6 +55,9 @@ message UserPrefsPb {
     repeated GroupSlotPb saved_groups = 5;
     bool show_groups_on_main_screen = 6;
     bool help_site_traffic = 7;
+    bool use_dynamic_theme = 8;
+    repeated string subscribed_topics = 9;
+    bool notification_delegation_enabled = 10;
 
     bool deprecated_ignore_minor_updates = 1;
 }
@@ -71,6 +111,9 @@ message MetadataPb {
     bool should_show_mate_banner = 9;
     bool should_show_onboarding = 10;
     bool should_show_data_reset_alert = 11;
+    repeated int32 unseen_feature_ids = 12;
+    bool is_push_messages_initialized = 13;
+    string messaging_token = 14;
 
     int64 deprecated_last_statistics_report = 1;
     string deprecated_app_uuid = 2;
@@ -82,6 +125,8 @@ message SettingsPb {
     DataVersionPb data_versions = 18;
     UserDataPb userdata = 19;
     MetadataPb metadata = 20;
+    SchedulePb schedule = 21;
+    WidgetStatePb widget_state = 22;
 
     // Deprecated
     string deprecated_studentInfo = 1;

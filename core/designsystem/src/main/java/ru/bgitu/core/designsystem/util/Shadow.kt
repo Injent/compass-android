@@ -3,7 +3,6 @@ package ru.bgitu.core.designsystem.util
 import android.graphics.BlurMaskFilter
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
-import android.os.Build.VERSION.SDK_INT
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,7 +28,6 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isSpecified
 import ru.bgitu.core.designsystem.theme.SpotCard
-import ru.bgitu.core.designsystem.util.shadow.roundRectShadow
 
 @Stable
 fun Modifier.boxShadow(

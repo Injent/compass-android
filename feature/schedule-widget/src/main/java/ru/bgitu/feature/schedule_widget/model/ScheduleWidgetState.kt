@@ -6,16 +6,20 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDate
+import ru.bgitu.core.SettingsPb
 import ru.bgitu.core.common.DateTimeUtil
+import ru.bgitu.core.datastore.model.StoredLesson
+import ru.bgitu.core.datastore.model.StoredSchedule
+import ru.bgitu.core.datastore.model.toStoredSchedule
 import ru.bgitu.feature.schedule_widget.R
-import ru.bgitu.feature.schedule_widget.WidgetPb.WidgetDataPb
-import ru.bgitu.feature.schedule_widget.WidgetPb.WidgetLessonPb
 
 data class ScheduleWidgetState(
     val queryDate: LocalDate = DateTimeUtil.currentDate,
     val isLoading: Boolean = true,
     val options: WidgetOptions = WidgetOptions(),
-    val classes: List<MinifiedLesson> = emptyList()
+    val schedule: StoredSchedule,
+    val groupIsSelected: Boolean,
+    val error: Boolean = false
 ) {
     fun getTitle(context: Context): String {
         val now = DateTimeUtil.currentDate
@@ -32,29 +36,24 @@ data class ScheduleWidgetState(
         }
     }
 
-    val classesForQueryDate: List<MinifiedLesson>
-        get() = classes.filter { it.date == queryDate }
-
-    companion object {
-        fun defaultProtoInstance(): WidgetDataPb {
-            return WidgetDataPb.newBuilder()
-                .setQueryDate(DateTimeUtil.currentDate.toString())
-                .setIsLoading(true)
-                .setOptions(WidgetOptions().toProtoModel())
-                .setWidgetVersion(1)
-                .build()
-        }
-    }
+    val currentLessons: List<StoredLesson>
+        get() = if (DateTimeUtil.isOddWeek(queryDate)) {
+            schedule.firstWeek
+        } else {
+            schedule.secondWeek
+        }.getOrDefault(queryDate.dayOfWeek, emptyList())
 }
 
-fun WidgetDataPb.toWidgetState(): ScheduleWidgetState {
+fun SettingsPb.toWidgetState(): ScheduleWidgetState {
     return ScheduleWidgetState(
-        queryDate = queryDate.toLocalDate(),
-        isLoading = isLoading,
-        classes = lessonsList.map(WidgetLessonPb::toMinifiedLesson),
+        queryDate = runCatching { widgetState.queryDate.toLocalDate() }
+            .getOrDefault(DateTimeUtil.currentDate),
+        isLoading = widgetState.isLoading,
+        schedule = schedule.toStoredSchedule(),
         options = WidgetOptions(
-            opacity = options.opacity,
-            themeMode = WidgetThemeMode.entries[options.mode]
-        )
+            opacity = widgetState.options.opacity,
+            themeMode = WidgetThemeMode.entries[widgetState.options.mode]
+        ),
+        groupIsSelected = credentials.groupId != 0 && credentials.groupName.isNotEmpty()
     )
 }

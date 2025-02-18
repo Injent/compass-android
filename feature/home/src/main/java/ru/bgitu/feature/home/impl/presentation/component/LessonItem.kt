@@ -2,7 +2,6 @@ package ru.bgitu.feature.home.impl.presentation.component
 
 import android.icu.text.RelativeDateTimeFormatter
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -71,11 +70,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.atDate
+import kotlinx.datetime.atTime
 import ru.bgitu.core.common.CommonStrings
 import ru.bgitu.core.common.DateTimeUtil
 import ru.bgitu.core.common.LessonDataUtils
+import ru.bgitu.core.datastore.model.StoredLesson
 import ru.bgitu.core.designsystem.components.AppCard
 import ru.bgitu.core.designsystem.icon.AppIcons
 import ru.bgitu.core.designsystem.icon.Building
@@ -86,19 +89,27 @@ import ru.bgitu.core.designsystem.icon.PersonCard
 import ru.bgitu.core.designsystem.theme.AppRippleTheme
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.core.designsystem.util.SoftwareLayer
-import ru.bgitu.core.ui.model.UiLesson
 import ru.bgitu.core.ui.onClick
 import ru.bgitu.feature.home.R
 import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
 
+data class LessonVisualData(
+    val isFirst: Boolean,
+    val isLast: Boolean,
+    val isPassed: Boolean,
+    val isHighlighted: Boolean,
+    val minTimeWidth: Dp
+)
+
 @Composable
 fun LessonItem(
-    lesson: UiLesson,
+    lesson: StoredLesson,
+    lessonDate: LocalDate,
     now: LocalDateTime,
     onClick: () -> Unit,
     onAddNote: () -> Unit,
-    minTimeWidth: Dp,
+    data: LessonVisualData,
     modifier: Modifier = Modifier,
     expanded: Boolean = false,
 ) {
@@ -107,31 +118,33 @@ fun LessonItem(
             indicatorSpaceWidth = 12.dp,
             gap = 24.dp,
             verticalGap = 8.dp,
-            firstItem = lesson.isFirst
+            firstItem = data.isFirst
         )
     }
     LessonLayout(
         modifier = modifier,
         params = layoutParams
     ) {
-        val startTime = remember(lesson.startTime) {
-            DateTimeUtil.formatTime(lesson.startTime)
+        val startTime = remember(lesson.startAt) {
+            DateTimeUtil.formatTime(lesson.startAt)
         }
-        val endTime = remember(lesson.endTime) {
-            DateTimeUtil.formatTime(lesson.endTime)
+        val endTime = remember(lesson.endAt) {
+            DateTimeUtil.formatTime(lesson.endAt)
         }
         val breakInterval = rememberBreakTimeInterval(
             now = now,
-            breakTime = lesson.breakTime
+            breakTime = lessonDate.atTime(
+                LocalTime.fromSecondOfDay(lesson.startAt.toSecondOfDay() + (45 * 60))
+            )
         )
         val classInterval = rememberLessonTimeInterval(
             now = now,
-            lessonStartTime = if (lesson.passed) {
-                lesson.endTime.atDate(lesson.date)
+            lessonStartTime = if (data.isPassed) {
+                lesson.endAt.atDate(lessonDate)
             } else {
-                lesson.startTime.atDate(lesson.date)
+                lesson.startAt.atDate(lessonDate)
             },
-            passed = lesson.passed
+            passed = data.isPassed
         )
 
         Text(
@@ -150,7 +163,7 @@ fun LessonItem(
             maxLines = 2,
             overflow = TextOverflow.Visible,
             modifier = Modifier
-                .width(minTimeWidth)
+                .width(data.minTimeWidth)
                 .layoutId(LessonComponentId.TIME)
         )
         LessonIndicator(
@@ -158,24 +171,24 @@ fun LessonItem(
                 defaultStrokeWidth = 2.4.dp,
                 dashInterval = 4.dp,
                 dashWidth = 3.dp,
-                passed = lesson.passed,
-                highlighted = lesson.highlighted,
-                isFirst = lesson.isFirst,
+                passed = data.isPassed,
+                highlighted = data.isHighlighted,
+                isFirst = data.isFirst,
             ),
             modifier = Modifier.layoutId(LessonComponentId.INDICATOR)
         )
         LessonBreakPoint(
             smallPoint = false,
-            enabled = lesson.passed || lesson.highlighted,
-            animated = lesson.highlighted,
-            highlighted = lesson.passed || lesson.highlighted,
+            enabled = data.isPassed || data.isHighlighted,
+            animated = data.isHighlighted,
+            highlighted = data.isPassed || data.isHighlighted,
             modifier = Modifier.layoutId(LessonComponentId.LONG_BREAK),
             label = classInterval
         )
-        if (lesson.date == now.date && !lesson.passed) {
+        if (lessonDate == now.date && !data.isPassed) {
             LessonBreakPoint(
                 smallPoint = true,
-                highlighted = lesson.highlighted,
+                highlighted = data.isHighlighted,
                 label = breakInterval,
                 modifier = Modifier.layoutId(LessonComponentId.SHORT_BREAK)
             )
@@ -202,7 +215,7 @@ fun LessonItem(
             }
         }
 
-        if (lesson.isLast) {
+        if (data.isLast) {
             Box(
                 modifier = Modifier
                     .layoutId(LessonComponentId.INDICATOR_GRADIENT)
@@ -218,7 +231,7 @@ fun LessonItem(
 
 @Composable
 private fun LessonCard(
-    lesson: UiLesson,
+    lesson: StoredLesson,
     expanded: Boolean,
     onAddNote: () -> Unit,
     modifier: Modifier = Modifier,
@@ -241,7 +254,7 @@ private fun LessonCard(
         ) {
             Text(
                 text = buildAnnotatedString {
-                    append(lesson.name)
+                    append(lesson.subjectName)
 
                     lesson.teacher.takeIf { it.isNotEmpty() }?.let { teacherName ->
                         appendLine()
@@ -304,97 +317,21 @@ private fun LessonCard(
                 fontWeight = FontWeight.Medium,
                 inlineContent = lessonInlineContent,
             )
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
+        }
+
+//        AnimatedVisibility(
+//            visible = expanded,
+//            enter = expandVertically(),
+//            exit = shrinkVertically()
 //        ) {
-
-//                Row(verticalAlignment = Alignment.CenterVertically) {
-//                    Text(
-//                        text = stringResource(
-//                            if (lesson.isLecture) {
-//                                CommonStrings.lecture_abbriviation
-//                            } else CommonStrings.practice_abbriviation
-//                        ),
-//                        style = AppTheme.typography.callout,
-//                        color = AppTheme.colorScheme.foreground2,
-//                        lineHeight = AppTheme.typography.callout.fontSize,
-//                        modifier = Modifier.padding(end = 2.dp),
-//                        fontWeight = FontWeight.Medium
-//                    )
-//                    Icon(
-//                        painter = painterResource(
-//                            if (lesson.isLecture) AppIcons.BookCover else AppIcons.Flask
-//                        ),
-//                        contentDescription = null,
-//                        modifier = Modifier.size(12.dp),
-//                        tint = AppTheme.colorScheme.foreground2
-//                    )
-//                }
-        }
-//            lesson.teacher.takeIf { it.isNotEmpty() }?.let {
-//                Row(
-//                    verticalAlignment = Alignment.CenterVertically,
-//                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs),
-//                    modifier = Modifier.padding(top = AppTheme.spacing.xs)
-//                ) {
-//                    Icon(
-//                        imageVector = AppIcons.PersonCard,
-//                        contentDescription = null,
-//                        tint = AppTheme.colorScheme.foreground2,
-//                        modifier = Modifier.size(14.dp)
-//                    )
-//                    Text(
-//                        text = lesson.teacher,
-//                        fontSize = 14.sp,
-//                        style = AppTheme.typography.body,
-//                        color = AppTheme.colorScheme.foreground2,
-//                        maxLines = if (expanded) 2 else 1
-//                    )
-//                }
-//            }
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs),
-//                modifier = Modifier.padding(top = AppTheme.spacing.xs)
-//            ) {
-//                Icon(
-//                    imageVector = AppIcons.Building,
-//                    contentDescription = null,
-//                    tint = AppTheme.colorScheme.foreground2,
-//                    modifier = Modifier.size(14.dp)
-//                )
-//                val location: String = remember(lesson) {
-//                    LessonDataUtils.provideLocation(
-//                        context = context,
-//                        building = lesson.building,
-//                        classroom = lesson.classroom,
-//                        style = LessonDataUtils.DisplayStyle.DEFAULT
-//                    )
-//                }
-//                Text(
-//                    text = location,
-//                    fontSize = 14.sp,
-//                    style = AppTheme.typography.body,
-//                    color = AppTheme.colorScheme.foreground2,
-//                    maxLines = if (expanded) 5 else 1
-//                )
-//            }
-
-        AnimatedVisibility(
-            visible = expanded,
-            enter = expandVertically(),
-            exit = shrinkVertically()
-        ) {
-            DashedOutlinedButton(
-                text = stringResource(R.string.action_add_homework),
-                onClick = onAddNote,
-                modifier = Modifier
-                    .padding(top = AppTheme.spacing.s)
-                    .fillMaxWidth()
-            )
-        }
-        // }
+//            DashedOutlinedButton(
+//                text = stringResource(R.string.action_add_homework),
+//                onClick = onAddNote,
+//                modifier = Modifier
+//                    .padding(top = AppTheme.spacing.s)
+//                    .fillMaxWidth()
+//            )
+//        }
     }
 }
 

@@ -1,5 +1,6 @@
 package ru.bgitu.core.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -16,6 +17,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
+@SuppressLint("ComposableNaming")
 @Composable
 fun <T> Flow<T>.listenEvents(
     lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,

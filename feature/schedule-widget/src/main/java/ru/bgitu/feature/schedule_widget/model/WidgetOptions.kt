@@ -1,7 +1,7 @@
 package ru.bgitu.feature.schedule_widget.model
 
 import kotlinx.serialization.Serializable
-import ru.bgitu.feature.schedule_widget.WidgetPb.WidgetOptionsPb
+import ru.bgitu.core.WidgetOptionsPb
 
 @Serializable
 data class WidgetOptions(

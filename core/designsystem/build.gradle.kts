@@ -10,7 +10,7 @@ dependencies {
     implementation(projects.core.common)
 
     implementation(libs.core.ktx)
-    implementation(libs.coil)
+    implementation(libs.coil.compose)
 
     api(libs.compose.activity)
     api(libs.compose.ui)
@@ -26,5 +26,6 @@ dependencies {
     api(libs.compose.constraintLayout)
     api(libs.compose.adaptive)
     api(libs.compose.navigation)
+    api(libs.infoBarCompose)
     debugImplementation(libs.compose.ui.tooling)
 }

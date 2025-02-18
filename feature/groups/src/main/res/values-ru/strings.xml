@@ -6,7 +6,7 @@
     <string name="option_groups_visibility">Показывать группы на главном экране</string>
     <string name="add_group">Добавить группу</string>
     <string name="organize_groups">Упорядочьте группы</string>
-    <string name="add_groups">Добавьте до 3-х групп</string>
+    <string name="add_groups">Добавьте еще групп</string>
     <string name="screen_find_group">Найти группу</string>
     <string name="delete_group">Удалить группу?</string>
     <string name="delete_group_description">Группа %s будет удалена из ваших любимых групп</string>
@@ -15,4 +15,10 @@
     <string name="group_not_selected">Не выбрано</string>
     <string name="alert_group_not_selected">Группа не выбрана</string>
     <string name="error_groups_not_loaded">Данные еще не загружены</string>
+    <string name="notifications">Уведомления</string>
+    <string name="wantToReceiveNotifications">Хотите получать уведомления об изменениях в расписании?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="noGroups">Нет групп</string>
+    <string name="youCantAddGroupsInLandscape">Вы не можете добавить группы в альбомном режиме</string>
 </resources>

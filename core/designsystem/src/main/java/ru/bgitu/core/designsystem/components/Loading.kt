@@ -112,7 +112,6 @@ fun AppDoubleLoading(
         AppCircularLoading(
             tint = tint
         )
-
     }
 }
 

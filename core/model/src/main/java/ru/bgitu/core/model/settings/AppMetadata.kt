@@ -11,5 +11,8 @@ data class AppMetadata(
     val isAnonymousUser: Boolean,
     val shouldShowMateBanner: Boolean,
     val shouldShowOnboarding: Boolean,
-    val shouldShowDataResetAlert: Boolean
+    val shouldShowDataResetAlert: Boolean,
+    val unseenFeatureIds: List<Int>,
+    val isPushMessagesInitialized: Boolean,
+    val messagingToken: String
 )

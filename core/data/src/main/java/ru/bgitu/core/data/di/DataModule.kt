@@ -1,39 +1,28 @@
 package ru.bgitu.core.data.di
 
-import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import ru.bgitu.core.common.di.CommonQualifiers
 import ru.bgitu.core.data.downloader.AndroidFileDownloader
 import ru.bgitu.core.data.repository.CompassRepository
 import ru.bgitu.core.data.repository.FirstOfflineScheduleRepository
+import ru.bgitu.core.data.repository.NotificationRepository
 import ru.bgitu.core.data.repository.ScheduleRepository
 import ru.bgitu.core.data.util.AndroidNetworkMonitor
 import ru.bgitu.core.data.util.NetworkMonitor
 
+val DataModuleMinified = module {
+    singleOf(::FirstOfflineScheduleRepository) bind ScheduleRepository::class
+    singleOf(::NotificationRepository)
+}
+
 val DataModule = module {
-    single {
-        AndroidNetworkMonitor(androidContext())
-    } bind NetworkMonitor::class
+    includes(FlavoredDataModule)
+    includes(DataModuleMinified)
 
-    single<ScheduleRepository> {
-        FirstOfflineScheduleRepository(
-            serviceApi = get(),
-            settingsRepository = get(),
-            scheduleDao = get(),
-        )
-    }
+    singleOf(::AndroidNetworkMonitor) bind NetworkMonitor::class
 
-    single {
-        CompassRepository(
-            compassService = get(),
-            settings = get()
-        )
-    }
+    singleOf(::CompassRepository)
 
-    single {
-        AndroidFileDownloader(
-            ioDispatcher = get(CommonQualifiers.DispatcherIO),
-        )
-    }
+    singleOf(::AndroidFileDownloader)
 }

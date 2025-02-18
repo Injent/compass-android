@@ -24,4 +24,11 @@
     <string name="help_site_traffic">Help promote the BGITU website</string>
     <string name="group_miscellaneous">Miscellaneous</string>
     <string name="site_traffic_details">The application will visit the BGITU website on behalf of your device, increasing its rating.\n\nPlease do not turn off this option if your device is not slowing down</string>
+    <string name="use_dynamic_theme">Use dynamic theme</string>
+    <string name="group_notifications">Notifications</string>
+    <string name="notifications">Notifications</string>
+    <string name="schedule_changes">Schedule changes</string>
+    <string name="broadcast">Useful messages</string>
+    <string name="severe_notifications">Severe</string>
+    <string name="dialog_allowNotifications">Allow notifications to be sent to receive notifications about schedule changes</string>
 </resources>

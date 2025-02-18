@@ -12,4 +12,7 @@
     <string name="label_mates">помощники</string>
     <string name="label_notes">д/з</string>
     <string name="label_settings">настройки</string>
+    <string name="dialog_wantToReceiveNotifications">Хотите получать уведомления о изменении в расписании?</string>
+    <string name="dialog_youCanEnableNotifications">Вы всегда сможете включить уведомления в настройках приложения</string>
+    <string name="change">Изменить</string>
 </resources>

@@ -9,24 +9,21 @@ import androidx.compose.ui.graphics.Color
 
 data class AppRipple(
     val background1: Color,
-    val foreground1: Color
 )
 
 val AppLightRipple = AppRipple(
-    background1 = Color(0x12B4B4B4),
-    foreground1 = Color(0xFF242424)
+    background1 = Color(0x51000000)
 )
 
 val AppDarkRipple = AppRipple(
-    background1 = Color(0x14F7F6F6),
-    foreground1 = Color.White
+    background1 = Color(0x34F7F6F6)
 )
 
 val DefaultRippleConfig: RippleConfiguration
     @Composable get() {
         val color = LocalAppRipple.current.background1
         return RippleConfiguration(
-            color,
+            color = color,
             RippleAlpha(
                 draggedAlpha = color.alpha,
                 focusedAlpha = color.alpha,

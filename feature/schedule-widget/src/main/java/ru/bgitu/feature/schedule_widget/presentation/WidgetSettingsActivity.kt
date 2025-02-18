@@ -12,26 +12,25 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.glance.appwidget.GlanceAppWidgetManager
-import androidx.glance.appwidget.state.updateAppWidgetState
-import androidx.glance.appwidget.updateAll
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import ru.bgitu.core.copy
 import ru.bgitu.core.designsystem.theme.CompassTheme
 import ru.bgitu.feature.schedule_widget.R
-import ru.bgitu.feature.schedule_widget.copy
-import ru.bgitu.feature.schedule_widget.model.WidgetOptions
+import ru.bgitu.feature.schedule_widget.model.ScheduleWidgetState
 import ru.bgitu.feature.schedule_widget.model.toProtoModel
 import ru.bgitu.feature.schedule_widget.model.toWidgetState
+import ru.bgitu.feature.schedule_widget.updateScheduleWidgetState
 import ru.bgitu.feature.schedule_widget.widget.ScheduleStateDefinition
-import ru.bgitu.feature.schedule_widget.widget.ScheduleWidget
 
 class WidgetSettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
-        if (SDK_INT >= 29) {
+        if (SDK_INT in 29..34) {
+            @Suppress("DEPRECATION")
             window.isStatusBarContrastEnforced = false
             window.isNavigationBarContrastEnforced = false
         }
@@ -51,11 +50,7 @@ class WidgetSettingsActivity : ComponentActivity() {
             finish()
         }
 
-        var options by mutableStateOf(WidgetOptions())
-        lifecycleScope.launch {
-            options = ScheduleStateDefinition.getDataStore(applicationContext, "ignore")
-                .data.first().toWidgetState().options
-        }
+        val options by mutableStateOf(runBlocking { getWidgetState().options })
 
         setContent {
             CompassTheme(isTranslucent = true) {
@@ -63,9 +58,7 @@ class WidgetSettingsActivity : ComponentActivity() {
                     initialState = options,
                     onSave = { widgetOptions ->
                         lifecycleScope.launch {
-                            updateAppWidgetState(
-                                context = applicationContext,
-                                definition = ScheduleStateDefinition,
+                            updateScheduleWidgetState(
                                 glanceId = GlanceAppWidgetManager(applicationContext).getGlanceIdBy(appWidgetId),
                                 updateState = {
                                     it.copy {
@@ -73,7 +66,6 @@ class WidgetSettingsActivity : ComponentActivity() {
                                     }
                                 }
                             )
-                            ScheduleWidget().updateAll(applicationContext)
                             finishSettings(appWidgetId, true)
                         }
                     },
@@ -102,5 +94,10 @@ class WidgetSettingsActivity : ComponentActivity() {
         val resultValue = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         setResult(if (save) RESULT_OK else RESULT_CANCELED, resultValue)
         finish()
+    }
+
+    private suspend fun getWidgetState(): ScheduleWidgetState {
+        return ScheduleStateDefinition.getDataStore(applicationContext, "ignore")
+            .data.first().toWidgetState()
     }
 }

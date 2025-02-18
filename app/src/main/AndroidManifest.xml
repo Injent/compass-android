@@ -55,10 +55,6 @@
             tools:node="merge">
             <meta-data android:name="ru.bgitu.app.startup.KoinInitializer"
                 android:value="androidx.startup" />
-            <meta-data android:name="ru.bgitu.app.startup.FirebaseInitializer"
-                android:value="androidx.startup" />
-            <meta-data android:name="ru.bgitu.app.startup.CommonInitializer"
-                android:value="androidx.startup" />
         </provider>
 
         <meta-data

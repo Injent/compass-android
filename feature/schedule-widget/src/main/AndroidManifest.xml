@@ -1,5 +1,6 @@
 <manifest xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
+
     <application>
         <activity android:name=".presentation.WidgetSettingsActivity"
             android:noHistory="true"
@@ -27,6 +28,14 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".receiver.SyncCompletedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="ru.bgitu.app.SYNC_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>

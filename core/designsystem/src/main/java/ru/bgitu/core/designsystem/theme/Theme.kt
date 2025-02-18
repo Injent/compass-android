@@ -18,7 +18,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 @Immutable
-data class AppShapes(
+class AppShapes(
     val default: RoundedCornerShape,
     val large: RoundedCornerShape,
     val small: RoundedCornerShape,

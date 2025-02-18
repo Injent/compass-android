@@ -2,21 +2,14 @@ package ru.bgitu.feature.professor_search.presentation.components
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import kotlinx.coroutines.delay
 import ru.bgitu.core.designsystem.components.AppConfirmButton
 import ru.bgitu.core.designsystem.components.AppDialog
 import ru.bgitu.core.designsystem.theme.AppTheme
 import ru.bgitu.feature.professor_search.R
-import kotlin.time.Duration.Companion.seconds
 
 @Composable
 internal fun TeacherScheduleAlertDialog(

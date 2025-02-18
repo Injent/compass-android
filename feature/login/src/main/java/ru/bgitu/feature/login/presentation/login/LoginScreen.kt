@@ -123,7 +123,7 @@ internal fun LoginScreen(
                     targetValue = if (isImeVisible) 0f else 1f
                 )
                 Image(
-                    painter = painterResource(AppIllustrations.SignIn),
+                    painter = painterResource(AppIllustrations.SearchMate),
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier

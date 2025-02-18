@@ -5,6 +5,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.engine.cio.endpoint
+import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.cache.storage.FileStorage
@@ -16,7 +17,6 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.URLProtocol
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import org.koin.android.ext.koin.androidContext
@@ -25,9 +25,10 @@ import org.koin.dsl.module
 import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.common.di.CommonQualifiers
 import ru.bgitu.core.common.exception.DetailedException
+import ru.bgitu.core.network.BuildConfig
 import ru.bgitu.core.network.CompassService
 import ru.bgitu.core.network.R
-import ru.bgitu.core.network.crypto.IgnoreTrustManager
+import ru.bgitu.core.network.crypto.TrustAllX509TrustManager
 import ru.bgitu.core.network.ktor.KtorDataSource
 
 val NetworkModule = module {
@@ -37,21 +38,19 @@ val NetworkModule = module {
             followRedirects = true
 
             engine {
-                https {
-                    serverName = "bgitu-compass.ru"
-                    trustManager = IgnoreTrustManager(this)
-                }
+                https.trustManager = TrustAllX509TrustManager()
+
                 endpoint {
-                    keepAliveTime = 5000
-                    connectTimeout = 5000
+                    connectTimeout = 5_000
                     connectAttempts = 2
                 }
             }
 
+            install(HttpRequestRetry) {
+                retryOnException(maxRetries = 2, retryOnTimeout = true)
+            }
+
             defaultRequest {
-                url {
-                    protocol = URLProtocol.HTTP
-                }
                 header(HttpHeaders.ContentType, "application/json")
             }
 
@@ -70,16 +69,18 @@ val NetworkModule = module {
                 )
             }
 
-            install(Logging) {
-                logger = object : Logger {
-                    override fun log(message: String) {
-                        Log.d("Ktor", message)
+            if (BuildConfig.DEBUG) {
+                install(Logging) {
+                    logger = object : Logger {
+                        override fun log(message: String) {
+                            Log.d("Ktor", message)
+                        }
                     }
+                    level = LogLevel.ALL
                 }
-                level = LogLevel.ALL
             }
         }
-    }
+    } bind HttpClient::class
 
     single {
         KtorDataSource(

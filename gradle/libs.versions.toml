@@ -1,34 +1,33 @@
 [versions]
 accompanist = "0.34.0"
-activity-compose = "1.9.0"
+activity-compose = "1.10.0"
 agconnectCore = "1.9.1.301"
 agcp = "1.9.1.300"
-agp = "8.4.2"
-androidxAnnotation = "1.8.0"
-androidxWork = "2.9.0"
+agp = "8.7.3"
+androidxAnnotation = "1.9.1"
+androidxWork = "2.10.0"
 camerax = "1.3.4"
-coil = "2.6.0"
-compileSdk = "34"
-compose-bom = "2024.09.02"
-composeCompiler = "1.5.14"
-constraintLayout = "1.0.1"
-core-ktx = "1.13.1"
-datastore = "1.1.1"
-desugarJdkLibs = "2.1.2"
+coil = "3.1.0"
+compileSdk = "35"
+compose-bom = "2025.01.01"
+constraintLayout = "1.1.0"
+core-ktx = "1.15.0"
+datastore = "1.1.2"
+desugarJdkLibs = "2.1.4"
 detekt = "1.23.3"
-firebase-bom = "33.3.0"
-firebasePlugin = "3.0.2"
-glance = "1.1.0"
+firebase-bom = "33.9.0"
+firebasePlugin = "3.0.3"
+glance = "1.1.1"
 googleServicesPlugin = "4.4.2"
-koin-bom = "3.5.6"
-kotlin = "1.9.24"
-kotlinx-serialization = "1.6.3"
-kotlinxCoroutines = "1.8.1"
+koin-bom = "4.0.1"
+kotlin = "2.1.0"
+kotlinx-serialization = "1.8.0"
+kotlinxCoroutines = "1.10.1"
 kotlinxDatetime = "0.5.0"
 ksp = "1.9.24-1.0.20"
-lifecycle = "2.8.6"
+lifecycle = "2.8.7"
 markdown = "0.3.7"
-minSdk = "27"
+minSdk = "24"
 protobuf = "4.26.0"
 protobufPlugin = "0.9.4"
 room = "2.6.1"
@@ -37,17 +36,15 @@ secrets = "2.0.1"
 sheetsComposeDialogs = "1.2.0"
 splashScreen = "1.0.1"
 startup = "1.2.0"
-targetSdk = "34"
-ktor = "2.3.12"
-navigation = "2.8.2"
+targetSdk = "35"
+ktor = "3.0.3"
+navigation = "2.8.6"
 truth = "1.4.2"
 turbine = "1.1.0"
 robolectric = "4.11.1"
 roborazzi = "1.7.0"
 junit = "4.13.2"
-androidxComposeAlpha = "1.7.3"
 androidxTestRules = "1.6.1"
-vkcompose = "0.5.4"
 androidxTracing = "1.3.0-alpha02"
 androidxTest = "1.6.1"
 androidxCredentialManager = "1.2.2"
@@ -57,8 +54,13 @@ huaweiAnalytics = "6.12.0.301"
 huaweiCrash = "1.9.1.301"
 huaweiAgConnect = "1.9.1.302"
 huaweiApms = "1.6.2.300"
+huaweiPushKit = "6.12.0.300"
 vkId = "2.0.1"
-lifecycleService = "2.8.6"
+lifecycleService = "2.8.7"
+infoBarCompose = "1.0.0"
+lazyPagination = "1.4.0"
+tracerBom = "1.0.1"
+konfetti = "2.0.5"
 
 [libraries]
 # Build logic plugins
@@ -84,7 +86,6 @@ compose-ui-text = { group = "androidx.compose.ui", name = "ui-text" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "androidxComposeAlpha" }
 compose-ui-testManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 compose-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class" }
 compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
@@ -152,6 +153,7 @@ huawei-appservice = { group = "com.huawei.hms", name = "appservice", version.ref
 huawei-hianalytics = { group = "com.huawei.hms", name = "hianalytics", version.ref = "huaweiAnalytics" }
 huawei-crash = { group = "com.huawei.agconnect", name = "agconnect-crash", version.ref = "huaweiCrash" }
 huawei-apms = { group = "com.huawei.agconnect", name = "agconnect-apms", version.ref = "huaweiApms" }
+huawei-pushKit = { group = "com.huawei.hms", name = "push", version.ref = "huaweiPushKit" }
 
 # Protobuf
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
@@ -165,16 +167,23 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 # Rustore
 rustore-bom = { group = "ru.rustore.sdk", name = "bom", version.ref = "rustore-bom" }
 rustore-update = { group = "ru.rustore.sdk", name = "appupdate" }
-vkcomposeGradlePlugin = { group = "com.vk.vkompose", name = "com.vk.vkompose.gradle.plugin", version.ref = "vkcompose" }
+rustore-push = { group = "ru.rustore.sdk", name = "pushclient" }
 
 # Work
 work = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidxWork" }
+
+# Coil
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-network-ktor3 = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil" }
 
 # Thrird Party
 coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 markdown = { group = "com.github.jeziellago", name = "compose-markdown", version.ref = "markdown" }
 sheetsComposeDialog-calendar = { group = "com.maxkeppeler.sheets-compose-dialogs", name = "calendar", version.ref = "sheetsComposeDialogs" }
 sheetsComposeDialog-core = { group = "com.maxkeppeler.sheets-compose-dialogs", name = "core", version.ref = "sheetsComposeDialogs" }
+infoBarCompose = { group = "com.radusalagean", name = "info-bar-compose", version.ref = "infoBarCompose" }
+lazyPaginationCompose = { module = "io.github.ahmad-hamwi:lazy-pagination-compose", version.ref = "lazyPagination" }
+konfetti = { group = "nl.dionsegijn", name = "konfetti-compose", version.ref = "konfetti" }
 
 # Test
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
@@ -187,6 +196,7 @@ androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-s
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebasePlugin" }
@@ -198,8 +208,8 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
-vkcompose = { id = "com.vk.vkompose", version.ref = "vkcompose" }
 huaweiAgConnect = { id = "com.huawei.agconnect", version.ref = "huaweiAgConnect" }
+tracer = { id = "ru.ok.tracer", version.ref = "tracerBom" }
 
 # Project plugins
 bgitu-app = { id = "bgitu.app", version = "unspecified" }

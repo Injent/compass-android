@@ -15,11 +15,6 @@ internal fun Project.configureCompose(
             compose = true
         }
 
-        composeOptions {
-            kotlinCompilerExtensionVersion =
-                libs.findVersion("composeCompiler").get().toString()
-        }
-
         dependencies {
             val bom = libs["compose.bom"]
             implementation(platform(bom))
@@ -27,10 +22,11 @@ internal fun Project.configureCompose(
         }
 
         tasks.withType<KotlinCompile>().configureEach {
-            kotlinOptions {
-                freeCompilerArgs = freeCompilerArgs +
-                        buildComposeMetricsParameters() +
-                        buildComposeStabilityConfig()
+            compilerOptions {
+                freeCompilerArgs.apply {
+                    addAll(buildComposeMetricsParameters())
+                    addAll(buildComposeStabilityConfig())
+                }
             }
         }
     }

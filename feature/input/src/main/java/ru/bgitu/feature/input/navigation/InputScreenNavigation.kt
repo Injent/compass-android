@@ -1,12 +1,10 @@
 package ru.bgitu.feature.input.navigation
 
 import androidx.compose.foundation.text.input.InputTransformation
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
-import ru.bgitu.core.navigation.push
 import ru.bgitu.feature.input.InputScreenRoute
 
 data class InputParams(
@@ -49,11 +47,4 @@ fun NavGraphBuilder.inputRoute() {
         val params = backStackEntry.toRoute<Input>()
         InputScreenRoute(params = params)
     }
-}
-
-fun NavController.navigateToInput(
-    params: InputParams
-) {
-    Input.validator = params.inputTransformation
-    push(params.toRoute())
 }

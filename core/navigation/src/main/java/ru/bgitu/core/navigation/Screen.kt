@@ -6,15 +6,7 @@ sealed interface Screen {
 
     @Serializable data object MainGraph : Screen
 
-    @Serializable data object FindMateGraph : Screen
-
-    @Serializable data object ProfileGraph : Screen
-
-    @Serializable data object Loading : Screen
-
     @Serializable data object About : Screen
-
-    @Serializable data object SearchMate : Screen
 
     @Serializable data object Help : Screen
 
@@ -33,12 +25,6 @@ sealed interface Screen {
     @Serializable data object Groups : Screen
 
     @Serializable data class GroupSearch(val resultKey: String) : Screen
-
-    @Serializable data object ExpertApply : Screen
-
-    @Serializable data class VariantScreen(val subjectName: String) : Screen
-
-    @Serializable data object Onboarding : Screen
 
     @Serializable data class Notes(val noteId: Int?) : Screen
 

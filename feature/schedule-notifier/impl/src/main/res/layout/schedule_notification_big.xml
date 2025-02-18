@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:padding="@dimen/notification_padding"
     android:columnCount="2"
-    android:rowCount="4"
+    android:rowCount="5"
     android:useDefaultMargins="false"
     android:orientation="horizontal">
 
@@ -52,11 +52,20 @@
         android:maxLines="2"
         android:textAppearance="@style/TextLabel" />
 
+    <ImageView
+        android:contentDescription="@null"
+        android:src="@color/divider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_columnSpan="2"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="6dp" />
+
     <TextView
         android:layout_width="@dimen/time_column_width"
         android:layout_height="wrap_content"
         android:text="@string/next"
-        android:layout_marginTop="6dp"
         android:textAppearance="@style/TextHeadline" />
 
     <TextView
@@ -65,13 +74,12 @@
         android:layout_marginEnd="@dimen/time_column_width"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="6dp"
         android:maxLines="2"
         android:ellipsize="end"
         android:textAppearance="@style/TextHeadline" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/time_column_width"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
@@ -98,16 +106,4 @@
         android:maxLines="2"
         android:layout_marginEnd="@dimen/time_column_width" />
 
-
-    <Button
-        android:id="@+id/turn_off"
-        android:layout_width="wrap_content"
-        android:layout_marginEnd="@dimen/time_column_width"
-        android:layout_height="28dp"
-        android:layout_gravity="end"
-        android:layout_columnSpan="2"
-        android:background="@drawable/notification_button"
-        android:textAllCaps="false"
-        android:textAppearance="@style/TextButton"
-        android:text="@string/turn_off_for_today" />
 </GridLayout>

@@ -6,5 +6,13 @@
     <string name="user_agreement">Пользовательское соглашение</string>
     <string name="share_app">Поделиться приложением</string>
     <string name="share_app_message">Попробуй Android приложение для просмотра расписания занятий БГИТУ <br />%s</string>
-    <string name="changelogs">Список изменений</string>
+    <string name="changelogs">Что нового?</string>
+
+    <string name="app_question">Вопросы, репорт ошибок и предложения по приложению</string>
+    <string name="suggestions">Предложения по функционалу</string>
+    <string name="mobile_dev_name">Елисей Веревкин</string>
+    <string name="backend_dev">Кирилл Пудов</string>
+    <string name="mobile_dev_role">Разработчик приложения БГИТУ Компас</string>
+    <string name="backend_dev_role">Разработчик Telegram-бота и серверной логики</string>
+    <string name="noChangelogFor">Нет записей по версии %s</string>
 </resources>

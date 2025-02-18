@@ -6,7 +6,7 @@
     <string name="option_groups_visibility">Show groups on home screen</string>
     <string name="add_group">Add group</string>
     <string name="organize_groups">Organize groups</string>
-    <string name="add_groups">Add up to three groups</string>
+    <string name="add_groups">Add more groups</string>
     <string name="screen_find_group">Find group</string>
     <string name="delete_group">Delete group?</string>
     <string name="delete_group_description">Group %s will be removed from your favorite groups</string>
@@ -15,4 +15,10 @@
     <string name="group_not_selected">Not selected</string>
     <string name="alert_group_not_selected">Group not selected!</string>
     <string name="error_groups_not_loaded">The data has not been uploaded yet</string>
+    <string name="notifications">Notifications</string>
+    <string name="wantToReceiveNotifications">Do you want to receive notifications about schedule changes?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="noGroups">No groups</string>
+    <string name="youCantAddGroupsInLandscape">You can\'t add groups in landscape mode</string>
 </resources>

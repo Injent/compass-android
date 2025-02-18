@@ -6,5 +6,9 @@ interface ScheduleNotifier {
      */
     fun enable(): Boolean
     fun disable(forToday: Boolean = false)
-    fun restart()
+
+    /**
+     * @param forced set to true if you want force notification recreation
+     */
+    fun restart(forced: Boolean = false)
 }

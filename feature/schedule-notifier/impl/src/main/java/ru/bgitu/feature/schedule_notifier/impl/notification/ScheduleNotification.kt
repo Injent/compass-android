@@ -18,8 +18,6 @@ fun Context.createScheduleNotification(
     currentClass: ClassInNotification,
     nextClass: ClassInNotification,
 ): Notification {
-    println("CREATED NOTIFICATIN")
-
     return NotificationCompat.Builder(this, AppChannelManager.PINNED_SCHEDULE_CHANNEL_ID)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setOngoing(true)
@@ -36,6 +34,19 @@ fun Context.createScheduleNotification(
         )
         .setCustomBigContentView(
             createBigRemoteViews(currentClass, nextClass)
+        )
+        .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+        .addAction(
+            NotificationCompat.Action(
+                ru.bgitu.core.common.R.drawable.ic_compass_arrow,
+                getString(R.string.turn_off_for_today),
+                PendingIntent.getBroadcast(
+                    this,
+                    0,
+                    Intent(this, TurnOffForTodayReceiver::class.java),
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+                )
+            )
         )
         .setContentIntent(
             PendingIntent.getActivity(
@@ -87,14 +98,5 @@ private fun Context.createBigRemoteViews(
             setTextViewText(R.id.next_time_end, nextClass.endTime)
         }
     }
-    remoteViews.setOnClickPendingIntent(
-        R.id.turn_off,
-        PendingIntent.getBroadcast(
-            this,
-            0,
-            Intent(this, TurnOffForTodayReceiver::class.java),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-        )
-    )
     return remoteViews
 }

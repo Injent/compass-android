@@ -1,24 +1,25 @@
 package ru.bgitu.core.data.downloader
 
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onStart
+import ru.bgitu.core.network.crypto.TrustAllX509TrustManager
 import java.io.File
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import java.security.SecureRandom
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
 
-/**
- * Uses Android native tools to do download files from https as Ktor CIO client can't do it
- * See [YouTrack Issue](https://youtrack.jetbrains.com/issue/KTOR-5392/CIO-The-Received-alert-during-handshake-error-with-TLS-v1.3-server)
- */
-class AndroidFileDownloader(
-    private val ioDispatcher: CoroutineDispatcher,
-) {
-    suspend fun downloadAndSaveFile(url: String, destination: File): Flow<DownloadState> = flow {
+class AndroidFileDownloader {
+    fun downloadAndSaveFile(url: String, destination: File) = callbackFlow<DownloadState> {
+        val sslContext = SSLContext.getInstance("TLS").apply {
+            init(null, arrayOf(TrustAllX509TrustManager()), SecureRandom())
+        }
+        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.socketFactory)
         val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
         connection.connect()
 
@@ -37,14 +38,15 @@ class AndroidFileDownloader(
             DownloadState.Downloading(
                 totalBytesToDownload = contentLength,
                 bytesDownloaded = bytesDownloaded
-            ).also { emit(it) }
+            ).also { send(it) }
         }
 
         output.flush()
         output.close()
         input.close()
 
-        emit(DownloadState.Finished)
+        send(DownloadState.Finished)
+        close()
     }
         .onStart {
             emit(DownloadState.Downloading(0, 0))
@@ -53,5 +55,5 @@ class AndroidFileDownloader(
             it.printStackTrace()
             emit(DownloadState.Failed(it))
         }
-        .flowOn(ioDispatcher)
+        .flowOn(Dispatchers.IO)
 }

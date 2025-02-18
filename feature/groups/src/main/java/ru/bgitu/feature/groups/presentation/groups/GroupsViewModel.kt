@@ -2,6 +2,7 @@ package ru.bgitu.feature.groups.presentation.groups
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -18,8 +19,6 @@ sealed interface GroupsUiState {
         val showGroupsOnMainScreen: Boolean,
     ) : GroupsUiState
 
-    data object Error : GroupsUiState
-
     data object Loading : GroupsUiState
 }
 
@@ -29,6 +28,7 @@ sealed interface GroupsIntent {
     data class AddGroup(val group: Group) : GroupsIntent
     data class RemoveGroup(val group: Group) : GroupsIntent
     data class SetGroupVisibility(val visible: Boolean) : GroupsIntent
+    data object DismissDialog : GroupsIntent
 }
 
 sealed interface GroupsEvent {
@@ -41,11 +41,13 @@ class GroupsViewModel(
     private val _events = eventChannel<GroupsEvent>()
     val events get() = _events.receiveAsFlow()
 
+    private val showNotificationsDialog = MutableStateFlow(false)
+
     val uiState = groupRepository.getGroupsData().mapLatest { groupData ->
         GroupsUiState.Success(
             primaryGroup = groupData.primaryGroup,
             savedGroups = groupData.savedGroups,
-            showGroupsOnMainScreen = groupData.showGroupsOnMainScreen
+            showGroupsOnMainScreen = groupData.showGroupsOnMainScreen,
         )
     }
         .stateIn(
@@ -67,6 +69,9 @@ class GroupsViewModel(
                 }
             }
             is GroupsIntent.ChangePrimaryGroup -> {
+                val state = uiState.value
+                if (state !is GroupsUiState.Success) return
+
                 viewModelScope.launch {
                     groupRepository.setPrimaryGroup(intent.group)
                 }
@@ -84,6 +89,7 @@ class GroupsViewModel(
                 }
                 groupRepository.setGroupsVisibility(intent.visible)
             }
+            GroupsIntent.DismissDialog -> showNotificationsDialog.value = false
         }
     }
 }

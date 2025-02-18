@@ -9,20 +9,11 @@ import ru.bgitu.core.notifications.R
 class AppChannelManager(private val context: Context) {
     private val notificationManager = NotificationManagerCompat.from(context)
 
-    fun ensureIfExists() {
-        val allChannelsCreated = arrayOf(
-            GENERAL_CHANNEL_ID,
-            BACKGROUND_WORK_CHANNEL_ID,
-            PINNED_SCHEDULE_CHANNEL_ID,
-        ).all { channelId ->
-            notificationManager.getNotificationChannel(channelId) != null
-        }
+    fun createChannels() {
+        if (notificationManager.getNotificationChannel(GENERAL_CHANNEL_ID) != null) return
 
-        if (!allChannelsCreated) {
-            createGeneralChannel()
-            createBackgroundWorkChannel()
-        }
-
+        createGeneralChannel()
+        createBackgroundWorkChannel()
         createPinnedScheduleChannel()
     }
 

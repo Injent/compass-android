@@ -1,6 +1,5 @@
 package ru.bgitu.core.designsystem.util.shadow
 
-import android.os.Parcelable
 import androidx.annotation.FloatRange
 
 /**

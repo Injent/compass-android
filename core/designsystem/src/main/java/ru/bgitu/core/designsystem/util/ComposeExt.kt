@@ -1,7 +1,6 @@
 package ru.bgitu.core.designsystem.util
 
 import android.content.Context
-import android.view.SoundEffectConstants
 import androidx.annotation.RawRes
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.animateFloatAsState
@@ -9,17 +8,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,24 +25,23 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionScene
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapLatest
 import ru.bgitu.core.common.TextResource
 import kotlin.math.max
 
+@OptIn(ExperimentalMotionApi::class)
 @Composable
 fun rememberMotionScene(
     @RawRes resId: Int,
@@ -75,21 +67,6 @@ fun rememberMotionScene(
             sb.toString()
         }
     )
-}
-
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
-@Composable
-fun adaptiveDp(
-    compact: Dp,
-    medium: Dp,
-    expanded: Dp
-): Dp {
-    val width = currentWindowAdaptiveInfo().windowSizeClass.widthSizeClass
-    return when {
-        width >= WindowWidthSizeClass.Expanded -> expanded
-        width >= WindowWidthSizeClass.Medium -> medium
-        else -> compact
-    }
 }
 
 val TextUnit.nonScaledSp: TextUnit
@@ -222,37 +199,12 @@ fun Modifier.verticalScrollWithScrollbar(
     )
     .verticalScroll(state, enabled, flingBehavior, reverseScrolling)
 
-
-
-fun Modifier.horizontalScrollWithScrollbar(
-    state: ScrollState,
-    enabled: Boolean = true,
-    flingBehavior: FlingBehavior? = null,
-    reverseScrolling: Boolean = false,
-    scrollbarConfig: ScrollBarConfig = ScrollBarConfig()
-) = this
-    .scrollbar(
-        state, Orientation.Horizontal,
-        indicatorThickness = scrollbarConfig.indicatorThickness,
-        indicatorColor = scrollbarConfig.indicatorColor,
-        alpha = scrollbarConfig.alpha ?: if (state.isScrollInProgress) 0.8f else 0f,
-        alphaAnimationSpec = scrollbarConfig.alphaAnimationSpec ?: tween(
-            delayMillis = if (state.isScrollInProgress) 0 else 1500,
-            durationMillis = if (state.isScrollInProgress) 150 else 500
-        ),
-        padding = scrollbarConfig.padding
-    )
-    .horizontalScroll(state, enabled, flingBehavior, reverseScrolling)
-
 @Composable
-fun ClearFocusWithImeEffect(
-    block: ((visible: Boolean) -> Unit)? = null
-) {
+fun ClearFocusWithImeEffect() {
     val focusManager = LocalFocusManager.current
     val isImeVisible by rememberImeState()
 
     LaunchedEffect(isImeVisible) {
-        block?.invoke(isImeVisible)
         if (isImeVisible) return@LaunchedEffect
         focusManager.clearFocus()
     }

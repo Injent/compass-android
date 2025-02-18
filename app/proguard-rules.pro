@@ -40,3 +40,32 @@
 -keep interface com.huawei.hms.analytics.type.HAParamType{*;}
 -keep class com.huawei.hms.analytics.HiAnalyticsInstance{*;}
 -keep class com.huawei.hms.analytics.HiAnalytics{*;}
+-keep class com.huawei.libcore.io.**{*;}
+
+-keep class ru.bgitu.core.data.push.FirebasePushService { *; }
+-keep class ru.bgitu.core.data.push.FirebasePushInterface { *; }
+
+-dontwarn android.securitydiagnose.HwSecurityDiagnoseManager$StpExtraStatusInfo
+-dontwarn android.securitydiagnose.HwSecurityDiagnoseManager
+-dontwarn android.telephony.HwTelephonyManager
+-dontwarn com.huawei.android.app.PackageManagerEx
+-dontwarn com.huawei.android.content.pm.ApplicationInfoEx
+-dontwarn com.huawei.android.os.BuildEx$VERSION
+-dontwarn com.huawei.android.util.NoExtAPIException
+-dontwarn com.huawei.appgallery.log.LogAdaptor
+-dontwarn com.huawei.hianalytics.process.HiAnalyticsConfig$Builder
+-dontwarn com.huawei.hianalytics.process.HiAnalyticsConfig
+-dontwarn com.huawei.hianalytics.process.HiAnalyticsInstance$Builder
+-dontwarn com.huawei.hianalytics.process.HiAnalyticsInstance
+-dontwarn com.huawei.hianalytics.process.HiAnalyticsManager
+-dontwarn com.huawei.hianalytics.util.HiAnalyticTools
+-dontwarn com.huawei.hms.support.account.request.AccountAuthParams
+-dontwarn com.huawei.hms.support.hwid.result.AuthHuaweiId
+-dontwarn com.huawei.libcore.io.ExternalStorageFile
+-dontwarn com.huawei.libcore.io.ExternalStorageFileInputStream
+-dontwarn com.huawei.libcore.io.ExternalStorageFileOutputStream
+-dontwarn com.huawei.libcore.io.ExternalStorageRandomAccessFile
+-dontwarn com.huawei.ohos.localability.BundleAdapter
+-dontwarn com.huawei.ohos.localability.base.BundleInfo
+-dontwarn com.huawei.ohos.localability.base.DeviceInfo
+-dontwarn com.huawei.system.BuildEx

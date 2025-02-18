@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
@@ -21,11 +22,17 @@ import ru.bgitu.feature.notes.model.Note
 
 sealed interface NoteDetailsEvent {
     data object Back : NoteDetailsEvent
+    data object Delete : NoteDetailsEvent
+    data class Share(val content: String) : NoteDetailsEvent
+    data class Copy(val content: String) : NoteDetailsEvent
 }
 
 sealed interface NoteDetailsIntent {
     data object Back : NoteDetailsIntent
     data object Save : NoteDetailsIntent
+    data object Delete : NoteDetailsIntent
+    data object Share : NoteDetailsIntent
+    data object Copy : NoteDetailsIntent
 }
 
 class NoteDetailsViewModel(
@@ -36,9 +43,12 @@ class NoteDetailsViewModel(
     var noteId = route.noteId
     val readModeInitially = noteId != null
 
+    private var saveJob: Job? = null
+
     private val _events = eventChannel<NoteDetailsEvent>()
     val events = _events.receiveAsFlow()
 
+    private var noteCreationDate: LocalDateTime? = null
     val contentField = TextFieldState()
     val subjectNameField = TextFieldState()
     val completeBeforeDate = MutableStateFlow<LocalDateTime?>(null)
@@ -50,6 +60,7 @@ class NoteDetailsViewModel(
                 contentField.setTextAndPlaceCursorAtEnd(it.content)
                 subjectNameField.setTextAndPlaceCursorAtEnd(it.subjectName)
                 priority.value = it.priority
+                noteCreationDate = it.createDate
                 completeBeforeDate.value = it.completeBeforeDate
                 emit(false)
             }
@@ -68,6 +79,9 @@ class NoteDetailsViewModel(
         when (intent) {
             NoteDetailsIntent.Back -> navigateBackWithSaving()
             NoteDetailsIntent.Save -> save()
+            NoteDetailsIntent.Copy -> _events.trySend(NoteDetailsEvent.Copy(contentField.text.toString()))
+            NoteDetailsIntent.Delete -> _events.trySend(NoteDetailsEvent.Delete)
+            NoteDetailsIntent.Share -> _events.trySend(NoteDetailsEvent.Share(contentField.text.toString()))
         }
     }
 
@@ -76,7 +90,8 @@ class NoteDetailsViewModel(
             _events.trySend(NoteDetailsEvent.Back)
             return
         }
-        viewModelScope.launch {
+        if (saveJob?.isActive == true) return
+        saveJob = viewModelScope.launch {
             noteId = notesRepository.saveNote(getComposedNote())
             _events.send(NoteDetailsEvent.Back)
         }
@@ -85,7 +100,8 @@ class NoteDetailsViewModel(
     private fun save() {
         if (contentField.text.isEmpty() && noteId == null) return
 
-        viewModelScope.launch {
+        if (saveJob?.isActive == true) return
+        saveJob = viewModelScope.launch {
             noteId = notesRepository.saveNote(getComposedNote())
         }
     }

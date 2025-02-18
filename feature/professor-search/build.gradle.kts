@@ -10,6 +10,5 @@ dependencies {
     
     implementation(libs.kotlinx.datetime)
 
-    testImplementation(projects.core.testing)
     testImplementation(libs.junit)
 }

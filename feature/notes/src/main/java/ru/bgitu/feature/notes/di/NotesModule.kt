@@ -1,6 +1,6 @@
 package ru.bgitu.feature.notes.di
 
-import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 import ru.bgitu.feature.notes.data.NotesRepository
 import ru.bgitu.feature.notes.presentation.details.NoteDetailsViewModel

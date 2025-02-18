@@ -5,16 +5,14 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import ru.bgitu.core.database.dao.NoteDao
 import ru.bgitu.core.database.dao.ScheduleDao
-import ru.bgitu.core.database.entity.LessonEntity
 import ru.bgitu.core.database.entity.NoteEntity
 import ru.bgitu.core.database.util.LocalDateConverter
 import ru.bgitu.core.database.util.LocalDateTimeConverter
 import ru.bgitu.core.database.util.LocalTimeConverter
 
 @Database(
-    version = 3,
+    version = 4,
     entities = [
-        LessonEntity::class,
         NoteEntity::class
     ]
 )

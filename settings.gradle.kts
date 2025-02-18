@@ -6,6 +6,7 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
         maven("https://developer.huawei.com/repo/")
+        maven("https://artifactory-external.vkpartner.ru/artifactory/maven/")
         maven("https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/")
     }
 
@@ -26,9 +27,9 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://jitpack.io")
-        maven(url = "https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/")
-        maven(url = "https://artifactory-external.vkpartner.ru/artifactory/maven")
-        maven(url = "https://developer.huawei.com/repo/")
+        maven("https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/")
+        maven("https://artifactory-external.vkpartner.ru/artifactory/maven/")
+        maven("https://developer.huawei.com/repo/")
     }
 }
 
@@ -39,12 +40,9 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 include(
     ":app",
     ":core:data",
-    ":core:data-test",
     ":core:designsystem",
     ":feature:home",
-    ":feature:login",
     ":core:datastore",
-    ":core:datastore-test",
     ":core:network",
     ":core:model",
     ":core:domain",
@@ -52,26 +50,19 @@ include(
     ":core:navigation",
     ":feature:profile",
     ":core:ui",
-    ":core:testing",
-    ":core:database",
     ":components:sync",
-    ":components:signin",
     ":core:notifications",
     ":components:updates:api",
     ":components:updates:impl",
     ":feature:update",
     ":feature:settings",
     ":feature:schedule-widget",
-    ":feature:profile-settings",
     ":feature:about",
     ":feature:help",
     ":feature:schedule-notifier:api",
     ":feature:schedule-notifier:impl",
     ":feature:professor-search",
-    ":feature:findmate",
     ":feature:groups",
-    ":feature:input"
+    ":feature:input",
+    ":feature:notes"
 )
-include(":feature:onboarding")
-include(":components:site-traffic")
-include(":feature:notes")

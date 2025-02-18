@@ -15,7 +15,6 @@ dependencies {
 
     implementation(libs.work)
     implementation(libs.lifecycle.livedata)
-    implementation(libs.koin.workManager)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.datetime)
 

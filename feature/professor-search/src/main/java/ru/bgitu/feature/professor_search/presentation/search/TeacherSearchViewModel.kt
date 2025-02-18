@@ -32,7 +32,7 @@ sealed class TeacherSearchEvent {
     data class NavigateToTeacherDetails(val teacherName: String) : TeacherSearchEvent()
 }
 
-data class TeacherSearchUiState internal constructor(
+data class TeacherSearchUiState(
     val recentSearchResults: List<String> = emptyList(),
     val searchResults: List<String> = emptyList(),
     val seenScheduleAlert: Boolean = true,

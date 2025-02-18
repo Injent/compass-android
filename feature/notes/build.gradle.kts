@@ -4,7 +4,3 @@ plugins {
 }
 
 android.namespace = "ru.bgitu.feature.notes"
-
-dependencies {
-    implementation(projects.core.database)
-}

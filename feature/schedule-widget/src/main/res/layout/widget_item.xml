@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:id="@+id/lesson_card">
+
+    <ImageView
+        android:id="@+id/lesson_background_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@null" />
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="4dp"
+        android:paddingHorizontal="8dp">
+
+        <TextView
+            android:id="@+id/time_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorForeground2"
+            android:textSize="12sp"
+            android:fontFamily="sans-serif"
+            android:text="08:20"
+            android:layout_marginTop="3dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:id="@+id/time_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorForeground2"
+            android:textSize="12sp"
+            android:text="09:55"
+            android:fontFamily="sans-serif"
+            android:layout_marginTop="2dp"
+            android:layout_below="@id/time_start" />
+
+        <TextView
+            android:id="@+id/subject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/subject_placeholder_1"
+            android:textColor="@color/colorForeground1"
+            android:textSize="15sp"
+            android:lineHeight="17sp"
+            android:textFontWeight="500"
+            android:layout_marginStart="6dp"
+            android:layout_toEndOf="@id/time_start" />
+
+        <TextView
+            android:id="@+id/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/subject"
+            android:layout_marginStart="6dp"
+            android:text="@string/location_placeholder_1"
+            android:textColor="@color/colorForeground2"
+            android:textSize="12sp"
+            android:layout_toEndOf="@id/time_end" />
+
+        <ImageView
+            android:id="@+id/lesson_icon"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginTop="4dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_book"
+            android:tint="@color/colorBrand"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true" />
+    </RelativeLayout>
+</FrameLayout>

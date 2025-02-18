@@ -19,7 +19,6 @@ class HuaweiStoreSync : StoreSync {
             availableAdapter.startResolution(
                 context
             ) {
-                println("ON COMPLETE: $it")
             }
         }
     }

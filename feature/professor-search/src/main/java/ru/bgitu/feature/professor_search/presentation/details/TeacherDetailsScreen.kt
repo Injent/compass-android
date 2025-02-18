@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -154,11 +155,21 @@ private fun ProfessorDetailsScreenContent(
         pageCount = { 6 }
     )
 
+    var pagerInited by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
+        if (!pagerInited) {
+            pagerInited = true
+            return@LaunchedEffect
+        }
+
         snapshotFlow { pagerState.currentPage }.distinctUntilChanged().collect {
             onIntent(ProfessorDetailsIntent.ChangePage(pagerState.currentPage))
         }
     }
+
+
+    val isLandScape = LocalConfiguration.current
+        .orientation == Configuration.ORIENTATION_LANDSCAPE
 
     Scaffold(
         contentWindowInsets = WindowInsets(0),
@@ -177,11 +188,13 @@ private fun ProfessorDetailsScreenContent(
         },
         snackbarHost = {
             AppSnackbarHost(
-                modifier = Modifier.padding(bottom = AppTheme.spacing.l)
+                modifier = Modifier.offset(y = -AppTheme.spacing.l)
             )
         },
         modifier = Modifier
-            .padding(LocalExternalPadding.current)
+            .thenIf(isLandScape) {
+                padding(LocalExternalPadding.current)
+            }
     ) { paddingValues ->
         val maxWidthOfDayAndWeek by maxWidthOfDayAndWeek()
 
@@ -198,16 +211,17 @@ private fun ProfessorDetailsScreenContent(
             timeColumnWidth = size.width
         }
 
-        val isLandScape = LocalConfiguration.current
-            .orientation == Configuration.ORIENTATION_LANDSCAPE
-
         val classesListContent = @Composable { modifier: Modifier, page: Int? ->
             LazyColumn(
                 verticalArrangement = if (uiState.loading) {
                     Arrangement.Center
                 } else Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(horizontal = AppTheme.spacing.l),
+                contentPadding = PaddingValues(
+                    start = AppTheme.spacing.l,
+                    end = AppTheme.spacing.l,
+                    bottom = AppTheme.spacing.l
+                ),
                 modifier = modifier
                     .fillMaxSize()
                     .padding(paddingValues)
@@ -386,8 +400,8 @@ private fun ProfessorDetailsTopBar(
                 AppTextButton(
                     text = stringResource(
                         if (uiState.filterByDays) {
-                            R.string.filter_by_days
-                        } else R.string.not_filter
+                            R.string.not_filter
+                        } else R.string.filter_by_days
                     ),
                     onClick = {
                         onIntent(ProfessorDetailsIntent.ChangeFilter(!uiState.filterByDays))

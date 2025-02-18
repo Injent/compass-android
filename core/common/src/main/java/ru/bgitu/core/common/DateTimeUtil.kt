@@ -69,7 +69,7 @@ object DateTimeUtil {
     }
         .onStart { emit(currentDateTime) }
 
-    fun getStartOfWeek(date: LocalDate): LocalDate {
+    private fun getStartOfWeek(date: LocalDate): LocalDate {
         var localDate = date
 
         while (localDate.dayOfWeek != DayOfWeek.MONDAY) {
@@ -242,7 +242,6 @@ object DateTimeUtil {
         return sb.toString()
     }
 
-    @Deprecated("use Context.formatRelativeTime instead")
     fun formatRelativeAdaptiveTime(
         from: LocalTime,
         to: LocalTime,
@@ -303,7 +302,7 @@ object DateTimeUtil {
         return localDate.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault())
     }
 
-    fun difference(start: LocalTime, end: LocalTime, chronoUnit: ChronoUnit): Int {
+    private fun difference(start: LocalTime, end: LocalTime, chronoUnit: ChronoUnit): Int {
         return chronoUnit.between(start.toJavaLocalTime(), end.toJavaLocalTime()).toInt()
     }
 
@@ -311,7 +310,7 @@ object DateTimeUtil {
         return chronoUnit.between(start.toJavaLocalDateTime(), end.toJavaLocalDateTime()).toInt()
     }
 
-    fun getStudyWeekNumber(date: LocalDate): Int {
+    private fun getStudyWeekNumber(date: LocalDate): Int {
         val startStudyYear = date.year.let {
             if (date.monthNumber in 1..8)
                 it - 1
@@ -336,6 +335,10 @@ object DateTimeUtil {
         }
 
         return weeksCount
+    }
+
+    fun isOddWeek(date: LocalDate): Boolean {
+        return getStudyWeekNumber(date) % 2 != 0
     }
 
     fun getFormattedStudyWeekNumber(date: LocalDate): TextResource {

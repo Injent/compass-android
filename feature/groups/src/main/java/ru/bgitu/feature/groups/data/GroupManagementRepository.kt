@@ -2,7 +2,6 @@ package ru.bgitu.feature.groups.data
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import ru.bgitu.core.common.eventbus.EventBus
 import ru.bgitu.core.common.eventbus.GlobalAppEvent
 import ru.bgitu.core.datastore.SettingsRepository
@@ -30,7 +29,7 @@ class GroupManagementRepository(
             it.copy(savedGroups = it.savedGroups.filterNot { savedGroup -> savedGroup == group })
         }
         settingsRepository.setGroup(group)
-        EventBus.post(GlobalAppEvent.ChangeGroup)
+        EventBus.post(GlobalAppEvent.ChangePrimaryGroup)
     }
 
     suspend fun searchGroup(query: String) = compassService.searchGroups(query.replace("-", ""))

@@ -51,7 +51,7 @@ fun MatesBannerContent(
                 .rotate(-25f)
         )
         Icon(
-            painter = painterResource(AppIcons.BookCover2),
+            painter = painterResource(AppIcons.ThumbUp),
             contentDescription = null,
             tint = iconTint,
             modifier = Modifier
