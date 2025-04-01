@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.StatFs
 import androidx.core.content.FileProvider
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
@@ -29,6 +28,7 @@ import ru.bgitu.components.updates.api.model.UpdateInfo
 import ru.bgitu.components.updates.impl.internal.AppUpdateSaver
 import ru.bgitu.core.common.Result
 import ru.bgitu.core.common.TextResource
+import ru.bgitu.core.common.di.AppDispatchers
 import ru.bgitu.core.common.exception.DetailedException
 import ru.bgitu.core.common.getOrThrow
 import ru.bgitu.core.common.runResulting
@@ -56,11 +56,11 @@ class BuiltInAppUpdateManager(
     private val context: Context,
     private val compassService: CompassService,
     private val settings: SettingsRepository,
-    private val ioDispatcher: CoroutineDispatcher
+    private val appDispatchers: AppDispatchers
 ) : AppUpdateManager {
     private val updateSaver by lazy { AppUpdateSaver(context) }
     private var listener: InstallStateListener? = null
-    private val managerScope = CoroutineScope(ioDispatcher + SupervisorJob())
+    private val managerScope = CoroutineScope(appDispatchers.ioDispatcher + SupervisorJob())
 
     override val appUpdateInfo = flow<UpdateInfo> {
         val updateResponse = compassService.getUpdateAvailability().getOrThrow()
@@ -231,7 +231,7 @@ class BuiltInAppUpdateManager(
     private suspend fun isUpdateValid(versionCode: Long, checksum: String): Boolean {
         val file = context.updateApkFile(versionCode)
         if (file.exists().not()) return false
-        return withContext(ioDispatcher) {
+        return withContext(appDispatchers.ioDispatcher) {
             val digest = MessageDigest.getInstance("SHA-256")
             val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
             val input = file.inputStream()

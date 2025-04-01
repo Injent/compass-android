@@ -208,6 +208,22 @@ fun WidgetSettingsScreen(
                     )
                 }
             }
+
+//            AppCardWithContent(
+//                label = stringResource(R.string.widget_button_color)
+//            ) {
+//                Row(
+//                    horizontalArrangement = Arrangement.SpaceBetween,
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                ) {
+//                    AppFilledIconButton(
+//                        onClick = {},
+//                        icon =
+//                    )
+//                }
+//            }
         }
     }
 }

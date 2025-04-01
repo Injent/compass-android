@@ -28,5 +28,6 @@
     <string name="select_group">Select group</string>
     <string name="reload">Reload</string>
     <string name="error_happend">Error</string>
+    <string name="widget_button_color">Buttons color</string>
 
 </resources>

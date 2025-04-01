@@ -1,7 +1,7 @@
 package ru.bgitu.core.data.model
 
 import kotlinx.datetime.LocalDate
-import ru.bgitu.core.common.DateTimeUtil
+import ru.bgitu.core.common.DateTimeUtil.isOddWeek
 import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.datastore.model.StoredLesson
 import ru.bgitu.core.datastore.model.StoredSchedule
@@ -15,7 +15,7 @@ sealed interface ScheduleState {
 }
 
 fun ScheduleState.Loaded.getLessons(date: LocalDate): List<StoredLesson> {
-    return if (DateTimeUtil.isOddWeek(date)) {
+    return if (date.isOddWeek()) {
         schedule.firstWeek.getOrDefault(date.dayOfWeek, emptyList())
     } else {
         schedule.secondWeek.getOrDefault(date.dayOfWeek, emptyList())

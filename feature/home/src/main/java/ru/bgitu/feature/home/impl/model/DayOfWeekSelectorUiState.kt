@@ -27,7 +27,6 @@ class DayOfWeekSelectorUiState(
 
     fun getDateFromDatePager(datePage: Int): LocalDate {
         val weekOffset = datePage - (datePageCount / 2)
-
         return now.date.plus(weekOffset, DateTimeUnit.WEEK)
     }
 

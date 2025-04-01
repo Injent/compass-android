@@ -24,7 +24,7 @@ import ru.bgitu.core.network.model.response.UpdateAvailabilityResponse
 import ru.bgitu.core.network.model.response.UserDataVersionResponse
 
 internal object CompassRoutes {
-    private const val BASE_URL = "http://api.bgitu-compass.ru"
+    private const val BASE_URL = "https://api-ssl.bgitu-compass.ru"
     const val CHOOSE_GROUP = "$BASE_URL/account/chooseGroup"
     const val REFRESH_TOKEN = "$BASE_URL/refreshToken"
     const val UPDATE_AVAILABILITY = "$BASE_URL/updateAvailability"

@@ -8,6 +8,7 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDate
 import ru.bgitu.core.SettingsPb
 import ru.bgitu.core.common.DateTimeUtil
+import ru.bgitu.core.common.DateTimeUtil.isOddWeek
 import ru.bgitu.core.datastore.model.StoredLesson
 import ru.bgitu.core.datastore.model.StoredSchedule
 import ru.bgitu.core.datastore.model.toStoredSchedule
@@ -37,7 +38,7 @@ data class ScheduleWidgetState(
     }
 
     val currentLessons: List<StoredLesson>
-        get() = if (DateTimeUtil.isOddWeek(queryDate)) {
+        get() = if (queryDate.isOddWeek()) {
             schedule.firstWeek
         } else {
             schedule.secondWeek

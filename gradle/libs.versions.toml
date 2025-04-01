@@ -61,6 +61,8 @@ infoBarCompose = "1.0.0"
 lazyPagination = "1.4.0"
 tracerBom = "1.0.1"
 konfetti = "2.0.5"
+haze = "1.4.0"
+colorpicker = "1.1.2"
 
 [libraries]
 # Build logic plugins
@@ -184,6 +186,8 @@ sheetsComposeDialog-core = { group = "com.maxkeppeler.sheets-compose-dialogs", n
 infoBarCompose = { group = "com.radusalagean", name = "info-bar-compose", version.ref = "infoBarCompose" }
 lazyPaginationCompose = { module = "io.github.ahmad-hamwi:lazy-pagination-compose", version.ref = "lazyPagination" }
 konfetti = { group = "nl.dionsegijn", name = "konfetti-compose", version.ref = "konfetti" }
+haze = { group = "dev.chrisbanes.haze", name = "haze", version.ref = "haze" }
+colorpicker = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker" }
 
 # Test
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }

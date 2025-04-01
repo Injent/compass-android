@@ -192,6 +192,7 @@ class HomeViewModel(
     fun onIntent(intent: HomeIntent) {
         when (intent) {
             is HomeIntent.ChangeDate -> {
+                println("DATE CHANGED ${intent.date}")
                 savedStateHandle[SELECTED_DATE] = intent.date.toEpochDays()
             }
             is HomeIntent.ChangeGroupView -> {
@@ -294,6 +295,11 @@ class HomeViewModel(
         }
 
         return null
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        println("HOME VIEW MODEL CLEARED")
     }
 }
 

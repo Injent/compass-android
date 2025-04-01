@@ -42,9 +42,11 @@ class SyncWorker(
 
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
-            if (settingsRepository.data.first().primaryGroup == null) return@withContext Result.failure()
+            if (settingsRepository.data.first().primaryGroup == null) {
+                return@withContext Result.failure()
+            }
 
-            val isManualSync = this@SyncWorker.inputData.getBoolean(PARAM_MANUAL_SYNC, false)
+            val isManualSync = inputData.getBoolean(PARAM_MANUAL_SYNC, false)
 
             val syncedSuccessfully = awaitAll(
                 async { scheduleRepository.sync(isManualSync) }
@@ -53,7 +55,7 @@ class SyncWorker(
             // Send broadcast to widget receiver to update it's state
             sendCompleteBroadcast(
                 success = syncedSuccessfully,
-                manualSync = isManualSync
+                manualSync = isManualSync,
             )
 
             successOrRetryUntil(syncedSuccessfully)
@@ -88,7 +90,9 @@ class SyncWorker(
 
         fun start(manualSync: Boolean = false) = OneTimeWorkRequestBuilder<SyncWorker>()
             .setInputData(
-                workDataOf(PARAM_MANUAL_SYNC to manualSync)
+                workDataOf(
+                    PARAM_MANUAL_SYNC to manualSync,
+                )
             )
             .setConstraints(SyncManagerConstraints)
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)

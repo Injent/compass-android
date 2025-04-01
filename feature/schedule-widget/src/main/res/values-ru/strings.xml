@@ -28,4 +28,5 @@
     <string name="select_group">Выбери группу</string>
     <string name="reload">Перезагрузить</string>
     <string name="error_happend">Ошибка</string>
+    <string name="widget_button_color">Цвет кнопок</string>
 </resources>

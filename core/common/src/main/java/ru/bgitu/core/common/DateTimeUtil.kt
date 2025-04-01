@@ -24,7 +24,6 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toJavaLocalTime
-import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.toLocalDateTime
 import java.time.Month
 import java.time.format.DateTimeFormatter
@@ -310,41 +309,53 @@ object DateTimeUtil {
         return chronoUnit.between(start.toJavaLocalDateTime(), end.toJavaLocalDateTime()).toInt()
     }
 
-    private fun getStudyWeekNumber(date: LocalDate): Int {
-        val startStudyYear = date.year.let {
-            if (date.monthNumber in 1..8)
-                it - 1
-            else it
+//        val startStudyYear = date.year.let {
+//            if (date.monthNumber in 1..8)
+//                it - 1
+//            else it
+//        }
+//
+//        var startDate = LocalDate(startStudyYear, Month.SEPTEMBER, 1)
+//        while (startDate.dayOfWeek in arrayOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)) {
+//            startDate = startDate.plus(1, DateTimeUnit.DAY)
+//        }
+//        startDate = startDate.plus(1, DateTimeUnit.DAY)
+//
+//        val endOfCurrentWeek = date.toJavaLocalDate().with(DayOfWeek.SUNDAY).toKotlinLocalDate()
+//
+//        var weeksCount = 0
+//        while (startDate < endOfCurrentWeek) {
+//            if (startDate.dayOfWeek == DayOfWeek.SUNDAY) {
+//                startDate = startDate.plus(1, DateTimeUnit.WEEK)
+//            }
+//            startDate = startDate.toJavaLocalDate().with(DayOfWeek.SUNDAY).toKotlinLocalDate()
+//            weeksCount++
+//        }
+//
+//        return weeksCount
+
+    fun LocalDate.getStudyWeekNum(): Int {
+        val thisWeekStartDate = this.minus(this.dayOfWeek.ordinal, DateTimeUnit.DAY)
+
+        val startStudyYear = if (this.month.ordinal < Month.SEPTEMBER.ordinal) this.year - 1 else this.year
+
+        val startStudyDate = LocalDate(startStudyYear, Month.SEPTEMBER, 1).let {
+            val is1SepAtWeekend = it.dayOfWeek == DayOfWeek.SATURDAY || it.dayOfWeek == DayOfWeek.SUNDAY
+            val startWeek = if (is1SepAtWeekend) it.plus(1, DateTimeUnit.WEEK) else it
+            startWeek.minus(startWeek.dayOfWeek.ordinal, DateTimeUnit.DAY)
         }
 
-        var startDate = LocalDate(startStudyYear, Month.SEPTEMBER, 1)
-        while (startDate.dayOfWeek in arrayOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)) {
-            startDate = startDate.plus(1, DateTimeUnit.DAY)
-        }
-        startDate = startDate.plus(1, DateTimeUnit.DAY)
-
-        val endOfCurrentWeek = date.toJavaLocalDate().with(DayOfWeek.SUNDAY).toKotlinLocalDate()
-
-        var weeksCount = 0
-        while (startDate < endOfCurrentWeek) {
-            if (startDate.dayOfWeek == DayOfWeek.SUNDAY) {
-                startDate = startDate.plus(1, DateTimeUnit.WEEK)
-            }
-            startDate = startDate.toJavaLocalDate().with(DayOfWeek.SUNDAY).toKotlinLocalDate()
-            weeksCount++
-        }
-
-        return weeksCount
+        return (thisWeekStartDate.toEpochDays() - startStudyDate.toEpochDays()) / 7 + 1
     }
 
-    fun isOddWeek(date: LocalDate): Boolean {
-        return getStudyWeekNumber(date) % 2 != 0
+    fun LocalDate.isOddWeek(): Boolean {
+        return this.getStudyWeekNum() % 2 != 0
     }
 
     fun getFormattedStudyWeekNumber(date: LocalDate): TextResource {
         return TextResource.DynamicString(
             R.string.week,
-            getStudyWeekNumber(date).toString()
+            date.getStudyWeekNum().toString()
         )
     }
 }

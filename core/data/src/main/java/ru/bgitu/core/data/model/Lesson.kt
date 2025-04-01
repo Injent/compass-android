@@ -2,9 +2,6 @@ package ru.bgitu.core.data.model
 
 import ru.bgitu.core.datastore.model.StoredLesson
 import ru.bgitu.core.datastore.model.StoredSchedule
-import ru.bgitu.core.model.Lesson
-import ru.bgitu.core.model.Subject
-import ru.bgitu.core.network.model.NetworkLesson
 import ru.bgitu.core.network.model.response.LessonResponse
 import ru.bgitu.core.network.model.response.ScheduleResponse
 

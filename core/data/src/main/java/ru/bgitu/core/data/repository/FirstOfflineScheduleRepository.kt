@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.LocalDate
 import ru.bgitu.core.common.CommonStrings
-import ru.bgitu.core.common.DateTimeUtil
+import ru.bgitu.core.common.DateTimeUtil.isOddWeek
 import ru.bgitu.core.common.TextResource
 import ru.bgitu.core.common.getOrElse
 import ru.bgitu.core.data.model.ScheduleState
@@ -37,6 +37,7 @@ class FirstOfflineScheduleRepository(
     override suspend fun getNetworkLessons(groupId: Int): ScheduleState {
         val schedule = serviceApi.getFullSchedule(groupId, true)
             .getOrElse { e ->
+                e.throwable?.printStackTrace()
                 return ScheduleState.Error(e.details)
             }
         return ScheduleState.Loaded(schedule.toStoredSchedule())
@@ -50,7 +51,7 @@ class FirstOfflineScheduleRepository(
     override suspend fun getLessonsForDate(date: LocalDate): List<StoredLesson> {
         val schedule = settingsRepository.schedule.first()
 
-        return if (DateTimeUtil.isOddWeek(date)) {
+        return if (date.isOddWeek()) {
             schedule.firstWeek
         } else {
             schedule.secondWeek
@@ -94,7 +95,10 @@ class FirstOfflineScheduleRepository(
         }
 
         val response = serviceApi.getFullSchedule(group.id)
-            .getOrElse { return false }
+            .getOrElse {
+                it.throwable?.printStackTrace()
+                return false
+            }
 
         settingsRepository.setSchedule(response.toStoredSchedule())
 

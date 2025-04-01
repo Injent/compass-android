@@ -401,9 +401,8 @@ private fun HomeScreenContent(
                                                     selectorUiState.now.date == pageDate
                                                 }
                                             },
-                                            onAddNote = { lesson ->
-                                                HomeIntent.NavigateToCreateNote(lesson.subjectName)
-                                                    .also(onIntent)
+                                            onAddNote = {
+
                                             },
                                             now = selectorUiState.now,
                                             lessonsDate = pageDate

@@ -23,7 +23,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import ru.bgitu.core.common.TextResource
-import ru.bgitu.core.common.di.CommonQualifiers
+import ru.bgitu.core.common.di.AppDispatchers
 import ru.bgitu.core.common.exception.DetailedException
 import ru.bgitu.core.network.BuildConfig
 import ru.bgitu.core.network.CompassService
@@ -64,7 +64,7 @@ val NetworkModule = module {
                 publicStorage(
                     FileStorage(
                         directory = androidContext().cacheDir,
-                        dispatcher = get(CommonQualifiers.DispatcherIO)
+                        dispatcher = get<AppDispatchers>().ioDispatcher
                     )
                 )
             }

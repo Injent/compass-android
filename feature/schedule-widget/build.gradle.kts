@@ -27,6 +27,7 @@ dependencies {
     implementation(libs.glance.widget)
     implementation(libs.kotlinx.datetime)
     implementation(libs.work)
+    implementation(libs.colorpicker)
 
     implementation(libs.protobuf.kotlin.lite)
     implementation(libs.protobuf.protoc)
